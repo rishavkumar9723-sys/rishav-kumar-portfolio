@@ -274,14 +274,14 @@
     border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;overflow:hidden;
     box-shadow:0 40px 90px -30px rgba(0,0,0,0.7);
   }
-  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--line-soft);}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--line-soft);flex:0 0 auto;}
   .modal-title{font-family:var(--display);font-size:18px;font-weight:600;}
   .modal-close{width:32px;height:32px;border:1px solid var(--line);border-radius:8px;font-size:14px;color:var(--fog);}
   .modal-close:hover{color:var(--paper);border-color:var(--fog-dim);}
-  .modal-tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line-soft);overflow-x:auto;}
+  .modal-tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line-soft);overflow-x:auto;overflow-y:hidden;flex:0 0 auto;min-height:44px;align-items:stretch;}
   .mtab{font-family:var(--mono);font-size:12px;letter-spacing:0.5px;padding:14px 14px 12px;color:var(--fog-dim);border-bottom:2px solid transparent;white-space:nowrap;}
   .mtab.active{color:var(--amber);border-bottom-color:var(--amber);}
-  .modal-body{padding:26px 28px;overflow-y:auto;flex:1;}
+  .modal-body{padding:26px 28px;overflow-y:auto;flex:1 1 auto;min-height:0;}
   .mpane{display:none;}
   .mpane.active{display:block;}
 
@@ -343,7 +343,7 @@
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()">
         <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
       </button>
-      <a href="#contact" class="btn ghost">Resume</a>
+      <a href="Rishav-Kumar-Resume.pdf" download class="btn ghost">Resume</a>
       <a href="#contact" class="btn primary">Let's Talk</a>
     </div>
   </nav>
@@ -364,10 +364,10 @@
         </p>
         <div class="btnrow">
           <a href="#projects" class="btn primary">View My Work <span aria-hidden="true">↓</span></a>
-          <a href="#contact" class="btn ghost"><span aria-hidden="true">⭳</span> Download Resume</a>
+          <a href="Rishav-Kumar-Resume.pdf" download class="btn ghost"><span aria-hidden="true">&#11015;</span> Download Resume</a>
         </div>
         <div class="iconlinks">
-          <a href="https://github.com/YOUR-GITHUB-USERNAME" target="_blank" rel="noopener" aria-label="GitHub">
+          <a href="https://github.com/rishavkumar9723-sys" target="_blank" rel="noopener" aria-label="GitHub">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.9c-2.78.62-3.37-1.36-3.37-1.36-.46-1.2-1.12-1.53-1.12-1.53-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.36 1.12 2.94.85.09-.66.34-1.12.62-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.32.1-2.75 0 0 .84-.27 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.32 2.75-1.05 2.75-1.05.55 1.43.2 2.49.1 2.75.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.8-4.58 5.05.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
           </a>
           <a href="https://www.linkedin.com/in/rishavkmr24/" target="_blank" rel="noopener" aria-label="LinkedIn">
@@ -617,7 +617,7 @@
       <div class="contact-links">
         <a href="mailto:rishavkumar9723@gmail.com" class="btn primary">Email</a>
         <a href="https://www.linkedin.com/in/rishavkmr24/" target="_blank" rel="noopener" class="btn ghost">LinkedIn</a>
-        <a href="https://github.com/YOUR-GITHUB-USERNAME" target="_blank" rel="noopener" class="btn ghost">GitHub</a>
+        <a href="https://github.com/rishavkumar9723-sys" target="_blank" rel="noopener" class="btn ghost">GitHub</a>
       </div>
     </div>
   </div>
@@ -634,13 +634,13 @@
     </div>
     <div class="modal-tabs">
       <button class="mtab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
-      <button class="mtab" data-tab="mindmap" onclick="switchTab('mindmap')">Mindmap</button>
+      <button class="mtab" data-tab="design" onclick="switchTab('design')">Design</button>
       <button class="mtab" data-tab="code" onclick="switchTab('code')">Code</button>
       <button class="mtab" data-tab="demo" onclick="switchTab('demo')">Live Demo</button>
     </div>
     <div class="modal-body">
       <div class="mpane active" id="pane-overview"></div>
-      <div class="mpane" id="pane-mindmap"></div>
+      <div class="mpane" id="pane-design"></div>
       <div class="mpane" id="pane-code"></div>
       <div class="mpane" id="pane-demo"></div>
     </div>
@@ -687,49 +687,9 @@ var PROJECTS = [
 "search metadata for a claim, drop the claim rather than display it\n"+
 "without a source."
     },
-    demoType:'support', demoUrl:'demo-support-enterprise-console.html'
-  },
-  {
-    id:'health-score',
-    title:'Customer Health Score Pipeline',
-    status:'live', statusLabel:'Live · monthly refresh',
-    tagline:'Fully automated monthly health scoring across the customer base.',
-    flow:'Apsona Scheduler → Gmail → Apps Script → Google Sheets → Salesforce REST API',
-    challenge:'The monthly customer health score refresh was a manual, cross-system pull-and-paste job prone to error and delay.',
-    solution:'A scheduled trigger chains through Gmail, Apps Script computation, Google Sheets as the working layer, and a Salesforce REST API sync that writes the score back to the account record.',
-    impact:'Removed manual handling from the entire monthly cycle, end to end.',
-    ac:[
-      'Every account gets a refreshed score by the first business day of the month with no manual step.',
-      'A failed sync retries once automatically and alerts the AM team on a second failure.',
-      'Score history is preserved, not overwritten, so trend lines stay intact.'
-    ],
-    metrics:[
-      'On-time refresh rate (target: 100% by day 1)',
-      'Sync failure rate',
-      'Time saved vs. the manual process it replaced'
-    ],
-    stack:['Apsona Scheduler','Gmail','Apps Script','Google Sheets','Salesforce REST API'],
-    code:{lang:'Apps Script (illustrative)', content:
-"function monthlyHealthRefresh() {\n"+
-"  var accounts = readAccountsFromSheet(HEALTH_SHEET_ID);\n"+
-"\n"+
-"  accounts.forEach(function(acct) {\n"+
-"    var score = computeHealthScore(acct);\n"+
-"    writeScoreToSheet(acct.id, score);\n"+
-"    syncScoreToSalesforce(acct.sfId, score);\n"+
-"  });\n"+
-"\n"+
-"  notifyOnFailureIfAny();\n"+
-"}\n"+
-"\n"+
-"function computeHealthScore(acct) {\n"+
-"  var usage   = acct.loginCount * 0.4;\n"+
-"  var support = (10 - acct.openCases) * 0.3;\n"+
-"  var billing = acct.onTimePayments * 0.3;\n"+
-"  return Math.round(usage + support + billing);\n"+
-"}"
-    },
-    demoType:'health', demoUrl:'demo-health-score.html'
+    demoType:'support', demoUrl:'demo-support-enterprise-console.html',
+    designUrl:'design-anchor-architecture.html',
+    designNote:'Interactive API data flow and system architecture for the grounded support console — how a case reaches Vertex AI Search, gets grounded against the docs corpus, and comes back as a cited answer.'
   },
   {
     id:'invoice-renewal',
@@ -767,7 +727,9 @@ var PROJECTS = [
 "    }\n"+
 "}"
     },
-    demoType:'invoice', demoUrl:'demo-invoice-ai-assistant.html', flowUrl:'demo-invoice-dataflow.html'
+    demoType:'invoice', demoUrl:'demo-invoice-ai-assistant.html', flowUrl:'demo-invoice-dataflow.html',
+    designUrl:'demo-invoice-dataflow.html',
+    designNote:'Animated architecture of the renewal pipeline — case intake and intent triage, the deterministic Apex context engine, the Gemini reasoning and pass/fail verification gate, and the Apsona merge into an editable AM draft.'
   },
   {
     id:'gtm-engine',
@@ -810,40 +772,9 @@ var PROJECTS = [
 "        record[\"emailStatus\"] = status\n"+
 "        return handoff(record, next_agent=\"personalization\")"
     },
-    demoType:'gtm', demoUrl:'demo-sdr-rep-console.html', flowUrl:'demo-gtm-agentic.html'
-  },
-  {
-    id:'scorecard',
-    title:'AI Use-Case Prioritization Scorecard',
-    status:'shipped', statusLabel:'Shipped',
-    tagline:'A weighted, adjustable framework for sequencing the AI roadmap.',
-    flow:'Use-case Inputs → Weighted Scoring Model → Ranked Roadmap',
-    challenge:'The AM and BnL teams had a growing backlog of AI ideas with no consistent way to sequence them.',
-    solution:'A weighted scorecard with visible, defensible calculation logic that scores every use case on impact, effort, and strategic fit.',
-    impact:'Gives leadership a repeatable way to prioritize the AI roadmap, built for direct manager review.',
-    ac:[
-      'Every use case is scored on the same three criteria so comparisons are apples-to-apples.',
-      'Anyone can trace a final rank back to its raw inputs — no hidden weighting.',
-      'Weights are adjustable so the model can be re-run when strategy shifts.'
-    ],
-    metrics:[
-      'Rank stability when weights shift by ±10%',
-      'Time from idea intake to prioritized backlog placement'
-    ],
-    stack:['Excel','Prioritization Frameworks','Stakeholder Reporting'],
-    code:{lang:'Scoring logic (illustrative)', content:
-"function weightedScore(useCase, weights) {\n"+
-"  return (\n"+
-"    useCase.impact * weights.impact +\n"+
-"    (10 - useCase.effort) * weights.effort +\n"+
-"    useCase.strategicFit * weights.strategic\n"+
-"  );\n"+
-"}\n"+
-"\n"+
-"// Excel equivalent, one row per use case:\n"+
-"// =Impact*Weights!$Impact + (10-Effort)*Weights!$Effort + StrategicFit*Weights!$Strategic"
-    },
-    demoType:'scorecard', demoUrl:'demo-scorecard.html'
+    demoType:'gtm', demoUrl:'demo-sdr-rep-console.html', flowUrl:'demo-gtm-agentic.html',
+    designUrl:'design-sdr-workflow.html',
+    designNote:'Step-through of the manual SDR pipeline this agent replaces — 27 stages from list build and dedupe through scoring, tiering, validation, personalisation, outreach and the Salesforce handoff, including every branch and rejection path.'
   },
   {
     id:'customer-insights',
@@ -884,7 +815,9 @@ var PROJECTS = [
 "  });\n"+
 "}"
     },
-    demoType:'customer-insights', demoUrl:'demo-customer-insights-console.html', flowUrl:'demo-customer-insights-dataflow.html'
+    demoType:'customer-insights', demoUrl:'demo-customer-insights-console.html', flowUrl:'demo-customer-insights-dataflow.html',
+    designUrl:'demo-customer-insights-dataflow.html',
+    designNote:'Animated data flow from signal ingestion (health score, usage telemetry, LinkedIn intent) through the Apsona scheduler and Apps Script pipeline into the Gemini risk-synthesis model and the AM playbook console.'
   }
 ];
 
@@ -908,7 +841,7 @@ function renderCards(){
       '<div class="proj-actions">' +
         '<a class="btn primary" href="'+p.demoUrl+'" target="_blank" rel="noopener">Live Demo ↗</a>' +
         '<button class="btn ghost" onclick="openModal(\''+p.id+'\',\'overview\')">Full Case Study</button>' +
-        '<button class="btn ghost" onclick="openModal(\''+p.id+'\',\'mindmap\')">Mindmap</button>' +
+        '<button class="btn ghost" onclick="openModal(\''+p.id+'\',\'design\')">Design</button>' +
         '<button class="btn ghost" onclick="openModal(\''+p.id+'\',\'code\')">Code</button>' +
       '</div>' +
     '</div>';
@@ -924,7 +857,7 @@ function openModal(id, tab){
   if(!currentProject) return;
   document.getElementById('modal-title').textContent = currentProject.title;
   renderOverview(currentProject);
-  renderMindmap(currentProject);
+  renderDesign(currentProject);
   renderCode(currentProject);
   renderDemo(currentProject);
   switchTab(tab || 'overview');
@@ -955,15 +888,21 @@ function renderOverview(p){
       p.metrics.map(function(m){return '<li>'+m+'</li>';}).join('')+'</ul></div>';
 }
 
-function renderMindmap(p){
+function renderDesign(p){
   var stages = p.flow.split('→').map(function(s){return s.trim();});
-  document.getElementById('pane-mindmap').innerHTML =
-    '<div class="ov-block"><span class="label">System Flow</span></div>' +
+  var html = '';
+  if(p.designUrl){
+    html += '<div class="ov-block"><span class="label">Design Workflow</span>' +
+      '<p>' + (p.designNote || 'Full interactive design walkthrough of how this system is put together.') + '</p></div>' +
+      '<a class="btn primary" href="'+p.designUrl+'" target="_blank" rel="noopener" style="display:inline-block;margin-bottom:22px;">Open design workflow ↗</a>';
+  }
+  html += '<div class="ov-block"><span class="label">System Flow</span></div>' +
     '<div class="mind-row">' +
     stages.map(function(s,i){
       return '<div class="mind-node">'+s+'</div>' + (i<stages.length-1 ? '<span class="mind-arrow">→</span>' : '');
     }).join('') +
     '</div>';
+  document.getElementById('pane-design').innerHTML = html;
 }
 
 function renderCode(p){

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anchor AI — Interactive API Data Flow & System Architecture</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg-space: #07090e;
+      --panel-bg: rgba(15, 23, 42, 0.75);
+      --panel-border: rgba(51, 65, 85, 0.6);
+      --panel-hover: rgba(30, 41, 59, 0.9);
+      
+      --cyan-glow: #00f2fe;
+      --blue-accent: #3b82f6;
+      --violet-accent: #8b5cf6;
+      --emerald-success: #10b981;
+      --amber-warn: #f59e0b;
+      --rose-danger: #f43f5e;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-space);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(0, 242, 254, 0.05) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header Styling */
+    header {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan-glow), var(--blue-accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #07090e;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+
+    .brand-info h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+    }
+
+    .btn:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: var(--cyan-glow);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Live Telemetry Bar */
+    .telemetry-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .telemetry-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .telemetry-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+      opacity: 0.5;
+    }
+
+    .telemetry-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .telemetry-value {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald-success);
+      box-shadow: 0 0 10px var(--emerald-success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    /* Architecture Visual Canvas */
+    .architecture-stage {
+      position: relative;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 32px 24px;
+      min-height: 480px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .stage-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 10;
+    }
+
+    .column-title {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--cyan-glow);
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Node Card Styling */
+    .node-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .node-card:hover {
+      background: var(--panel-hover);
+      border-color: var(--cyan-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 242, 254, 0.15);
+    }
+
+    .node-card.active {
+      border-color: var(--cyan-glow);
+      background: rgba(15, 23, 42, 0.95);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+    }
+
+    .node-card.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 12%; bottom: 12%;
+      width: 3px;
+      background: var(--cyan-glow);
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .node-badge {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .node-badge.get { color: var(--emerald-success); border-color: rgba(16, 185, 129, 0.3); }
+    .node-badge.post { color: var(--cyan-glow); border-color: rgba(0, 242, 254, 0.3); }
+    .node-badge.grpc { color: var(--violet-accent); border-color: rgba(139, 92, 246, 0.3); }
+
+    .node-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .node-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .node-protocol {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* Canvas Connections SVG */
+    .svg-connections {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .connection-path {
+      fill: none;
+      stroke: rgba(51, 65, 85, 0.4);
+      stroke-width: 2;
+      stroke-dasharray: 6 6;
+    }
+
+    .connection-active {
+      fill: none;
+      stroke: url(#cyanVioletGradient);
+      stroke-width: 3;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.6));
+      stroke-dasharray: 10 10;
+      animation: dashFlow 2s linear infinite;
+    }
+
+    @keyframes dashFlow {
+      from { stroke-dashoffset: 40; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Inspector & Code Section */
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+    }
+
+    .panel-box {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .tab-btn {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      border-radius: 4px;
+      border: none;
+      color: var(--text-muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--cyan-glow);
+      color: #07090e;
+      font-weight: 700;
+    }
+
+    /* Code Viewer Block */
+    .code-viewer {
+      background: #090d16;
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .code-viewer .kw { color: #f43f5e; font-weight: 600; }
+    .code-viewer .str { color: #10b981; }
+    .code-viewer .num { color: #f59e0b; }
+    .code-viewer .prop { color: #38bdf8; }
+    .code-viewer .cmt { color: var(--text-dim); font-style: italic; }
+
+    /* API Endpoint Tag */
+    .endpoint-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .method-tag {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .method-tag.POST { background: rgba(0, 242, 254, 0.2); color: var(--cyan-glow); }
+    .method-tag.GET { background: rgba(16, 185, 129, 0.2); color: var(--emerald-success); }
+
+    /* Trace Execution Log Stream */
+    .trace-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .trace-item {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 11.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .trace-item:hover {
+      border-color: var(--cyan-glow);
+    }
+
+    .trace-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .trace-text {
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    .trace-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .trace-status.pass { color: var(--emerald-success); }
+    .trace-status.warn { color: var(--amber-warn); }
+
+    @media (max-width: 1024px) {
+      .architecture-stage { grid-template-columns: repeat(2, 1fr); }
+      .inspector-grid { grid-template-columns: 1fr; }
+      .telemetry-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-logo">⚓</div>
+      <div class="brand-info">
+        <h1>Anchor Grounded Support Engine</h1>
+        <p>Apsona AI · Vertex AI Search & Gemini Enterprise API Architecture</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn" id="simBtn" onclick="runFullPipelineSimulation()">
+        <span>⚡</span> Run Live API Simulation
+      </button>
+      <button class="btn" onclick="resetPipeline()">
+        <span>↺</span> Reset
+      </button>
+      <button class="btn btn-primary" onclick="toggleSpeed()">
+        <span id="speedLabel">1x Flow Speed</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Telemetry Metric Cards -->
+    <div class="telemetry-bar">
+      <div class="telemetry-card">
+        <span class="telemetry-label">Telemetry Pipeline</span>
+        <span class="telemetry-value">
+          <span class="indicator-dot"></span> Active (Webhook & SSE)
+        </span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">Context MCP Server</span>
+        <span class="telemetry-value" style="color: var(--cyan-glow);">
+          96 Calls / Day
+        </span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">Grounding Gate Pass Rate</span>
+        <span class="telemetry-value" style="color: var(--emerald-success);">
+          98.4% Zero-Hallucination
+        </span>
+      </div>
+      <div class="telemetry-card">
+        <span class="telemetry-label">Chatter Sync Latency</span>
+        <span class="telemetry-value" style="color: var(--violet-accent);">
+          1.24s Avg Response
+        </span>
+      </div>
+    </div>
+
+    <!-- 6-Stage Interactive Architecture Canvas -->
+    <div class="architecture-stage">
+
+      <!-- SVG Path Layer for Bezier Connections -->
+      <svg class="svg-connections">
+        <defs>
+          <linearGradient id="cyanVioletGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00f2fe" />
+            <stop offset="50%" stop-color="#3b82f6" />
+            <stop offset="100%" stop-color="#8b5cf6" />
+          </linearGradient>
+        </defs>
+        <!-- Animated Connecting Lines -->
+        <path class="connection-active" d="M 210 140 C 250 140, 250 140, 290 140" />
+        <path class="connection-active" d="M 450 140 C 490 140, 490 140, 530 140" />
+        <path class="connection-active" d="M 690 140 C 730 140, 730 140, 770 140" />
+        <path class="connection-active" d="M 930 140 C 970 140, 970 140, 1010 140" />
+        <path class="connection-active" d="M 1170 140 C 1210 140, 1210 140, 1250 140" />
+      </svg>
+
+      <!-- Stage 1: Case Intake -->
+      <div class="stage-column">
+        <div class="column-title">
+          <span>1. Intake</span>
+          <span>SFDC</span>
+        </div>
+        <div class="node-card active" id="node-intake" onclick="selectNode('intake')">
+          <div class="node-header">
+            <span class="node-badge post">POST</span>
+            <span style="font-size:10px; color:var(--text-dim);">Case API</span>
+          </div>
+          <div class="node-name">Salesforce Case Intake</div>
+          <div class="node-desc">Receives Platform Event and triggers automated webhook call.</div>
+          <div class="node-protocol">https://agent.apsona.com</div>
+        </div>
+      </div>
+
+      <!-- Stage 2: MCP Context -->
+      <div class="stage-column">
+        <div class="column-title">
+          <span>2. Context</span>
+          <span>MCP</span>
+        </div>
+        <div class="node-card" id="node-mcp" onclick="selectNode('mcp')">
+          <div class="node-header">
+            <span class="node-badge grpc">RPC</span>
+            <span style="font-size:10px; color:var(--text-dim);">JSON-RPC</span>
+          </div>
+          <div class="node-name">MCP Context Server</div>
+          <div class="node-desc">Fetches account tier, product history, and prior case logs.</div>
+          <div class="node-protocol">mcp.getCaseContext()</div>
+        </div>
+      </div>
+
+      <!-- Stage 3: Vertex AI Retrieval -->
+      <div class="stage-column">
+        <div class="column-title">
+          <span>3. Search</span>
+          <span>VERTEX</span>
+        </div>
+        <div class="node-card" id="node-vertex" onclick="selectNode('vertex')">
+          <div class="node-header">
+            <span class="node-badge post">REST</span>
+            <span style="font-size:10px; color:var(--text-dim);">GCP Search</span>
+          </div>
+          <div class="node-name">Vertex AI Search</div>
+          <div class="node-desc">Queries datastore across Drive, Help Center, Fathom & Jira.</div>
+          <div class="node-protocol">discoveryengine.googleapis.com</div>
+        </div>
+      </div>
+
+      <!-- Stage 4: Grounding Gate -->
+      <div class="stage-column">
+        <div class="column-title">
+          <span>4. Gate</span>
+          <span>GEMINI</span>
+        </div>
+        <div class="node-card" id="node-gate" onclick="selectNode('gate')">
+          <div class="node-header">
+            <span class="node-badge post">AI GATE</span>
+            <span style="font-size:10px; color:var(--text-dim);">Grounding</span>
+          </div>
+          <div class="node-name">Grounding Verification</div>
+          <div class="node-desc">Cross-checks draft assertions against retrieved URLs.</div>
+          <div class="node-protocol">gemini-enterprise:verify</div>
+        </div>
+      </div>
+
+      <!-- Stage 5: Draft Synthesizer -->
+      <div class="stage-column">
+        <div class="column-title">
+          <span>5. Draft</span>
+          <span>GEMINI</span>
+        </div>
+        <div class="node-card" id="node-draft" onclick="selectNode('draft')">
+          <div class="node-header">
+            <span class="node-badge post">LLM</span>
+            <span style="font-size:10px; color:var(--text-dim);">Gemini 2.5</span>
+          </div>
+          <div class="node-name">Draft Synthesizer</div>
+          <div class="node-desc">Builds customer response in support tone with citations.</div>
+          <div class="node-protocol">models/gemini-2.5-flash</div>
+        </div>
+      </div>
+
+      <!-- Stage 6: Post-back -->
+      <div class="stage-column">
+        <div class="column-title">
+          <span>6. Post-back</span>
+          <span>CHATTER</span>
+        </div>
+        <div class="node-card" id="node-postback" onclick="selectNode('postback')">
+          <div class="node-header">
+            <span class="node-badge post">POST</span>
+            <span style="font-size:10px; color:var(--text-dim);">Chatter API</span>
+          </div>
+          <div class="node-name">Chatter & Review Sync</div>
+          <div class="node-desc">Unwraps links and posts feed item or routes to review.</div>
+          <div class="node-protocol">services/data/v58.0/chatter</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Inspector Panel Grid -->
+    <div class="inspector-grid">
+
+      <!-- Code & Payload Inspector -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔍 API Inspector & Request Payloads</span>
+          </div>
+          <div class="tab-group">
+            <button class="tab-btn active" id="tabCurl" onclick="setPayloadTab('curl')">cURL</button>
+            <button class="tab-btn" id="tabReq" onclick="setPayloadTab('req')">Request JSON</button>
+            <button class="tab-btn" id="tabRes" onclick="setPayloadTab('res')">Response JSON</button>
+          </div>
+        </div>
+
+        <div class="endpoint-bar">
+          <span class="method-tag POST" id="epMethod">POST</span>
+          <span id="epUrl" style="color: var(--text-main);">https://agent.apsona.com/webhook/case-created</span>
+          <span id="epStatus" style="margin-left: auto; color: var(--emerald-success); font-weight:700;">200 OK</span>
+        </div>
+
+        <div class="code-viewer" id="codeViewer">
+// Select a node above to inspect its live REST/gRPC API payload.
+        </div>
+      </div>
+
+      <!-- Live Execution Log Stream -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📡 Real-time Pipeline Execution Log</span>
+          </div>
+          <span style="font-size: 11px; font-family: var(--font-mono); color: var(--cyan-glow);">
+            LOG_STREAM_CONNECTED
+          </span>
+        </div>
+
+        <div class="trace-stream" id="traceStream">
+          <div class="trace-item">
+            <div class="trace-meta">
+              <span>[10:02:14.210] IntakeAgent</span>
+              <span class="trace-status pass">✓ 200 OK</span>
+            </div>
+            <div class="trace-text">&gt; Case #00012358 received via Salesforce Platform Event.</div>
+          </div>
+          <div class="trace-item">
+            <div class="trace-meta">
+              <span>[10:02:14.480] McpContextAgent</span>
+              <span class="trace-status pass">✓ RPC SUCCESS</span>
+            </div>
+            <div class="trace-text">&gt; Customer plan: Business+, 1 prior case retrieved.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let activeNode = 'intake';
+    let activeTab = 'curl';
+    let animSpeed = 1;
+    let simInterval = null;
+
+    const apiNodes = {
+      intake: {
+        method: 'POST',
+        url: 'https://agent.apsona.com/api/v1/telemetry/case-intake',
+        status: '200 OK',
+        curl: `curl -X POST "https://agent.apsona.com/api/v1/telemetry/case-intake" \\
+  -H "Authorization: Bearer <SFDC_OAUTH_TOKEN>" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "event": "Case_Created_Event__e",
+    "caseId": "5003A000009xYZ1QAM",
+    "caseNumber": "00012358",
+    "subject": "Report export timing out on large datasets",
+    "accountDomain": "sterlingfacilities.com"
+  }'`,
+        req: `{
+  "event": "Case_Created_Event__e",
+  "caseId": "5003A000009xYZ1QAM",
+  "caseNumber": "00012358",
+  "subject": "Report export timing out on large datasets",
+  "accountDomain": "sterlingfacilities.com",
+  "priority": "P2"
+}`,
+        res: `{
+  "status": "ACCEPTED",
+  "executionId": "exec_99214a_0012358",
+  "timestamp": "2026-08-17T10:02:14.210Z",
+  "route": "VERTEX_SEARCH_GROUNDED_DRAFT"
+}`
+      },
+      mcp: {
+        method: 'POST',
+        url: 'https://mcp.apsona.com/v1/context/getCaseContext',
+        status: '200 OK',
+        curl: `curl -X POST "https://mcp.apsona.com/v1/context/getCaseContext" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "mcp.getCaseContext",
+    "params": { "caseId": "00012358" },
+    "id": 104
+  }'`,
+        req: `{
+  "jsonrpc": "2.0",
+  "method": "mcp.getCaseContext",
+  "params": {
+    "caseId": "00012358",
+    "accountDomain": "sterlingfacilities.com"
+  },
+  "id": 104
+}`,
+        res: `{
+  "jsonrpc": "2.0",
+  "result": {
+    "accountTier": "Business+",
+    "priorCases": 1,
+    "productModule": "Report Export",
+    "openJiraTickets": ["APSONA-4821"]
+  },
+  "id": 104
+}`
+      },
+      vertex: {
+        method: 'POST',
+        url: 'https://discoveryengine.googleapis.com/v1alpha/projects/apsona-ai/locations/global/collections/default/dataStores/apsona-kb/servingConfigs/default_search:search',
+        status: '200 OK',
+        curl: `curl -X POST "https://discoveryengine.googleapis.com/v1alpha/projects/apsona-ai/locations/global/dataStores/apsona-kb/servingConfigs/default_search:search" \\
+  -H "Authorization: Bearer $(gcloud auth print-access-token)" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "Report export timing out on large datasets",
+    "pageSize": 3
+  }'`,
+        req: `{
+  "query": "Report export timing out on large datasets",
+  "pageSize": 3,
+  "contentSearchSpec": {
+    "snippetSpec": { "maxSnippetCount": 2 },
+    "summarySpec": { "summaryResultCount": 3 }
+  }
+}`,
+        res: `{
+  "results": [
+    {
+      "id": "doc_drive_8812",
+      "title": "Apsona Export Troubleshooting.docx",
+      "webViewLink": "https://docs.apsona.com/export-troubleshooting",
+      "score": 0.89
+    }
+  ]
+}`
+      },
+      gate: {
+        method: 'POST',
+        url: 'https://us-central1-aiplatform.googleapis.com/v1/projects/apsona-ai/locations/us-central1/publishers/google/models/gemini-enterprise:verifyGrounding',
+        status: '200 OK',
+        curl: `curl -X POST "https://us-central1-aiplatform.googleapis.com/v1/projects/apsona-ai/locations/us-central1/models/gemini-enterprise:verifyGrounding" \\
+  -H "Authorization: Bearer <GCP_AUTH_KEY>" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "claims": ["reduce batch size", "raise governor limits"],
+    "retrievedMetadata": ["Apsona Export Troubleshooting.docx"]
+  }'`,
+        req: `{
+  "claims": [
+    "reduce batch size",
+    "contact salesforce admin to raise governor limits"
+  ],
+  "retrievedMetadataSource": ["Apsona Export Troubleshooting.docx"]
+}`,
+        res: `{
+  "groundingEvaluations": [
+    { "claim": "reduce batch size", "grounded": true, "sourceUrl": "https://docs.apsona.com/export-troubleshooting" },
+    { "claim": "contact salesforce admin to raise governor limits", "grounded": false, "sourceUrl": null }
+  ],
+  "decision": "FLAG_UNSUPPORTED_STEP_FOR_REP_REVIEW"
+}`
+      },
+      draft: {
+        method: 'POST',
+        url: 'https://us-central1-aiplatform.googleapis.com/v1/projects/apsona-ai/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent',
+        status: '200 OK',
+        curl: `curl -X POST "https://us-central1-aiplatform.googleapis.com/v1/projects/apsona-ai/locations/us-central1/models/gemini-2.5-flash:generateContent" \\
+  -H "Authorization: Bearer <GCP_TOKEN>" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "contents": [{"role": "user", "parts": [{"text": "Draft response with citation..."}]}]
+  }'`,
+        req: `{
+  "model": "gemini-2.5-flash",
+  "systemInstruction": "Synthesize factual customer reply using verified citations only.",
+  "prompt": "Customer: D. Ahn. Problem: Report export timeout. Citation: https://docs.apsona.com/export-troubleshooting"
+}`,
+        res: `{
+  "candidates": [{
+    "content": {
+      "parts": [{
+        "text": "Hi D. Ahn,\\n\\nFor large dataset exports, reducing batch size prevents timeout issues as outlined in our Export Troubleshooting guide..."
+      }]
+    }
+  }]
+}`
+      },
+      postback: {
+        method: 'POST',
+        url: 'https://apsona.my.salesforce.com/services/data/v58.0/chatter/feed-elements',
+        status: '201 Created',
+        curl: `curl -X POST "https://apsona.my.salesforce.com/services/data/v58.0/chatter/feed-elements" \\
+  -H "Authorization: Bearer <SF_SESSION_TOKEN>" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "body": { "messageSegments": [{ "type": "Text", "text": "Draft created..." }] },
+    "subjectId": "5003A000009xYZ1QAM"
+  }'`,
+        req: `{
+  "feedElementType": "FeedItem",
+  "subjectId": "5003A000009xYZ1QAM",
+  "body": {
+    "messageSegments": [
+      { "type": "Text", "text": "[Anchor AI Draft] Grounded response ready for review." }
+    ]
+  }
+}`,
+        res: `{
+  "id": "0D53A000018xKL9SAM",
+  "success": true,
+  "errors": []
+}`
+      }
+    };
+
+    function selectNode(key) {
+      activeNode = key;
+      document.querySelectorAll('.node-card').forEach(n => n.classList.remove('active'));
+      const card = document.getElementById(`node-${key}`);
+      if (card) card.classList.add('active');
+
+      const data = apiNodes[key];
+      if (!data) return;
+
+      document.getElementById('epMethod').className = `method-tag ${data.method}`;
+      document.getElementById('epMethod').textContent = data.method;
+      document.getElementById('epUrl').textContent = data.url;
+      document.getElementById('epStatus').textContent = data.status;
+
+      updateCodeViewer();
+    }
+
+    function setPayloadTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+      updateCodeViewer();
+    }
+
+    function updateCodeViewer() {
+      const data = apiNodes[activeNode];
+      if (!data) return;
+
+      const viewer = document.getElementById('codeViewer');
+      let text = data[activeTab] || '';
+      viewer.textContent = text;
+    }
+
+    function toggleSpeed() {
+      animSpeed = animSpeed === 1 ? 2 : 1;
+      document.getElementById('speedLabel').textContent = `${animSpeed}x Flow Speed`;
+      const path = document.querySelector('.connection-active');
+      if (path) path.style.animationDuration = `${2 / animSpeed}s`;
+    }
+
+    function resetPipeline() {
+      if (simInterval) clearInterval(simInterval);
+      selectNode('intake');
+      const stream = document.getElementById('traceStream');
+      stream.innerHTML = `
+        <div class="trace-item">
+          <div class="trace-meta">
+            <span>[System] Initialized</span>
+            <span class="trace-status pass">✓ READY</span>
+          </div>
+          <div class="trace-text">&gt; Click "Run Live API Simulation" to trace a complete case payload.</div>
+        </div>`;
+    }
+
+    function runFullPipelineSimulation() {
+      resetPipeline();
+      const nodeKeys = ['intake', 'mcp', 'vertex', 'gate', 'draft', 'postback'];
+      let idx = 0;
+
+      const stream = document.getElementById('traceStream');
+      stream.innerHTML = '';
+
+      simInterval = setInterval(() => {
+        if (idx >= nodeKeys.length) {
+          clearInterval(simInterval);
+          return;
+        }
+
+        const key = nodeKeys[idx];
+        selectNode(key);
+
+        const time = new Date().toISOString().split('T')[1].slice(0, 12);
+        const item = document.createElement('div');
+        item.className = 'trace-item';
+        item.innerHTML = `
+          <div class="trace-meta">
+            <span>[${time}] ${key.toUpperCase()}_STAGE</span>
+            <span class="trace-status pass">✓ ${apiNodes[key].status}</span>
+          </div>
+          <div class="trace-text">&gt; Executed endpoint: ${apiNodes[key].url.split('com')[1]}</div>`;
+        
+        stream.appendChild(item);
+        stream.scrollTop = stream.scrollHeight;
+
+        idx++;
+      }, 1200 / animSpeed);
+    }
+
+    // Initialize default view
+    selectNode('intake');
+  </script>
+</body>
+</html>

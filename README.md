@@ -4,35 +4,46 @@ Live product portfolio built as a static, self-contained HTML site. No build ste
 
 ## View it live
 
-Once GitHub Pages is turned on for this repo (Settings → Pages → Deploy from branch → `main` → `/root`), the site is served from:
+Deployed on Vercel from the `main` branch (framework preset: Other, no build command):
 
 ```
-https://<your-username>.github.io/rishav-portfolio/index.html
+https://rishav-kumar-portfolio-iota.vercel.app
 ```
+
+Pushing to `main` redeploys automatically.
 
 ## Files
 
-- `index.html` — the main portfolio site (rename from `rishav-portfolio.html` on upload)
-- `rishav-photo.png` — profile photo, referenced by the hero section
+- `index.html` — the main portfolio site
+- `rishav-photo.png` — profile photo, referenced by the hero section (720×720, circular alpha mask)
+- `Rishav-Kumar-Resume.pdf` — served by both "Resume" buttons
 
-### Live prototypes (linked from the Projects section)
+### Live prototypes (the "Live Demo" tab on each project)
 
 | File | Project |
 |---|---|
-| `demo-sdr-rep-console.html` | Pursuit — outbound SDR console |
-| `demo-gtm-agentic.html` | GTM pipeline agent architecture |
 | `demo-support-enterprise-console.html` | Anchor — Vertex AI Search support console |
+| `demo-sdr-rep-console.html` | Pursuit — outbound SDR console |
 | `demo-invoice-ai-assistant.html` | Invoice renewal AI assistant (Salesforce-styled) |
-| `demo-invoice-dataflow.html` | Invoice pipeline architecture animation |
 | `demo-customer-insights-console.html` | Customer Insights / churn engine console |
-| `demo-customer-insights-dataflow.html` | Customer Insights architecture animation |
-| `demo-health-score.html` | Health Score refresh demo |
-| `demo-scorecard.html` | AI use-case prioritization scorecard |
 
-### Superseded (safe to skip on upload)
+### Design workflows (the "Design" tab on each project)
 
-`demo-support-agent.html`, `demo-gtm-engine.html`, `demo-invoice-renewal.html` — earlier drafts, nothing in `index.html` links to these anymore.
+| File | Project |
+|---|---|
+| `design-anchor-architecture.html` | Anchor — interactive API data flow & architecture |
+| `design-sdr-workflow.html` | Pursuit — 27-stage manual SDR pipeline walkthrough |
+| `demo-invoice-dataflow.html` | Invoice renewal — animated pipeline architecture |
+| `demo-customer-insights-dataflow.html` | Customer Insights — animated system data flow |
+
+`demo-gtm-agentic.html` is the GTM agent architecture animation, linked from the Pursuit project's Code tab.
+
+Note that `demo-invoice-dataflow.html` and `demo-customer-insights-dataflow.html` each serve double duty — they are both the project's architecture animation and its Design tab target.
+
+### Removed
+
+The **AI Use-Case Prioritization Scorecard** and **Customer Health Score Pipeline** projects were removed from the site, along with their `demo-scorecard.html` and `demo-health-score.html` files.
 
 ## Updating
 
-Since this is a plain static site, editing is just: edit the HTML file, re-upload/overwrite it in the repo (GitHub's web UI lets you edit files directly, or drag a replacement in), done. No build or deploy step beyond that.
+Plain static site — edit the HTML file and commit. GitHub's web UI lets you edit files directly or drag a replacement in. No build step.
