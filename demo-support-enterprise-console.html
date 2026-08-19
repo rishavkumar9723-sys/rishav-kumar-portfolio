@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anchor — Grounded Support Console | Apsona</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{
+    --bg:#F7F4EC; --panel:#FFFDF8; --panel-2:#F1ECDF; --line:#E4DCC7; --line-soft:#EDE7D8;
+    --fog:#6B6252; --fog-dim:#A39A88; --ink:#2A2419;
+    --blue:#0E6B57; --blue-soft:rgba(14,107,87,0.09); --navy:#FFFDF8; --navy-2:#F1ECDF;
+    --green:#3D7A4A; --green-soft:rgba(61,122,74,0.1);
+    --amber:#A9791F; --amber-soft:rgba(169,121,31,0.12);
+    --red:#A6402F; --red-soft:rgba(166,64,47,0.1);
+    --gray-soft:rgba(107,98,82,0.07);
+    --seal:#A9791F;
+    --shadow-sm:0 1px 3px rgba(42,36,25,0.05);
+    --shadow-md:0 10px 26px -10px rgba(42,36,25,0.12), 0 2px 5px -2px rgba(42,36,25,0.06);
+    --shadow-lg:0 26px 60px -20px rgba(42,36,25,0.24);
+    --display:'Lora', serif; --body:'Inter', sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+  input,select{font-family:inherit;}
+  svg.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+  #app{display:grid;grid-template-columns:246px 1fr;min-height:100vh;}
+  @media (max-width:840px){#app{grid-template-columns:1fr;}#sidebar{display:none;}}
+
+  #sidebar{background:var(--navy);color:var(--ink);padding:22px 16px;display:flex;flex-direction:column;border-right:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+  .brand-mark{width:32px;height:32px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:14px;color:#fff;box-shadow:0 4px 10px -3px rgba(14,107,87,0.5);}
+  .brand-name{font-family:var(--display);font-weight:700;font-size:16px;font-style:italic;}
+  .brand-sub{font-family:var(--mono);font-size:10px;color:var(--fog-dim);margin:2px 0 26px 42px;}
+  .navitem{display:flex;align-items:center;gap:10px;padding:10.5px 12px;border-radius:14px;font-size:13.5px;font-weight:500;color:var(--fog);margin-bottom:3px;transition:background .15s;}
+  .navitem svg.ic{stroke:var(--fog-dim);}
+  .navitem:hover{background:var(--panel-2);}
+  .navitem.active{background:var(--blue-soft);color:var(--blue);box-shadow:inset 0 0 0 1px rgba(14,107,87,0.15);}
+  .navitem.active svg.ic{stroke:#fff;}
+  .navitem span.lbl{flex:1;}
+  .navbadge{background:var(--amber);color:#fff;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+  .rep-card{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#4A9C86);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+  .rep-name{font-size:13px;font-weight:600;}
+  .rep-role{font-family:var(--mono);font-size:10px;color:var(--fog-dim);margin-top:1px;}
+  .back-link{font-family:var(--mono);font-size:11px;color:var(--fog-dim);display:flex;align-items:center;gap:6px;margin-bottom:22px;}
+  .back-link:hover{color:var(--blue);}
+
+  #main{padding:30px 36px 60px;}
+  .page-head{margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+  .page-head h1{font-family:var(--display);font-size:24px;font-weight:700;}
+  .page-head p{color:var(--fog);font-size:13.5px;margin-top:4px;max-width:560px;}
+
+  table.queue{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-md);}
+  table.queue th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);padding:13px 16px;border-bottom:1px solid var(--line);background:var(--panel-2);}
+  table.queue td{padding:15px 16px;border-bottom:1px solid var(--line-soft);font-size:13.5px;vertical-align:middle;}
+  table.queue tr:last-child td{border-bottom:none;}
+  table.queue tr.rowlink{cursor:pointer;transition:background .15s;}
+  table.queue tr.rowlink:hover{background:var(--panel-2);}
+  .lead-cell{display:flex;align-items:center;gap:11px;}
+  .company{font-weight:600;}
+  .company-sub{font-family:var(--mono);font-size:11px;color:var(--fog-dim);margin-top:2px;}
+
+  .tier{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:8px;letter-spacing:0.3px;}
+  .tier.P1{background:var(--red);color:#fff;}
+  .tier.P2{background:var(--navy);color:#fff;}
+  .tier.P3{background:var(--gray-soft);color:var(--fog);border:1px solid var(--line);}
+
+  .status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;}
+  .status .dot{width:6px;height:6px;border-radius:50%;}
+  .status.on_track{background:var(--green-soft);color:var(--green);}
+  .status.on_track .dot{background:var(--green);}
+  .status.needs_review{background:var(--amber-soft);color:var(--amber);}
+  .status.needs_review .dot{background:var(--amber);}
+  .status.blocked{background:var(--gray-soft);color:var(--fog);}
+  .status.blocked .dot{background:var(--fog-dim);}
+  .status.closed{background:var(--gray-soft);color:var(--fog-dim);}
+  .status.closed .dot{background:var(--fog-dim);}
+
+  .stagebar{display:flex;gap:2.5px;align-items:center;}
+  .stagebar .seg{width:11px;height:5px;border-radius:2px;background:var(--line);}
+  .stagebar .seg.on{background:var(--blue);}
+  .stagebar .seg.amber{background:var(--amber);}
+  .stagebar .seg.done{background:var(--fog-dim);}
+  .stage-label{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);margin-top:5px;}
+
+  .review-card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:18px;padding:22px 24px;margin-bottom:14px;box-shadow:var(--shadow-md);}
+  .review-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+  .review-top h3{font-family:var(--display);font-size:16.5px;font-weight:600;}
+  .review-reason{background:var(--amber-soft);border:1px solid rgba(217,119,6,0.22);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--ink);margin-bottom:14px;line-height:1.65;}
+  .review-reason b{color:var(--amber);}
+  .review-actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{font-family:var(--body);font-size:13px;font-weight:600;padding:10px 16px;border-radius:12px;border:1px solid var(--line);display:inline-flex;align-items:center;gap:7px;transition:transform .12s, box-shadow .12s;}
+  .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 6px 16px -6px rgba(52,87,213,0.55);}
+  .btn.primary:hover{transform:translateY(-1px);}
+  .btn.ghost{background:var(--panel);color:var(--ink);}
+  .btn.ghost:hover{border-color:var(--fog-dim);}
+  .btn.sm{padding:8px 13px;font-size:12.5px;}
+  .btn:disabled{opacity:0.45;cursor:default;transform:none;}
+  .empty-state{color:var(--fog-dim);font-size:13.5px;padding:50px 0;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:18px;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+  @media (max-width:840px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:19px 21px;box-shadow:var(--shadow-sm);}
+  .stat-num{font-family:var(--display);font-size:29px;font-weight:700;}
+  .stat-label{font-family:var(--mono);font-size:10.5px;letter-spacing:0.5px;text-transform:uppercase;color:var(--fog-dim);margin-top:4px;}
+  .insight-card{background:linear-gradient(135deg,var(--blue-soft),transparent);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:18px;padding:20px 22px;}
+  .insight-card h3{font-family:var(--display);font-size:15px;margin-bottom:9px;}
+  .insight-card p{font-size:13.5px;color:var(--fog);line-height:1.7;}
+
+  /* ===== Integrations ===== */
+  .int-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  @media (max-width:840px){.int-grid{grid-template-columns:1fr;}}
+  .int-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow-sm);display:flex;gap:14px;}
+  .int-logo{width:42px;height:42px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:14px;color:#fff;}
+  .int-body{flex:1;}
+  .int-name{font-family:var(--display);font-weight:600;font-size:14.5px;}
+  .int-desc{font-size:12.5px;color:var(--fog);margin:4px 0 10px;line-height:1.6;}
+  .int-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+  .int-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);color:var(--fog);}
+  .int-foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);}
+  .int-status{display:inline-flex;align-items:center;gap:5px;color:var(--green);}
+  .int-status .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+
+  /* ===== Run Pipeline ===== */
+  .rp-controls{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .rp-progress-track{flex:1;min-width:140px;height:6px;background:var(--line-soft);border-radius:20px;overflow:hidden;}
+  .rp-progress-fill{height:100%;width:0%;background:var(--blue);transition:width .4s;}
+  .rp-counter{font-family:var(--mono);font-size:12px;color:var(--fog-dim);white-space:nowrap;}
+  .rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media (max-width:900px){.rp-grid{grid-template-columns:1fr;}}
+  .rp-stepper{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px;box-shadow:var(--shadow-md);max-height:560px;overflow-y:auto;}
+  .rp-step{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:14px;margin-bottom:2px;transition:background .2s;}
+  .rp-step.active{background:var(--blue-soft);}
+  .rp-step.done{opacity:0.6;}
+  .rp-step-num{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--fog-dim);flex-shrink:0;}
+  .rp-step.active .rp-step-num{background:var(--blue);color:#fff;border-color:var(--blue);}
+  .rp-step.done .rp-step-num{background:var(--green);color:#fff;border-color:var(--green);}
+  .rp-step-name{font-family:var(--display);font-size:13px;font-weight:600;}
+  .rp-step-tool{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);margin-top:1px;}
+  .rp-code{background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow-md);height:560px;overflow-y:auto;font-family:var(--mono);font-size:12.5px;color:var(--ink);}
+  .rp-code .ln{margin-bottom:7px;opacity:0;animation:fadein .3s forwards;line-height:1.7;}
+  .rp-code .ln .pfx{color:var(--fog-dim);}
+  .rp-code .ln .fn{color:var(--blue);}
+  .rp-code .ln .ok{color:var(--green);}
+  .rp-code .ln .warn{color:var(--amber);}
+  @keyframes fadein{to{opacity:1;}}
+  .rp-code-empty{color:var(--fog-dim);}
+  .rp-done-banner{display:none;margin-top:18px;background:var(--green-soft);border:1px solid rgba(22,163,74,0.3);border-radius:16px;padding:16px 20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .rp-done-banner.show{display:flex;}
+  .rp-done-banner span{font-size:13.5px;color:var(--ink);}
+  .rp-done-banner b{color:var(--amber);}
+  .arch-strip{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--fog-dim);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
+  .arch-strip .node{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:5px 10px;color:var(--ink);font-weight:600;}
+  .arch-strip .arrow{color:var(--fog-dim);}
+
+  /* ===== Lead detail overlay ===== */
+  .overlay{position:fixed;inset:0;background:rgba(15,18,32,0.6);z-index:100;display:none;align-items:flex-start;justify-content:flex-end;}
+  .overlay.open{display:flex;}
+  .drawer{width:min(640px,100%);height:100vh;background:var(--panel);overflow-y:auto;box-shadow:var(--shadow-lg);}
+  .drawer-head{padding:26px 28px 0;border-bottom:1px solid var(--line-soft);position:sticky;top:0;background:var(--panel);z-index:2;padding-bottom:18px;}
+  .drawer-close{position:absolute;top:24px;right:24px;width:32px;height:32px;border:1px solid var(--line);border-radius:12px;color:var(--fog);}
+  .drawer-close:hover{color:var(--ink);border-color:var(--fog-dim);}
+  .drawer-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .drawer-avatar{width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,var(--blue),#4A9C86);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;color:#fff;font-size:16px;}
+  .drawer-company{font-family:var(--display);font-size:19px;font-weight:700;}
+  .drawer-contact{font-size:12.5px;color:var(--fog);margin-top:1px;}
+  .drawer-tabs{display:flex;gap:4px;padding:0 28px;border-bottom:1px solid var(--line-soft);}
+  .dtab{font-family:var(--mono);font-size:12px;padding:12px 6px;margin-right:20px;color:var(--fog-dim);border-bottom:2px solid transparent;}
+  .dtab.active{color:var(--blue);border-bottom-color:var(--blue);}
+  .drawer-body{padding:22px 28px 60px;}
+  .dpane{display:none;}
+  .dpane.active{display:block;}
+
+  .fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  .fact{background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:13px 15px;}
+  .fact .k{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);margin-bottom:4px;}
+  .fact .v{font-size:13.5px;font-weight:600;}
+  .fact .v a{color:var(--blue);text-decoration:underline;}
+
+  .draft-card{border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:20px;background:var(--panel-2);}
+  .draft-card h4{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);margin-bottom:12px;}
+  .draft-body{font-size:13.5px;line-height:1.75;color:var(--ink);}
+  .draft-body a{color:var(--blue);font-weight:600;text-decoration:underline;}
+  .draft-body ol{margin:10px 0 10px 20px;}
+  .draft-actions{margin-top:14px;display:flex;gap:10px;}
+
+  .source-list{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+  .source-item{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 13px;background:var(--panel);}
+  .source-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;position:relative;}
+  .source-icon::after{content:'';position:absolute;inset:-3px;border:1px solid var(--seal);border-radius:50%;opacity:0.5;}
+  .source-item{position:relative;}
+  .source-verified{position:absolute;top:-6px;right:-4px;width:15px;height:15px;border-radius:50%;background:var(--seal);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--panel);}
+  .source-title{font-size:12.5px;font-weight:600;}
+  .source-sub{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);}
+  .source-link{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--blue);}
+
+  .trail-item{position:relative;padding-left:26px;padding-bottom:22px;border-left:2px solid var(--line-soft);margin-left:8px;}
+  .trail-item:last-child{border-left-color:transparent;padding-bottom:0;}
+  .trail-dot{position:absolute;left:-7px;top:0;width:12px;height:12px;border-radius:50%;border:2px solid var(--panel);}
+  .trail-dot.pass{background:var(--green);}
+  .trail-dot.fail{background:var(--amber);}
+  .trail-dot.rep{background:var(--blue);}
+  .trail-agent{font-family:var(--display);font-size:14px;font-weight:600;}
+  .trail-time{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);margin-top:1px;margin-bottom:8px;}
+  .trail-rule{font-size:12.5px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:6px;color:var(--fog);}
+  .trail-rule b{color:var(--ink);}
+  .trail-reason{font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:6px;}
+  .trail-meta{display:flex;gap:8px;align-items:center;}
+  .badge-outcome{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:8px;}
+  .badge-outcome.pass{background:var(--green-soft);color:var(--green);}
+  .badge-outcome.fail{background:var(--amber-soft);color:var(--amber);}
+  .badge-outcome.rep{background:var(--blue-soft);color:var(--blue);}
+  .confidence{font-family:var(--mono);font-size:11px;color:var(--fog-dim);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <a class="back-link" href="index.html">&larr; Back to portfolio</a>
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Anchor</div></div>
+    <div class="brand-sub">Apsona · Vertex AI + Gemini Enterprise</div>
+
+    <div class="navitem active" data-tab="run" onclick="switchMainTab('run')">
+      <svg class="ic" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg><span class="lbl">Trace a Case</span>
+    </div>
+    <div class="navitem" data-tab="queue" onclick="switchMainTab('queue')">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="lbl">Docket</span>
+    </div>
+    <div class="navitem" data-tab="review" onclick="switchMainTab('review')">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      <span class="lbl">Awaiting Your Word</span><span class="navbadge" id="review-badge">0</span>
+    </div>
+    <div class="navitem" data-tab="metrics" onclick="switchMainTab('metrics')">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span class="lbl">Grounding Record</span>
+    </div>
+    <div class="navitem" data-tab="integrations" onclick="switchMainTab('integrations')">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="lbl">Integrations</span>
+    </div>
+
+    <div class="rep-card">
+      <div class="avatar">MC</div>
+      <div><div class="rep-name">Maya Chen</div><div class="rep-role">Support Lead · Apsona</div></div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="pane-run"></div>
+    <div id="pane-queue" style="display:none;"></div>
+    <div id="pane-review" style="display:none;"></div>
+    <div id="pane-metrics" style="display:none;"></div>
+    <div id="pane-integrations" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="overlay" id="drawer-overlay" onclick="if(event.target===this) closeDrawer()">
+  <div class="drawer">
+    <div class="drawer-head">
+      <button class="drawer-close" onclick="closeDrawer()">✕</button>
+      <div class="drawer-top">
+        <div class="drawer-avatar" id="drawer-avatar"></div>
+        <div>
+          <div class="drawer-company" id="drawer-company"></div>
+          <div class="drawer-contact" id="drawer-contact"></div>
+        </div>
+      </div>
+      <div id="drawer-badges"></div>
+    </div>
+    <div class="drawer-tabs">
+      <button class="dtab active" data-dtab="overview" onclick="switchDrawerTab('overview')">Overview</button>
+      <button class="dtab" data-dtab="sources" onclick="switchDrawerTab('sources')">Sources</button>
+      <button class="dtab" data-dtab="trail" onclick="switchDrawerTab('trail')">Agent Trail</button>
+    </div>
+    <div class="drawer-body">
+      <div class="dpane active" id="dpane-overview"></div>
+      <div class="dpane" id="dpane-sources"></div>
+      <div class="dpane" id="dpane-trail"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= ARCHITECTURE STRIP ================= */
+var ARCH_FLOW = ['Salesforce Case','HTTP POST','Vertex AI Search','MCP Context Server','Gemini Enterprise','Chatter Post-back'];
+
+/* ================= PIPELINE AGENTS (for Run Pipeline) ================= */
+var PIPELINE_AGENTS = [
+  {name:'Case Intake Agent', tool:'Salesforce Platform Event → HTTPS', log:['<span class="fn">POST</span> https://agent.apsona.com/webhook/case-created', '<span class="ok">&gt; Case #00012358 detected — status: New, no existing draft</span>']},
+  {name:'MCP Context Agent', tool:'MCP Server → Salesforce Case API', log:['<span class="fn">mcp.getCaseContext</span>(caseId="00012358")', '<span class="ok">&gt; customer tier: Business+, 1 prior case, product: Report Export</span>']},
+  {name:'Vertex AI Search Retrieval Agent', tool:'Vertex AI Search datastore', log:['<span class="fn">vertexAiSearch.query</span>(datastore="apsona-support-kb", query=caseSubject)', '<span class="ok">&gt; 2 results: Drive doc (webViewLink), Help Center article</span>']},
+  {name:'Citation & Grounding Agent', tool:'Gemini Enterprise grounding check', log:['<span class="fn">citationAgent.crossCheck</span>(draftClaims, retrievedMetadata)', '<span class="warn">&gt; 1 of 2 claims unsupported — flagged for rep review, not shipped</span>']}
+];
+
+/* ================= CASE DATA ================= */
+var CASES = [
+  {
+    id:'fenwick', caseNum:'#00012301', company:'Meridian Nonprofit Group', domain:'meridiannp.org', contact:'R. Fenwick · Ops Admin',
+    tier:'P2', subject:'Salesforce report export failing', status:'on_track', updated:'20 min ago', stageIndex:6,
+    facts:{plan:'Business+', priorCases:1, product:'Reporting / Export'},
+    draft:'Hi R. Fenwick,<br><br>I see you are having trouble with your Salesforce report exports. Based on our <a href="#" target="_blank">Apsona Export Troubleshooting Guide</a>, this typically happens when the field mapping is misaligned.<br><br><b>Recommended Steps:</b><ol><li>Open your Apsona console and check the field alignment as detailed in our <a href="#" target="_blank">Salesforce Reporting Setup guide</a>.</li><li>Clear your local cache and retry.</li></ol>Let me know if that resolves the issue!',
+    sources:[
+      {type:'drive', title:'Apsona Export Troubleshooting.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'},
+      {type:'helpcenter', title:'Salesforce Reporting Setup', sub:'docs.apsona.com/reporting-setup', color:'#3457D5'}
+    ],
+    trail:[
+      {agent:'Case Intake Agent', time:'10:02 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012301 created, no prior draft found.'},
+      {agent:'MCP Context Agent', time:'10:02 AM', result:'pass', rule:'Draft cannot proceed without a validated case-context object.', reasoning:'Retrieved customer tier (Business+), 1 prior case, product area.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'10:03 AM', result:'pass', rule:'Only surface results with a valid source URL in metadata.', reasoning:'Retrieved Drive doc via webViewLink and matching Help Center article.', confidence:0.89},
+      {agent:'Citation & Grounding Agent', time:'10:03 AM', result:'pass', rule:'Every technical claim must be accompanied by a citation from retrieved results — never a guessed link.', reasoning:'Both recommended steps matched directly to retrieved sources.'},
+      {agent:'Drafting Agent (Gemini Enterprise)', time:'10:03 AM', result:'pass', rule:'Draft in the support team\'s voice, one CTA.', reasoning:'Draft generated addressing R. Fenwick directly, 2 numbered steps, 1 closing CTA.'},
+      {agent:'Chatter-Post Agent', time:'10:04 AM', result:'pass', rule:'Raw Google redirect links (google.com/url?q=...) are always resolved to clean public URLs before posting.', reasoning:'Resolved 2 redirect-wrapped links into clean docs.apsona.com URLs before posting to Chatter.'}
+    ]
+  },
+  {
+    id:'okonkwo', caseNum:'#00012309', company:'Coastal Data Co-op', domain:'coastaldata.coop', contact:'A. Okonkwo · IT Lead',
+    tier:'P3', subject:'Bulk action stuck at 40%', status:'on_track', updated:'1 hr ago', stageIndex:6,
+    facts:{plan:'Team', priorCases:0, product:'Bulk Actions'},
+    draft:'Hi A. Okonkwo,<br><br>Thanks for flagging this — a bulk action stalling partway through usually points to a batch-size or governor-limit issue. One of our support leads walked through this exact scenario on a recent call, linked below, alongside our written guide.<br><br><b>Recommended Steps:</b><ol><li>Reduce your batch size as shown in the <a href="#" target="_blank">Fathom call: Bulk Action Troubleshooting</a> (jump to 4:12).</li><li>Re-run the action and confirm the record count matches expectations.</li></ol>Let me know how it goes!',
+    sources:[
+      {type:'fathom', title:'Fathom: Bulk Action Troubleshooting Call', sub:'Recorded Mar 12 · timestamp 4:12', color:'#7C4DFF'},
+      {type:'drive', title:'Apsona Bulk Actions Guide.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
+    ],
+    trail:[
+      {agent:'Case Intake Agent', time:'9:10 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012309 created.'},
+      {agent:'MCP Context Agent', time:'9:10 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'No prior cases, plan: Team.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'9:11 AM', result:'pass', rule:'Only surface results with a valid source URL in metadata.', reasoning:'Best match was a Fathom call recording transcript, not a written doc — surfaced with timestamp.', confidence:0.81},
+      {agent:'Citation & Grounding Agent', time:'9:11 AM', result:'pass', rule:'Every claim needs a citation from retrieved results.', reasoning:'Batch-size step matched the Fathom transcript at 4:12; second step matched the written guide.'},
+      {agent:'Drafting Agent (Gemini Enterprise)', time:'9:11 AM', result:'pass', rule:'Draft in support voice, one CTA.', reasoning:'Draft generated referencing both the call and the doc.'},
+      {agent:'Chatter-Post Agent', time:'9:12 AM', result:'pass', rule:'Links must resolve to clean, clickable URLs.', reasoning:'Posted to Chatter with a direct-timestamp Fathom link and clean Drive link.'}
+    ]
+  },
+  {
+    id:'delacruz', caseNum:'#00012322', company:'Bright Path Foundation', domain:'brightpathfdn.org', contact:'L. De la Cruz · Database Admin',
+    tier:'P2', subject:'Duplicate contact records after sync', status:'needs_review', updated:'35 min ago', stageIndex:4,
+    facts:{plan:'Business+', priorCases:2, product:'Sync / Dedupe'},
+    reviewReason:'The Citation & Grounding Agent could match one recommended step to a source ("check sync direction settings") but not the second ("clear cache and retry manually") — no retrieved document mentions it. Rather than ship an uncited claim, it dropped the step and is waiting on you to confirm or add a source.',
+    facts2:true,
+    sources:[
+      {type:'drive', title:'Apsona Sync Conflict Resolution.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
+    ],
+    trail:[
+      {agent:'Case Intake Agent', time:'11:40 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012322 created.'},
+      {agent:'MCP Context Agent', time:'11:40 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'2 prior cases on sync issues found and attached.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'11:41 AM', result:'pass', rule:'Only surface results with valid source URLs.', reasoning:'One matching doc retrieved on sync-direction settings.', confidence:0.68},
+      {agent:'Citation & Grounding Agent', time:'11:41 AM', result:'fail', rule:'Do not generate or guess links not explicitly provided in search metadata — if unsupported, drop the claim rather than ship it.', reasoning:'"Clear cache and retry manually" has no matching source in retrieved results. Dropped from the draft and escalated.', confidence:0.44}
+    ]
+  },
+  {
+    id:'harbor', caseNum:'#00012330', company:'Harbor & Co.', domain:'harborandco.com', contact:'T. Massey · Data Manager',
+    tier:'P1', subject:'Recurring export failure — 3rd time this quarter', status:'needs_review', updated:'50 min ago', stageIndex:3,
+    facts:{plan:'Enterprise', priorCases:3, product:'Reporting / Export'},
+    reviewReason:'The MCP Context Agent found 2 prior cases on this exact issue and a linked Jira ticket, APSONA-4821, describing a known race condition in export field mapping — plus a Confluence page documenting the known issue. This looks like a recurring bug, not a one-off, and needs your call on how to respond.',
+    sources:[
+      {type:'jira', title:'APSONA-4821 — Export field mapping race condition', sub:'Atlassian Jira · Open, Engineering', color:'#0052CC'},
+      {type:'confluence', title:'Known Issues — Export Module', sub:'Atlassian Confluence', color:'#2684FF'},
+      {type:'drive', title:'Apsona Export Troubleshooting.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
+    ],
+    trail:[
+      {agent:'Case Intake Agent', time:'8:55 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012330 created, marked P1 by customer plan.'},
+      {agent:'MCP Context Agent', time:'8:55 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'Found 2 prior cases on the same issue for this account.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'8:56 AM', result:'fail', rule:'A recurring pattern across linked systems (3+ cases, open Jira ticket) routes to a human before drafting — never auto-responds to a known bug with a workaround script.', reasoning:'Retrieved an open Jira ticket (APSONA-4821) and Confluence known-issue page matching this exact symptom across 3 cases.', confidence:0.94}
+    ]
+  },
+  {
+    id:'vega', caseNum:'#00012341', company:'Union Grove Alliance', domain:'uniongrove.org', contact:'P. Vega · IT Coordinator',
+    tier:'P2', subject:'SSO login redirect loop', status:'blocked', updated:'2 hrs ago', stageIndex:3,
+    facts:{plan:'Business+', priorCases:0, product:'SSO / Authentication'},
+    reviewReason:null,
+    trail:[
+      {agent:'Case Intake Agent', time:'7:30 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012341 created.'},
+      {agent:'MCP Context Agent', time:'7:30 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'No prior cases — new SSO customer.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'7:31 AM', result:'fail', rule:'Only surface results with a valid source URL — zero results means no draft, not a guess.', reasoning:'No indexed document covers this specific SAML redirect-loop scenario yet. Returned zero results with valid metadata, so no draft was generated.', confidence:0.0}
+    ]
+  }
+];
+
+var INTEGRATIONS = [
+  {name:'Vertex AI Search', color:'#4285F4', mark:'VS', desc:'Grounded retrieval across Drive, Fathom, Confluence, Jira, and the Help Center — one datastore, one query.', usedBy:['Retrieval Agent'], stat:'412 queries today'},
+  {name:'Gemini Enterprise (Agent Builder)', color:'#8E44E9', mark:'GE', desc:'Drafts the customer-facing reply in the support team\'s voice, grounded in retrieved sources only.', usedBy:['Drafting Agent'], stat:'96 drafts generated today'},
+  {name:'Google Drive', color:'#0F9D58', mark:'GD', desc:'Source documents, resolved via webViewLink so citations point to a real, permissioned file.', usedBy:['Retrieval Agent'], stat:'58 documents indexed'},
+  {name:'Fathom', color:'#7C4DFF', mark:'FT', desc:'Call recordings and summaries used as a citable source when a past support call solved the same issue.', usedBy:['Retrieval Agent'], stat:'12 calls referenced today'},
+  {name:'Atlassian (Confluence + Jira)', color:'#2684FF', mark:'AT', desc:'Known-issue documentation and linked engineering tickets, so recurring bugs get traced back, not re-answered from scratch.', usedBy:['MCP Context Agent','Retrieval Agent'], stat:'3 known-issue matches today'},
+  {name:'Salesforce Case & Chatter API', color:'#00A1E0', mark:'SF', desc:'Case intake trigger and the channel the finished, cleaned-up draft gets posted back into.', usedBy:['Case Intake Agent','Chatter-Post Agent'], stat:'96 cases processed today'},
+  {name:'MCP Server', color:'#161C33', mark:'MCP', desc:'Structured case context — customer tier, prior case history, product area — fed to every downstream agent.', usedBy:['MCP Context Agent'], stat:'96 context calls today'},
+  {name:'Apsona Help Center', color:'#D97706', mark:'HC', desc:'Public article mapping so citations resolve to a clean, customer-facing URL instead of an internal doc link.', usedBy:['Citation & Grounding Agent','Chatter-Post Agent'], stat:'41 articles linked today'}
+];
+
+var currentDrawerLead = null;
+var runInProgress = false;
+
+/* ================= NAV ================= */
+function switchMainTab(tab){
+  ['run','queue','review','metrics','integrations'].forEach(function(t){
+    document.getElementById('pane-'+t).style.display = (t===tab) ? 'block' : 'none';
+    var nav = document.querySelector('.navitem[data-tab="'+t+'"]');
+    if(nav) nav.classList.toggle('active', t===tab);
+  });
+  if(tab==='run') renderRunPipeline();
+  if(tab==='queue') renderQueue();
+  if(tab==='review') renderReview();
+  if(tab==='metrics') renderMetrics();
+  if(tab==='integrations') renderIntegrations();
+}
+
+function archStripHtml(){
+  return '<div class="arch-strip">' + ARCH_FLOW.map(function(n,i){
+    return '<span class="node">'+n+'</span>' + (i<ARCH_FLOW.length-1 ? '<span class="arrow">→</span>' : '');
+  }).join('') + '</div>';
+}
+
+/* ================= STAGE BAR ================= */
+function stageBarHtml(c){
+  var total = 6, filled = c.stageIndex;
+  var segClass = c.status === 'needs_review' ? 'amber' : (c.status === 'closed' || c.status === 'blocked' ? 'done' : 'on');
+  var segs = '';
+  for(var i=1;i<=total;i++){
+    segs += '<div class="seg '+(i<=filled ? segClass : '')+'"></div>';
+  }
+  return '<div class="stagebar">'+segs+'</div><div class="stage-label">Stage '+filled+' / '+total+'</div>';
+}
+
+/* ================= QUEUE ================= */
+function renderQueue(){
+  var pane = document.getElementById('pane-queue');
+  pane.innerHTML =
+    archStripHtml() +
+    '<div class="page-head"><div><h1>Docket</h1><p>Every support case currently moving through Vertex AI Search grounding and Gemini Enterprise drafting.</p></div></div>' +
+    '<table class="queue"><thead><tr><th>Case</th><th>Priority</th><th>Stage progress</th><th>Status</th><th>Updated</th></tr></thead><tbody>' +
+    CASES.map(function(c){
+      return '<tr class="rowlink" onclick="openDrawer(\''+c.id+'\')">' +
+        '<td><div class="lead-cell"><div class="avatar" style="width:34px;height:34px;font-size:12px;">'+initials(c.company)+'</div>' +
+        '<div><div class="company">'+c.company+' <span style="color:var(--fog-dim);font-family:var(--mono);font-size:11px;">'+c.caseNum+'</span></div><div class="company-sub">'+c.subject+'</div></div></div></td>' +
+        '<td><span class="tier '+c.tier+'">'+c.tier+'</span></td>' +
+        '<td>'+stageBarHtml(c)+'</td>' +
+        '<td>'+statusChip(c.status)+'</td>' +
+        '<td style="color:var(--fog-dim);font-family:var(--mono);font-size:11.5px;">'+c.updated+'</td>' +
+      '</tr>';
+    }).join('') +
+    '</tbody></table>';
+}
+function initials(name){
+  return name.split(' ').filter(function(w){return w[0]===w[0].toUpperCase() && /[A-Za-z]/.test(w[0]);}).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+}
+function statusChip(status){
+  var labels = {on_track:'Posted', needs_review:'Needs Review', blocked:'Waiting on Docs', closed:'Closed'};
+  return '<span class="status '+status+'"><span class="dot"></span>'+labels[status]+'</span>';
+}
+
+/* ================= NEEDS REVIEW ================= */
+function renderReview(){
+  var pane = document.getElementById('pane-review');
+  var items = CASES.filter(function(c){ return c.status === 'needs_review'; });
+  document.getElementById('review-badge').textContent = items.length;
+
+  if(items.length === 0){
+    pane.innerHTML = '<div class="page-head"><div><h1>Awaiting Your Word</h1><p>Cases where an agent could not fully ground its draft and stopped rather than guessing.</p></div></div>' +
+      '<div class="empty-state">Nothing waiting on you right now.</div>';
+    return;
+  }
+
+  pane.innerHTML = '<div class="page-head"><div><h1>Awaiting Your Word</h1><p>Cases where an agent could not fully ground its draft and stopped rather than guessing.</p></div></div>' +
+    items.map(function(c){
+      return '<div class="review-card">' +
+        '<div class="review-top"><h3>'+c.company+' <span style="color:var(--fog-dim);font-weight:400;font-size:13px;">'+c.caseNum+' — '+c.subject+'</span></h3>' +
+        '<span class="tier '+c.tier+'">'+c.tier+'</span></div>' +
+        '<div class="review-reason"><b>Why it stopped:</b> '+c.reviewReason+'</div>' +
+        '<div class="review-actions">' + reviewActionsFor(c) + '</div>' +
+      '</div>';
+    }).join('');
+}
+
+function reviewActionsFor(c){
+  if(c.id === 'delacruz' || c.id === 'sterling'){
+    return '<button class="btn primary sm" onclick="resolveReview(\''+c.id+'\',\'approve_without\')">Post Without Unsupported Step</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\''+c.id+'\',\'add_citation\')">Add Citation Manually</button>' +
+           '<button class="btn ghost sm" onclick="openDrawer(\''+c.id+'\')">View Full Trail</button>';
+  }
+  if(c.id === 'harbor'){
+    return '<button class="btn primary sm" onclick="resolveReview(\'harbor\',\'link_known_issue\')">Link to APSONA-4821 &amp; Reply</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\'harbor\',\'escalate_new\')">Escalate as New Bug</button>' +
+           '<button class="btn ghost sm" onclick="openDrawer(\'harbor\')">View Full Trail</button>';
+  }
+  return '';
+}
+
+function resolveReview(id, action){
+  var c = CASES.filter(function(x){ return x.id === id; })[0];
+  if(!c) return;
+  var entry = {agent:'Rep Decision', time:'Just now', result:'rep', rule:'Human review resolution.', reasoning:''};
+
+  if(id === 'delacruz' || id === 'sterling'){
+    if(action === 'approve_without'){
+      c.status = 'on_track'; c.stageIndex = 6;
+      entry.reasoning = 'Rep approved the draft with the unsupported step removed — posted to Chatter with only the grounded recommendation.';
+    } else {
+      c.status = 'on_track'; c.stageIndex = 6;
+      entry.reasoning = 'Rep manually added a citation from internal knowledge and approved the full draft for posting.';
+    }
+  }
+  if(id === 'harbor'){
+    if(action === 'link_known_issue'){
+      c.status = 'on_track'; c.stageIndex = 6;
+      entry.reasoning = 'Rep linked the case to the existing Jira ticket APSONA-4821 and replied referencing the known issue and its tracked status.';
+    } else {
+      c.status = 'closed';
+      entry.reasoning = 'Rep escalated as a distinct new bug report rather than linking to the existing ticket.';
+    }
+  }
+
+  c.updated = 'Just now';
+  c.trail.push(entry);
+  delete c.reviewReason;
+  renderReview();
+  renderQueue();
+}
+
+/* ================= METRICS ================= */
+function renderMetrics(){
+  var pane = document.getElementById('pane-metrics');
+  var total = CASES.length;
+  var needsReview = CASES.filter(function(c){return c.status==='needs_review';}).length;
+  var onTrack = CASES.filter(function(c){return c.status==='on_track';}).length;
+  var allSteps = CASES.reduce(function(acc,c){ return acc.concat(c.trail); }, []);
+  var passCount = allSteps.filter(function(s){return s.result==='pass';}).length;
+  var passRate = Math.round((passCount / allSteps.length) * 100);
+
+  pane.innerHTML =
+    '<div class="page-head"><div><h1>Grounding Record</h1><p>Aggregate grounding and gate pass-rate across every case, not just cases resolved.</p></div></div>' +
+    '<div class="stat-grid">' +
+      '<div class="stat-card"><div class="stat-num">'+total+'</div><div class="stat-label">Cases in pipeline</div></div>' +
+      '<div class="stat-card"><div class="stat-num">'+needsReview+'</div><div class="stat-label">Needs rep review</div></div>' +
+      '<div class="stat-card"><div class="stat-num">'+onTrack+'</div><div class="stat-label">Posted, no edit needed</div></div>' +
+      '<div class="stat-card"><div class="stat-num">'+passRate+'%</div><div class="stat-label">Grounding gates passed clean</div></div>' +
+    '</div>' +
+    '<div class="insight-card"><h3>Zero-hallucination is the metric that matters here</h3>' +
+    '<p>A high resolution rate means nothing if even one reply links to a page that does not exist. Tracking the Citation & Grounding Agent\'s gate pass-rate separately — and routing anything unsupported to a human instead of shipping it — is what makes it safe to let this draft customer-facing replies unattended.</p></div>';
+}
+
+/* ================= INTEGRATIONS ================= */
+function renderIntegrations(){
+  var pane = document.getElementById('pane-integrations');
+  pane.innerHTML =
+    '<div class="page-head"><div><h1>Integrations</h1><p>Every tool and API behind Anchor.</p></div></div>' +
+    '<div class="int-grid">' +
+    INTEGRATIONS.map(function(i){
+      return '<div class="int-card">' +
+        '<div class="int-logo" style="background:'+i.color+';">'+i.mark+'</div>' +
+        '<div class="int-body">' +
+          '<div class="int-name">'+i.name+'</div>' +
+          '<div class="int-desc">'+i.desc+'</div>' +
+          '<div class="int-tags">'+i.usedBy.map(function(a){return '<span class="int-tag">'+a+'</span>';}).join('')+'</div>' +
+          '<div class="int-foot"><span class="int-status"><span class="dot"></span>Connected</span><span>'+i.stat+'</span></div>' +
+        '</div>' +
+      '</div>';
+    }).join('') +
+    '</div>';
+}
+
+/* ================= RUN PIPELINE ================= */
+function renderRunPipeline(){
+  var pane = document.getElementById('pane-run');
+  pane.innerHTML =
+    archStripHtml() +
+    '<div class="page-head"><div><h1>Trace a Case</h1><p>Watch a new case call out from Salesforce, get grounded against Vertex AI Search, and come back as a draft — with the actual HTTP and API calls logged step by step.</p></div></div>' +
+    '<div class="rp-controls">' +
+      '<button class="btn primary" id="rp-run-btn" onclick="runPipelineDemo()">▶ Trace Case</button>' +
+      '<button class="btn ghost" onclick="resetPipelineDemo()">↺ Reset</button>' +
+      '<div class="rp-progress-track"><div class="rp-progress-fill" id="rp-progress-fill"></div></div>' +
+      '<div class="rp-counter" id="rp-counter">Stage 0 / 4</div>' +
+    '</div>' +
+    '<div class="rp-grid">' +
+      '<div class="rp-stepper" id="rp-stepper"></div>' +
+      '<div class="rp-code" id="rp-code"><div class="rp-code-empty">Click "Run Pipeline" to watch each agent\'s calls execute here.</div></div>' +
+    '</div>' +
+    '<div class="rp-done-banner" id="rp-done-banner">' +
+      '<span>⚠️ <b>Sterling Facilities Group</b> processed — one step in the draft has no matching citation and needs your review before it can post.</span>' +
+      '<button class="btn primary sm" onclick="switchMainTab(\'review\')">Go to Needs My Review</button>' +
+    '</div>';
+  renderStepper(-1);
+}
+
+function renderStepper(activeIdx){
+  var html = PIPELINE_AGENTS.map(function(a,i){
+    var cls = i < activeIdx ? 'done' : (i === activeIdx ? 'active' : '');
+    var numContent = i < activeIdx ? '✓' : (i+1);
+    return '<div class="rp-step '+cls+'"><div class="rp-step-num">'+numContent+'</div>' +
+      '<div><div class="rp-step-name">'+a.name+'</div><div class="rp-step-tool">'+a.tool+'</div></div></div>';
+  }).join('');
+  document.getElementById('rp-stepper').innerHTML = html;
+}
+
+function resetPipelineDemo(){
+  runInProgress = false;
+  document.getElementById('rp-code').innerHTML = '<div class="rp-code-empty">Click "Run Pipeline" to watch each agent\'s calls execute here.</div>';
+  document.getElementById('rp-progress-fill').style.width = '0%';
+  document.getElementById('rp-counter').textContent = 'Stage 0 / '+PIPELINE_AGENTS.length;
+  document.getElementById('rp-done-banner').classList.remove('show');
+  document.getElementById('rp-run-btn').textContent = '▶ Trace Case';
+  renderStepper(-1);
+  var idx = CASES.findIndex(function(c){return c.id==='sterling';});
+  if(idx > -1) CASES.splice(idx,1);
+}
+
+function runPipelineDemo(){
+  if(runInProgress) return;
+  runInProgress = true;
+  resetPipelineDemo();
+  runInProgress = true;
+  document.getElementById('rp-run-btn').textContent = '⏳ Running…';
+  document.getElementById('rp-code').innerHTML = '';
+  stepPipeline(0);
+}
+
+function stepPipeline(i){
+  if(i >= PIPELINE_AGENTS.length){
+    runInProgress = false;
+    document.getElementById('rp-run-btn').textContent = '▶ Trace Case';
+    document.getElementById('rp-done-banner').classList.add('show');
+    addSterlingCase();
+    return;
+  }
+  renderStepper(i);
+  var a = PIPELINE_AGENTS[i];
+  var code = document.getElementById('rp-code');
+  var header = document.createElement('div');
+  header.className = 'ln';
+  header.innerHTML = '<span class="pfx">// '+a.name+' ('+a.tool+')</span>';
+  code.appendChild(header);
+  a.log.forEach(function(line, li){
+    setTimeout(function(){
+      var ln = document.createElement('div');
+      ln.className = 'ln';
+      ln.innerHTML = '<span class="pfx">&gt;</span> ' + line;
+      code.appendChild(ln);
+      code.scrollTop = code.scrollHeight;
+    }, li*260);
+  });
+  document.getElementById('rp-progress-fill').style.width = (((i+1)/PIPELINE_AGENTS.length)*100)+'%';
+  document.getElementById('rp-counter').textContent = 'Stage '+(i+1)+' / '+PIPELINE_AGENTS.length;
+  setTimeout(function(){ stepPipeline(i+1); }, 1000 + a.log.length*260);
+}
+
+function addSterlingCase(){
+  if(CASES.some(function(c){return c.id==='sterling';})) return;
+  CASES.push({
+    id:'sterling', caseNum:'#00012358', company:'Sterling Facilities Group', domain:'sterlingfacilities.com', contact:'D. Ahn · IT Manager',
+    tier:'P2', subject:'Report export timing out on large datasets', status:'needs_review', updated:'Just now', stageIndex:3,
+    facts:{plan:'Business+', priorCases:1, product:'Reporting / Export'},
+    reviewReason:'The Citation & Grounding Agent matched one recommended step ("reduce batch size") to a retrieved source, but a second step ("contact your Salesforce admin to raise governor limits") has no matching document — dropped rather than shipped, and flagged for you.',
+    sources:[
+      {type:'drive', title:'Apsona Export Troubleshooting.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
+    ],
+    trail:[
+      {agent:'Case Intake Agent', time:'Just now', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012358 detected via Platform Event.'},
+      {agent:'MCP Context Agent', time:'Just now', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'Customer tier Business+, 1 prior case, product: Report Export.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'Just now', result:'pass', rule:'Only surface results with a valid source URL.', reasoning:'Retrieved 1 Drive doc and 1 Help Center article via Vertex AI Search.', confidence:0.71},
+      {agent:'Citation & Grounding Agent', time:'Just now', result:'fail', rule:'Do not generate or guess links not explicitly provided in search metadata.', reasoning:'"Raise governor limits with your Salesforce admin" has no matching retrieved source — dropped and escalated instead of guessed.', confidence:0.39}
+    ]
+  });
+}
+
+/* ================= DRAWER ================= */
+function openDrawer(id){
+  currentDrawerLead = CASES.filter(function(c){ return c.id === id; })[0];
+  if(!currentDrawerLead) return;
+  document.getElementById('drawer-avatar').textContent = initials(currentDrawerLead.company);
+  document.getElementById('drawer-company').textContent = currentDrawerLead.company + ' — ' + currentDrawerLead.caseNum;
+  document.getElementById('drawer-contact').textContent = currentDrawerLead.contact + ' · ' + currentDrawerLead.domain;
+  document.getElementById('drawer-badges').innerHTML =
+    '<span class="tier '+currentDrawerLead.tier+'" style="margin-right:8px;">'+currentDrawerLead.tier+'</span>' + statusChip(currentDrawerLead.status);
+  renderDrawerOverview();
+  renderDrawerSources();
+  renderDrawerTrail();
+  switchDrawerTab('overview');
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+function closeDrawer(){ document.getElementById('drawer-overlay').classList.remove('open'); }
+function switchDrawerTab(tab){
+  document.querySelectorAll('.dtab').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-dtab')===tab); });
+  document.querySelectorAll('.dpane').forEach(function(p){ p.classList.toggle('active', p.id==='dpane-'+tab); });
+}
+function renderDrawerOverview(){
+  var c = currentDrawerLead;
+  var draftHtml;
+  if(c.draft){
+    draftHtml = '<div class="draft-card"><h4>Generated Draft</h4><div class="draft-body">'+c.draft+'</div>' +
+      '<div class="draft-actions"><button class="btn primary sm" disabled>✓ Posted to Chatter</button></div></div>';
+  } else {
+    draftHtml = '<div class="draft-card"><h4>Generated Draft</h4><div class="draft-body" style="color:var(--fog-dim);">'+
+      (c.status === 'blocked' ? 'No draft generated — Vertex AI Search returned zero grounded results for this topic. Waiting on documentation, not on you.' : 'Draft withheld until the flagged step below is resolved.') +
+      '</div></div>';
+  }
+  document.getElementById('dpane-overview').innerHTML =
+    stageBarHtml(c) +
+    '<div class="fact-grid" style="margin-top:16px;">' +
+      '<div class="fact"><div class="k">Subject</div><div class="v">'+c.subject+'</div></div>' +
+      '<div class="fact"><div class="k">Plan</div><div class="v">'+c.facts.plan+'</div></div>' +
+      '<div class="fact"><div class="k">Prior Cases (via MCP)</div><div class="v">'+c.facts.priorCases+'</div></div>' +
+      '<div class="fact"><div class="k">Product Area</div><div class="v">'+c.facts.product+'</div></div>' +
+    '</div>' +
+    draftHtml +
+    (c.reviewReason ? '<div class="review-reason"><b>Why it stopped:</b> '+c.reviewReason+'</div>' : '');
+}
+function renderDrawerSources(){
+  var c = currentDrawerLead;
+  var list = c.sources || [];
+  document.getElementById('dpane-sources').innerHTML = list.length === 0
+    ? '<div class="empty-state">No grounded sources retrieved yet for this case.</div>'
+    : '<div class="source-list">' + list.map(function(s){
+        return '<div class="source-item"><div class="source-icon" style="background:'+s.color+';">'+s.type.slice(0,2).toUpperCase()+'<span class="source-verified" title="Verified in retrieved metadata">✓</span></div>' +
+          '<div><div class="source-title">'+s.title+'</div><div class="source-sub">'+s.sub+'</div></div>' +
+          '<a class="source-link" href="#" target="_blank">Open ↗</a></div>';
+      }).join('') + '</div>';
+}
+function renderDrawerTrail(){
+  var c = currentDrawerLead;
+  document.getElementById('dpane-trail').innerHTML = c.trail.map(function(t){
+    var dotClass = t.result === 'pass' ? 'pass' : (t.result === 'rep' ? 'rep' : 'fail');
+    var badgeClass = dotClass;
+    var badgeLabel = t.result === 'pass' ? 'PASSED' : (t.result === 'rep' ? 'REP DECISION' : 'ESCALATED');
+    return '<div class="trail-item">' +
+      '<div class="trail-dot '+dotClass+'"></div>' +
+      '<div class="trail-agent">'+t.agent+'</div>' +
+      '<div class="trail-time">'+t.time+'</div>' +
+      (t.rule ? '<div class="trail-rule"><b>Rule checked:</b> '+t.rule+'</div>' : '') +
+      '<div class="trail-reason">'+t.reasoning+'</div>' +
+      '<div class="trail-meta">' +
+        '<span class="badge-outcome '+badgeClass+'">'+badgeLabel+'</span>' +
+        (t.confidence !== undefined ? '<span class="confidence">confidence '+Math.round(t.confidence*100)+'%</span>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+
+/* ================= INIT ================= */
+switchMainTab('run');
+</script>
+</body>
+</html>

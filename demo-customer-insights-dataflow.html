@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apsona AI Customer Insights — Animated System Data Flow</title>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: #161e2e;
+      --card-border: #2a364f;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation */
+    header {
+      background: #111827;
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .badge { background: var(--accent-red); color: white; padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 13px; letter-spacing: 0.5px; }
+    .title { font-size: 18px; font-weight: 700; }
+    .controls-bar { display: flex; gap: 12px; align-items: center; }
+
+    .btn {
+      background: #1f2937;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: #374151; border-color: #4b5563; }
+    .btn.active { background: var(--accent-purple); border-color: var(--accent-purple); color: white; }
+
+    /* Canvas Stage Layout */
+    .flow-container {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* System Status Bar */
+    .status-banner {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .stat-item { display: flex; flex-direction: column; }
+    .stat-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+    .stat-value { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); animation: pulse 1.5s infinite; }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    /* Visual Architecture Grid */
+    .diagram-stage {
+      position: relative;
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      min-height: 520px;
+    }
+
+    /* Columns */
+    .stage-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 2;
+    }
+    .column-header {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .col-1 .column-header { color: var(--accent-blue); border-color: var(--accent-blue); }
+    .col-2 .column-header { color: var(--accent-amber); border-color: var(--accent-amber); }
+    .col-3 .column-header { color: var(--accent-purple); border-color: var(--accent-purple); }
+    .col-4 .column-header { color: var(--accent-green); border-color: var(--accent-green); }
+
+    /* Node Cards */
+    .node-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .node-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+      border-color: #4b5563;
+    }
+    .node-card.selected {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .node-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 4px; height: 100%;
+      background: var(--card-border);
+    }
+    .col-1 .node-card::before { background: var(--accent-blue); }
+    .col-2 .node-card::before { background: var(--accent-amber); }
+    .col-3 .node-card::before { background: var(--accent-purple); }
+    .col-4 .node-card::before { background: var(--accent-green); }
+
+    .node-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+    .node-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+    .node-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.08); font-weight: 600; }
+
+    /* SVG Connector Overlay */
+    .svg-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .path-line {
+      fill: none;
+      stroke: #2a364f;
+      stroke-width: 2;
+      stroke-dasharray: 6 6;
+      animation: dash 30s linear infinite;
+    }
+
+    .path-active {
+      fill: none;
+      stroke: url(#flowGradient);
+      stroke-width: 3;
+      stroke-dasharray: 10 10;
+      animation: flow 2s linear infinite;
+    }
+
+    @keyframes flow {
+      from { stroke-dashoffset: 40; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes dash {
+      from { stroke-dashoffset: 1000; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Detail Inspector Panel */
+    .inspector-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    .inspector-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--accent-purple); display: flex; align-items: center; gap: 8px; }
+    .inspector-body { font-size: 13px; color: #cbd5e1; line-height: 1.6; }
+    .code-block {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #38bdf8;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <span class="badge">APSONA</span>
+      <span class="title">Animated System Data Flow & Architecture</span>
+    </div>
+    <div class="controls-bar">
+      <button class="btn active" id="toggleAnimBtn" onclick="toggleAnimation()">⏸ Pause Animation</button>
+      <button class="btn" onclick="resetFlow()">🔄 Reset Flow</button>
+      <button class="btn" onclick="speedUp()">⚡ 2x Speed</button>
+    </div>
+  </header>
+
+  <div class="flow-container">
+
+    <!-- Live System Metric Indicators -->
+    <div class="status-banner">
+      <div class="stat-item">
+        <span class="stat-label">Pipeline Execution Status</span>
+        <span class="stat-value"><span class="pulse-dot"></span> Active & Syncing</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Ingested Analytics Events</span>
+        <span class="stat-value" id="eventCounter">14,280 / hr</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">LinkedIn Signals Tracked</span>
+        <span class="stat-value" style="color: var(--accent-blue);">32 ICP Accounts</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Preemptive Churn Triggers</span>
+        <span class="stat-value" style="color: var(--accent-amber);">18 Flagged</span>
+      </div>
+    </div>
+
+    <!-- Animated Architecture Diagram Stage -->
+    <div class="diagram-stage">
+
+      <!-- SVG Path Connection Layer -->
+      <svg class="svg-overlay" id="svgCanvas">
+        <defs>
+          <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#3b82f6" />
+            <stop offset="50%" stop-color="#8b5cf6" />
+            <stop offset="100%" stop-color="#10b981" />
+          </linearGradient>
+        </defs>
+        <!-- Animated Connector Paths -->
+        <path class="path-active" d="M 280 120 C 330 120, 330 120, 380 120" />
+        <path class="path-active" d="M 280 260 C 330 260, 330 120, 380 120" />
+        <path class="path-active" d="M 280 400 C 330 400, 330 260, 380 260" />
+        
+        <path class="path-active" d="M 620 120 C 670 120, 670 180, 720 180" />
+        <path class="path-active" d="M 620 260 C 670 260, 670 180, 720 180" />
+
+        <path class="path-active" d="M 960 180 C 1010 180, 1010 200, 1060 200" />
+        <path class="path-active" d="M 960 360 C 1010 360, 1010 200, 1060 200" />
+      </svg>
+
+      <!-- Stage 1: Data Sources & Telemetry -->
+      <div class="stage-column col-1">
+        <div class="column-header">
+          <span>1. Signal Ingestion</span>
+          <span>RAW</span>
+        </div>
+
+        <div class="node-card selected" onclick="inspectNode('sfdc')">
+          <div class="node-title">
+            <span>Salesforce Health Score</span>
+            <span class="node-tag">Live Object</span>
+          </div>
+          <div class="node-desc">Health_Score__c field (0-100 across 4 tiers: Critical, Needs Attn, Healthy, Thriving).</div>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('events')">
+          <div class="node-title">
+            <span>Usage Telemetry</span>
+            <span class="node-tag">App Analytics</span>
+          </div>
+          <div class="node-desc">MSR, Doc Merge, Single Reports, Dedupe runs, Filters, Import/Export tracking.</div>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('linkedin')">
+          <div class="node-title">
+            <span>LinkedIn Intent Engine</span>
+            <span class="node-tag">Social API</span>
+          </div>
+          <div class="node-desc">Tracks company page visits, post engagement, and key Admin job role changes.</div>
+        </div>
+      </div>
+
+      <!-- Stage 2: Automation Pipeline -->
+      <div class="stage-column col-2">
+        <div class="column-header">
+          <span>2. Pipeline Process</span>
+          <span>AUTO</span>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('scheduler')">
+          <div class="node-title">
+            <span>Apsona Scheduler</span>
+            <span class="node-tag">MSR Runner</span>
+          </div>
+          <div class="node-desc">Runs recurring MSR with dynamic relative date filters; emails CSV output automatically.</div>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('apps-script')">
+          <div class="node-title">
+            <span>Google Apps Script</span>
+            <span class="node-tag">Ingest & Push</span>
+          </div>
+          <div class="node-desc">Ingests CSV email attachment into Sheet formulas, then writes calculated scores to SFDC.</div>
+        </div>
+      </div>
+
+      <!-- Stage 3: AI Engine & Synthesis -->
+      <div class="stage-column col-3">
+        <div class="column-header">
+          <span>3. AI Risk Synthesis</span>
+          <span>GEMINI AI</span>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('ai-engine')">
+          <div class="node-title">
+            <span>Preemptive Risk Model</span>
+            <span class="node-tag">Synthesis</span>
+          </div>
+          <div class="node-desc">Correlates login drops, feature usage, and LinkedIn champion departure events.</div>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('champion')">
+          <div class="node-title">
+            <span>Champion Departure Alert</span>
+            <span class="node-tag">Early Warning</span>
+          </div>
+          <div class="node-desc">Detects when primary Salesforce Admin leaves before product usage zeroes out.</div>
+        </div>
+      </div>
+
+      <!-- Stage 4: AM Console & Execution -->
+      <div class="stage-column col-4">
+        <div class="column-header">
+          <span>4. AM Execution</span>
+          <span>ACTION</span>
+        </div>
+
+        <div class="node-card" onclick="inspectNode('playbook')">
+          <div class="node-title">
+            <span>Proactive Playbooks</span>
+            <span class="node-tag">Interactive UI</span>
+          </div>
+          <div class="node-desc">Clickable UI for AM teams to generate AI emails, log calls, and schedule MSR workshops.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Node Inspector Panel -->
+    <div class="inspector-panel" id="inspector">
+      <div>
+        <div class="inspector-title" id="nodeInspTitle">📌 Node Details: Salesforce Health Score Engine</div>
+        <div class="inspector-body" id="nodeInspBody">
+          The Health Score is Apsona's primary account metric (0–100), calculated using three weighted inputs:
+          <strong>Login Count per License (55%)</strong>, <strong>Feature Coverage Ratio (35%)</strong>, and <strong>Support Case Volume (10%)</strong>.
+          It feeds directly into the AI Risk Model to trigger preemptive outreach before renewal dates.
+        </div>
+        <div class="code-block" id="nodeCode">
+// Automated Formula Breakdown
+HealthScore = (LoginRatio * 0.55) + (FeatureCoverage * 0.35) + (SupportRatio * 0.10);
+Tier = HealthScore < 35 ? "Critical" : HealthScore < 50 ? "Needs Attention" : "Healthy";
+        </div>
+      </div>
+
+      <div style="background: #0d1322; padding: 14px; border-radius: 8px; border: 1px solid var(--card-border);">
+        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 8px;">Pipeline Metric Impact</div>
+        <ul style="font-size: 12px; color: #cbd5e1; display: flex; flex-direction: column; gap: 8px; padding-left: 16px;">
+          <li>Backtested churn prediction rate: <b>85%</b></li>
+          <li>Critical segment churn risk: <b>6x higher</b></li>
+          <li>Automation refresh frequency: <b>Daily</b></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let isAnimated = true;
+    let animSpeed = 1;
+
+    const nodeData = {
+      sfdc: {
+        title: "📌 Salesforce Health Score Engine",
+        body: "Calculates global health score (0-100) based on 3 components: Login Count per License (55%), Feature Coverage Ratio (35%), and Support Cases (10%). Automates score writes via REST API.",
+        code: `// Salesforce REST API Payload
+{
+  "Health_Score__c": 48.2,
+  "Health_Status__c": "Needs Attention",
+  "Last_Refreshed__c": "2026-03-29T10:00:00Z"
+}`
+      },
+      events: {
+        title: "⚡ Product Usage Event Telemetry",
+        body: "Captures feature usage across Document Mail Merge, MSR Multi-Step Reports, Single Step Reports, Deduplication, Filters, and Import/Export tasks via App Analytics.",
+        code: `// App Analytics Event Payload
+{
+  "account_id": "0014P00000xDSF1",
+  "msr_reports_run_30d": 0,
+  "doc_merge_count_30d": 12,
+  "trend_mom": "-82%"
+}`
+      },
+      linkedin: {
+        title: "🔗 LinkedIn Intent & Executive Signals",
+        body: "Monitors company page engagement, content views, and identifies key decision-maker (Salesforce Admin / CS Lead) employment updates.",
+        code: `// LinkedIn API Signal
+{
+  "account": "Denver Scholarship Foundation",
+  "event": "CHAMPION_ROLE_CHANGE",
+  "previous_contact": "CRM Administrator",
+  "status": "Left Organization"
+}`
+      },
+      scheduler: {
+        title: "⏱️ Apsona Scheduler Automation",
+        body: "Executes Multi-Source Reports (MSR) on a recurring schedule using dynamic relative date filters. Generates and emails CSV outputs directly to processing scripts.",
+        code: `// Apsona Scheduler Config
+{
+  "report": "Global_Account_Usage_MSR",
+  "filter": "LAST_N_DAYS:30",
+  "output_format": "CSV",
+  "delivery": "EMAIL"
+}`
+      },
+      'apps-script': {
+        title: "⚙️ Google Apps Script Ingest & Push Pipeline",
+        body: "Script 1 extracts CSV from Gmail into Google Sheets. Google Sheets updates score formulas. Script 2 pushes updated scores to Salesforce via REST API.",
+        code: `function pushScoresToSalesforce() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Calculated_Scores");
+  // Iterates rows and executes REST PATCH to Salesforce
+}`
+      },
+      'ai-engine': {
+        title: "🤖 Gemini AI Preemptive Risk Synthesis",
+        body: "Correlates declining feature velocity with social indicators (admin turnover) to calculate early churn probability before renewal windows.",
+        code: `// AI Risk Synthesis
+if (msrUsageTrend < -0.50 && championTurnoverDetected) {
+  triggerAlert("CRITICAL_PREEMPTIVE_CHURN_RISK");
+}`
+      },
+      champion: {
+        title: "🚨 Executive Champion Departure Tracking",
+        body: "Flags accounts where the primary user or decision maker changes roles, enabling AMs to immediately offer onboarding sessions to new admins.",
+        code: `// Onboarding Trigger
+createTask({
+  subject: "Schedule Onboarding for New Salesforce Admin",
+  priority: "High",
+  due_date: "+3 Days"
+});`
+      },
+      playbook: {
+        title: "🎯 Interactive AM Action Console",
+        body: "Empowers Account Managers with 1-click workflows: AI personal email generator, call logging, workshop booking, and renewal risk escalation.",
+        code: `// Interactive Playbook Action
+openModal('ai-email');
+// Auto-populates personalized outreach template`
+      }
+    };
+
+    function toggleAnimation() {
+      const path = document.querySelectorAll('.path-active');
+      const btn = document.getElementById('toggleAnimBtn');
+      if (isAnimated) {
+        path.forEach(p => p.style.animationPlayState = 'paused');
+        btn.innerText = '▶ Resume Animation';
+        btn.classList.remove('active');
+      } else {
+        path.forEach(p => p.style.animationPlayState = 'running');
+        btn.innerText = '⏸ Pause Animation';
+        btn.classList.add('active');
+      }
+      isAnimated = !isAnimated;
+    }
+
+    function speedUp() {
+      const paths = document.querySelectorAll('.path-active');
+      animSpeed = animSpeed === 1 ? 2 : 1;
+      paths.forEach(p => p.style.animationDuration = `${2 / animSpeed}s`);
+      alert(`Flow speed set to ${animSpeed}x`);
+    }
+
+    function resetFlow() {
+      document.querySelectorAll('.node-card').forEach(n => n.classList.remove('selected'));
+      inspectNode('sfdc');
+    }
+
+    function inspectNode(key) {
+      document.querySelectorAll('.node-card').forEach(n => n.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+
+      const data = nodeData[key];
+      if (!data) return;
+
+      document.getElementById('nodeInspTitle').innerText = data.title;
+      document.getElementById('nodeInspBody').innerText = data.body;
+      document.getElementById('nodeCode').innerText = data.code;
+    }
+
+    // Dynamic Counter Simulation
+    setInterval(() => {
+      const counter = document.getElementById('eventCounter');
+      const val = 14200 + Math.floor(Math.random() * 200);
+      counter.innerText = `${val.toLocaleString()} / hr`;
+    }, 3000);
+  </script>
+</body>
+</html>

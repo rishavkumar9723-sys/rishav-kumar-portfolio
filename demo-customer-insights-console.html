@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apsona AI Customer Insights & Preemptive Churn Engine</title>
+<style>
+:root {
+  --primary: #c82333;
+  --primary-hover: #a71d2a;
+  --bg-dark: #0f172a;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --critical: #ef4444;
+  --critical-bg: rgba(239, 68, 68, 0.15);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --healthy: #10b981;
+  --healthy-bg: rgba(16, 185, 129, 0.15);
+  --thriving: #059669;
+  --thriving-bg: rgba(5, 150, 105, 0.2);
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-size: 13px;
+}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:inherit;}
+
+/* Top Navigation */
+header {
+  background: #1e293b;
+  border-bottom: 1px solid var(--card-border);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo-group { display: flex; align-items: center; gap: 12px; }
+.logo-badge { background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; font-weight: 800; font-size: 12px; letter-spacing: 0.5px; }
+.app-title { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+.back-link { font-size: 12px; color: var(--text-muted); margin-right: 6px; }
+.back-link:hover { color: var(--text-main); }
+.user-profile { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-muted); }
+.ai-pill { background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+/* Layout Containers */
+.main-container { display: flex; flex: 1; overflow: hidden; }
+
+/* Signal framework strip */
+.signal-strip { background:#141e33; border-bottom:1px solid var(--card-border); padding:10px 24px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.signal-chip { font-size:11px; padding:4px 10px; border-radius:20px; border:1px solid var(--card-border); color:var(--text-muted); background:#1e293b; }
+.signal-chip.live { color:#34d399; border-color:rgba(16,185,129,0.4); }
+.signal-chip.new { color:#a78bfa; border-color:rgba(139,92,246,0.4); }
+
+/* Metrics Top Bar */
+.kpi-banner {
+  background: #141e33;
+  border-bottom: 1px solid var(--card-border);
+  padding: 12px 24px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.kpi-card { background: var(--card-bg); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--card-border); }
+.kpi-title { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight:600; letter-spacing:0.4px; }
+.kpi-value { font-size: 22px; font-weight: 700; color: white; }
+.kpi-sub { font-size: 11px; margin-top: 4px; }
+.text-critical { color: var(--critical); }
+.text-warning { color: var(--warning); }
+.text-healthy { color: var(--healthy); }
+
+/* Left Sidebar: Account Directory */
+.sidebar {
+  width: 340px;
+  background: #151f32;
+  border-right: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+}
+.search-filter-box { padding: 16px; border-bottom: 1px solid var(--card-border); display: flex; flex-direction: column; gap: 10px; }
+.search-input { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; color: white; font-size: 13px; }
+.filter-tabs { display: flex; gap: 6px; }
+.tab-btn { flex: 1; padding: 6px; font-size: 11px; background: #1e293b; border: 1px solid var(--card-border); border-radius: 6px; color: var(--text-muted); text-align:center; }
+.tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
+.account-list { overflow-y: auto; flex: 1; }
+.account-item { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background .15s; }
+.account-item:hover { background: #1e293b; }
+.account-item.selected { background: #273549; border-left: 4px solid var(--primary); }
+.acc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap:8px; }
+.acc-name { font-size: 14px; font-weight: 600; color: var(--text-main); flex:1; white-space: nowrap; overflow:hidden; text-overflow:ellipsis; }
+.score-badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space:nowrap; }
+.badge-critical { background: var(--critical-bg); color: var(--critical); border: 1px solid var(--critical); }
+.badge-attention { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning); }
+.badge-healthy { background: var(--healthy-bg); color: var(--healthy); border: 1px solid var(--healthy); }
+.badge-thriving { background: var(--thriving-bg); color: #34d399; border: 1px solid #34d399; }
+.acc-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+.signal-dots { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+.signal-indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink:0; }
+
+/* Right Main Panel: Detailed Account Insights */
+.content-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.account-detail-header {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.acc-title-main { font-size: 22px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; flex-wrap:wrap; }
+.acc-sub-details { font-size: 13px; color: var(--text-muted); display: flex; gap: 16px; margin-top: 6px; flex-wrap:wrap; }
+
+/* Grid Layout for Insights */
+.insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.full-width { grid-column: span 2; }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 18px;
+}
+.card-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:8px; flex-wrap:wrap; }
+
+/* Health Breakdown Formula Bars */
+.formula-bar-container { margin-bottom: 12px; }
+.formula-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.progress-bg { background: #0f172a; height: 8px; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
+
+/* Product Events Table */
+.events-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.events-table th { text-align: left; padding: 8px; color: var(--text-muted); border-bottom: 1px solid var(--card-border); font-size:11px; text-transform:uppercase; letter-spacing:0.4px; }
+.events-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.trend-down { color: var(--critical); font-weight: bold; }
+.trend-up { color: var(--healthy); font-weight: bold; }
+.trend-flat { color: var(--text-muted); }
+.status-chip { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.08); color: var(--text-muted); }
+
+/* AI Insight Cards */
+.ai-alert-box {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.ai-alert-header { font-size: 13px; font-weight: 600; color: #a78bfa; display: flex; align-items: center; gap:6px; margin-bottom:6px; }
+.ai-alert-body { font-size: 12px; color: #e2e8f0; line-height: 1.5; }
+
+/* Action Modal & Buttons */
+.action-bar { display: flex; gap: 10px; flex-wrap:wrap; }
+.btn { padding: 9px 16px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; display:inline-flex; align-items:center; gap:6px; }
+.btn:hover { opacity: 0.9; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: #334155; color: white; }
+.btn-ai { background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; }
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.75); display: none; justify-content: center; align-items: center; z-index: 100;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+  background: #1e293b; border: 1px solid var(--card-border); width: 600px; max-width:92vw; border-radius: 12px; padding: 24px; max-height:86vh; overflow-y:auto;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom:1px solid var(--card-border); padding-bottom:12px; }
+.modal-title { font-size: 16px; font-weight: 700; }
+.close-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+.modal-body { font-size: 13px; line-height: 1.6; color: #cbd5e1; display: flex; flex-direction: column; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing:0.4px; }
+.form-group textarea, .form-group input, .form-group select {
+  background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; padding: 10px; color: white; font-size:13px; width:100%; font-family:inherit;
+}
+.playbook-note { font-size:11px; color:var(--text-muted); margin-top:14px; background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; line-height:1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a class="back-link" href="index.html">&larr; Portfolio</a>
+    <span class="logo-badge">APSONA</span>
+    <span class="app-title">AI Customer Insights &amp; Preemptive Churn Engine</span>
+  </div>
+  <div class="user-profile">
+    <span class="ai-pill">✦ Gemini AI Insights Active</span>
+    <span>Account Manager: <strong>Rishav Kumar</strong></span>
+    <span>Role: <strong>CS Lead</strong></span>
+  </div>
+</header>
+
+<div class="signal-strip">
+  <span class="signal-chip live">1. Health Score — Live</span>
+  <span class="signal-chip live">2. Usage Event Velocity — Live</span>
+  <span class="signal-chip live">3. LinkedIn &amp; Org Intent — Live</span>
+  <span class="signal-chip new">4. Executive Champion Turnover — New</span>
+  <span class="signal-chip new">5. Feature Friction &amp; Batch Failure — New</span>
+  <span class="signal-chip new">6. License Adoption Velocity — New</span>
+  <span class="signal-chip new">7. AI Sentiment &amp; Support Stress — New</span>
+</div>
+
+<div class="kpi-banner">
+  <div class="kpi-card">
+    <div class="kpi-title">ARR at Risk (Critical Segment)</div>
+    <div class="kpi-value text-critical">$136,000</div>
+    <div class="kpi-sub text-critical">▲ 50% of total churn ARR concentrated in top accounts</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">High Churn Risk Accounts</div>
+    <div class="kpi-value text-warning">18 Accounts</div>
+    <div class="kpi-sub text-warning">Critical / Needs Attention (Score &lt; 50)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Preemptive Outreach Rate</div>
+    <div class="kpi-value text-healthy">89.4%</div>
+    <div class="kpi-sub text-healthy">Outreach triggered before renewal window</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Avg Portfolio Health</div>
+    <div class="kpi-value">64.2 / 100</div>
+    <div class="kpi-sub text-healthy">Target: &gt;70.0 (Thriving)</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="sidebar">
+    <div class="search-filter-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search account name, domain..." oninput="filterAccounts()">
+      <div class="filter-tabs">
+        <div class="tab-btn active" onclick="setFilter('all', this)">All</div>
+        <div class="tab-btn" onclick="setFilter('critical', this)">Critical</div>
+        <div class="tab-btn" onclick="setFilter('attention', this)">Needs Attn</div>
+        <div class="tab-btn" onclick="setFilter('thriving', this)">Healthy</div>
+      </div>
+    </div>
+    <div class="account-list" id="accountList"></div>
+  </div>
+
+  <div class="content-area" id="detailArea">
+    <div class="account-detail-header">
+      <div>
+        <div class="acc-title-main" id="detName">Denver Scholarship Foundation
+          <span class="score-badge badge-critical" id="detScoreBadge">0.0 - CRITICAL</span>
+        </div>
+        <div class="acc-sub-details">
+          <span>License Band: <strong id="detBand">51+ Licenses</strong></span>
+          <span>Expiration Date: <strong id="detExp">04/27/2026</strong></span>
+          <span>ARR Value: <strong id="detArr">$12,800/yr</strong></span>
+          <span>Salesforce ID: <strong>0014P00000xDSF1</strong></span>
+        </div>
+      </div>
+      <div class="action-bar">
+        <button class="btn btn-ai" onclick="openModal('ai-playbook')">⚡ AI Playbook Generator</button>
+        <button class="btn btn-primary" onclick="openModal('log-call')">📞 Log Outreach Call</button>
+      </div>
+    </div>
+
+    <div class="insights-grid">
+      <div class="card">
+        <div class="card-title">
+          <span>Signal 1 — Health Score Engine (Global: <span id="detScoreVal">0.0</span>/100)</span>
+          <span style="font-size: 11px; color: var(--accent-blue); text-transform:none;">Auto-refreshed via Apps Script MSR</span>
+        </div>
+        <div class="formula-bar-container">
+          <div class="formula-label"><span>Login Count per AFS License (Weight: 55%)</span><span id="scoreLoginVal">12%</span></div>
+          <div class="progress-bg"><div class="progress-fill" id="scoreLoginBar" style="width: 12%; background: var(--critical);"></div></div>
+        </div>
+        <div class="formula-bar-container">
+          <div class="formula-label"><span>Feature Coverage Ratio (Weight: 35%)</span><span id="scoreFeatureVal">18%</span></div>
+          <div class="progress-bg"><div class="progress-fill" id="scoreFeatureBar" style="width: 18%; background: var(--critical);"></div></div>
+        </div>
+        <div class="formula-bar-container">
+          <div class="formula-label"><span>Support Cases Last 365 Days (Weight: 10%)</span><span id="scoreSupportVal">45%</span></div>
+          <div class="progress-bg"><div class="progress-fill" id="scoreSupportBar" style="width: 45%; background: var(--warning);"></div></div>
+        </div>
+        <div class="playbook-note">📌 <strong>Backtest Insight:</strong> Accounts in the Critical segment exhibit 6x higher churn within 90 days than Healthy-tier accounts.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>Signal 2 &amp; 3 — Usage Events &amp; LinkedIn Intent</span>
+          <span style="font-size: 11px; color: var(--healthy); text-transform:none;">Live Telemetry</span>
+        </div>
+        <table class="events-table">
+          <thead><tr><th>Event Module</th><th>30-Day Vol</th><th>MoM Trend</th><th>Status</th></tr></thead>
+          <tbody id="eventsTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="card full-width">
+        <div class="card-title">
+          <span>🤖 AI Multi-Signal Preemptive Churn Analysis</span>
+          <span class="ai-pill">Real-Time Synthesis</span>
+        </div>
+        <div id="aiAlertContainer"></div>
+      </div>
+
+      <div class="card full-width">
+        <div class="card-title">
+          <span>🎯 Account Manager (AM) Preemptive Action Center</span>
+          <span style="font-size: 11px; color: var(--text-muted); text-transform:none;">Recommended Next Steps</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+          <div style="background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 13px; font-weight: 600; color: white; margin-bottom: 6px;">Step 1: Champion Re-engagement</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;" id="playbookStep1">Identify and reach the new stakeholder before the relationship goes cold.</div>
+            <button class="btn btn-secondary" style="width: 100%; justify-content:center;" onclick="openModal('ai-email')">Draft Personalized Email</button>
+          </div>
+          <div style="background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 13px; font-weight: 600; color: white; margin-bottom: 6px;">Step 2: Technical Enablement</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;" id="playbookStep2">Close the usage gap with a hands-on workshop on the modules that dropped.</div>
+            <button class="btn btn-secondary" style="width: 100%; justify-content:center;" onclick="openModal('book-session')">Schedule Technical Workshop</button>
+          </div>
+          <div style="background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid var(--card-border);">
+            <div style="font-size: 13px; font-weight: 600; color: white; margin-bottom: 6px;">Step 3: Renewal Risk Flag</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;" id="playbookStep3">Make sure this account can't quietly slip past the renewal team.</div>
+            <button class="btn btn-primary" style="width: 100%; justify-content:center;" onclick="flagRenewalRisk()">Flag Account in Salesforce</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="actionModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Log Outreach &amp; Preemptive Action</div>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// Mock data modeled on a real churned-customer / health-score backtest
+const accountsData = [
+  {
+    id: "1", name: "Denver Scholarship Foundation", licenseBand: "51+", expDate: "04/27/2026",
+    healthStatus: "Critical", healthScore: 0.0, arr: 12800,
+    loginScore: 12, featureScore: 18, supportScore: 45,
+    events: [
+      { name: "Doc Mail Merge", count: "12", trend: "↓ 82%", status: "Critical Drop" },
+      { name: "MSR Multi-step Reports", count: "0", trend: "↓ 100%", status: "Inactive" },
+      { name: "Single Step Reports", count: "5", trend: "↓ 60%", status: "Low" },
+      { name: "Deduplication Runs", count: "0", trend: "0%", status: "Unused" },
+      { name: "Import / Export Jobs", count: "3", trend: "↓ 40%", status: "At Risk" }
+    ],
+    linkedInSignal: "⚠️ Key Decision Maker (Salesforce Admin) left the company 3 weeks ago.",
+    aiAnalysis: [
+      { title: "Executive Champion Turnover Risk", body: "LinkedIn signals indicate the previous Admin departed 3 weeks ago with no successor identified in the system yet. This account has had zero MSR runs since the departure — usage collapse and champion loss are compounding." },
+      { title: "Underutilized Seat Band (51+ Licenses)", body: "Only a small fraction of 50+ purchased licenses have logged in over the last 30 days. Renewal risk is high given the ratio of paid seats to active usage." }
+    ]
+  },
+  {
+    id: "2", name: "Center for Court Innovation", licenseBand: "31-50", expDate: "06/16/2026",
+    healthStatus: "Needs Attention", healthScore: 54.5, arr: 8400,
+    loginScore: 60, featureScore: 45, supportScore: 50,
+    events: [
+      { name: "Doc Mail Merge", count: "145", trend: "↑ 12%", status: "Healthy" },
+      { name: "MSR Multi-step Reports", count: "8", trend: "↓ 35%", status: "Declining" },
+      { name: "Single Step Reports", count: "89", trend: "↑ 5%", status: "Steady" },
+      { name: "Deduplication Runs", count: "12", trend: "↑ 20%", status: "Active" },
+      { name: "Import / Export Jobs", count: "42", trend: "↓ 15%", status: "Needs Attn" }
+    ],
+    linkedInSignal: "💡 3 team members viewed Apsona's LinkedIn post on MSR Automation.",
+    aiAnalysis: [
+      { title: "Feature Expansion Opportunity", body: "High single-step report usage but low MSR multi-step adoption suggests the team hasn't been onboarded onto the more powerful reporting flow yet — a training gap, not a churn signal." }
+    ]
+  },
+  {
+    id: "3", name: "Commerce Bancshares Inc", licenseBand: "31-50", expDate: "05/25/2028",
+    healthStatus: "Needs Attention", healthScore: 48.2, arr: 9600,
+    loginScore: 40, featureScore: 50, supportScore: 60,
+    events: [
+      { name: "Doc Mail Merge", count: "42", trend: "↓ 25%", status: "Declining" },
+      { name: "MSR Multi-step Reports", count: "4", trend: "↓ 50%", status: "Low" },
+      { name: "Single Step Reports", count: "30", trend: "↓ 10%", status: "Steady" },
+      { name: "Deduplication Runs", count: "1", trend: "0%", status: "Low" },
+      { name: "Import / Export Jobs", count: "15", trend: "↓ 20%", status: "At Risk" }
+    ],
+    linkedInSignal: "🔹 Company is hiring 2 new Salesforce Analysts, per LinkedIn.",
+    aiAnalysis: [
+      { title: "New Hire Onboarding Trigger", body: "Two new Salesforce Analysts are joining per LinkedIn hiring posts. Reach out to offer fresh onboarding before usage decline becomes their baseline expectation of the product." }
+    ]
+  },
+  {
+    id: "4", name: "Auburn University Foundation", licenseBand: "1-10", expDate: "11/20/2026",
+    healthStatus: "Thriving", healthScore: 98.5, arr: 4200,
+    loginScore: 98, featureScore: 95, supportScore: 100,
+    events: [
+      { name: "Doc Mail Merge", count: "450", trend: "↑ 34%", status: "Thriving" },
+      { name: "MSR Multi-step Reports", count: "64", trend: "↑ 40%", status: "Power User" },
+      { name: "Single Step Reports", count: "210", trend: "↑ 15%", status: "Active" },
+      { name: "Deduplication Runs", count: "45", trend: "↑ 50%", status: "High" },
+      { name: "Import / Export Jobs", count: "120", trend: "↑ 22%", status: "Power User" }
+    ],
+    linkedInSignal: "🌟 Admin posted a positive comment on Apsona's LinkedIn page.",
+    aiAnalysis: [
+      { title: "Case Study & Expansion Candidate", body: "Maximum feature adoption across every module tracked. Strong candidate for a reference call, case study, or an expansion conversation rather than any risk-mitigation play." }
+    ]
+  },
+  {
+    id: "5", name: "Children's Hospital of Phila", licenseBand: "51+", expDate: "11/07/2026",
+    healthStatus: "Healthy", healthScore: 61.5, arr: 14500,
+    loginScore: 65, featureScore: 58, supportScore: 60,
+    events: [
+      { name: "Doc Mail Merge", count: "310", trend: "↑ 5%", status: "Steady" },
+      { name: "MSR Multi-step Reports", count: "18", trend: "↓ 10%", status: "Steady" },
+      { name: "Single Step Reports", count: "140", trend: "↑ 8%", status: "Healthy" },
+      { name: "Deduplication Runs", count: "22", trend: "0%", status: "Steady" },
+      { name: "Import / Export Jobs", count: "80", trend: "↑ 12%", status: "Healthy" }
+    ],
+    linkedInSignal: "ℹ️ Standard company updates, no notable signal this cycle.",
+    aiAnalysis: [
+      { title: "Stable Enterprise Account", body: "Consistent utilization across the board with no red flags. Recommend an annual strategic business review rather than a risk intervention." }
+    ]
+  }
+];
+
+let currentSelectedId = "1";
+let activeFilter = "all";
+
+function statusBadgeClass(status){
+  if (status === "Critical") return "badge-critical";
+  if (status === "Needs Attention") return "badge-attention";
+  if (status === "Thriving") return "badge-thriving";
+  return "badge-healthy";
+}
+
+function renderAccountList() {
+  const listContainer = document.getElementById("accountList");
+  listContainer.innerHTML = "";
+  const filtered = accountsData.filter(acc => {
+    if (activeFilter === "critical") return acc.healthStatus === "Critical";
+    if (activeFilter === "attention") return acc.healthStatus === "Needs Attention";
+    if (activeFilter === "thriving") return acc.healthStatus === "Healthy" || acc.healthStatus === "Thriving";
+    return true;
+  });
+  filtered.forEach(acc => {
+    const item = document.createElement("div");
+    item.className = `account-item ${acc.id === currentSelectedId ? 'selected' : ''}`;
+    item.onclick = () => selectAccount(acc.id);
+    const badgeClass = statusBadgeClass(acc.healthStatus);
+    const dotColor = acc.healthScore < 50 ? '#ef4444' : '#10b981';
+    item.innerHTML = `
+      <div class="acc-header">
+        <span class="acc-name">${acc.name}</span>
+        <span class="score-badge ${badgeClass}">${acc.healthScore.toFixed(1)}</span>
+      </div>
+      <div class="acc-meta">
+        <span>Band: ${acc.licenseBand}</span>
+        <span>Exp: ${acc.expDate}</span>
+      </div>
+      <div class="signal-dots">
+        <span class="signal-indicator" style="background:${dotColor};"></span>
+        <span style="font-size: 11px; color: var(--text-muted);">${acc.healthStatus}</span>
+      </div>`;
+    listContainer.appendChild(item);
+  });
+}
+
+function selectAccount(id) {
+  currentSelectedId = id;
+  renderAccountList();
+  const acc = accountsData.find(a => a.id === id);
+  if (!acc) return;
+
+  document.getElementById("detName").childNodes[0].nodeValue = acc.name + " ";
+  const badge = document.getElementById("detScoreBadge");
+  badge.innerText = `${acc.healthScore.toFixed(1)} - ${acc.healthStatus.toUpperCase()}`;
+  badge.className = "score-badge " + statusBadgeClass(acc.healthStatus);
+
+  document.getElementById("detBand").innerText = `${acc.licenseBand} Licenses`;
+  document.getElementById("detExp").innerText = acc.expDate;
+  document.getElementById("detArr").innerText = `$${acc.arr.toLocaleString()}/yr`;
+  document.getElementById("detScoreVal").innerText = acc.healthScore.toFixed(1);
+
+  setBar('scoreLogin', acc.loginScore);
+  setBar('scoreFeature', acc.featureScore);
+  setBar('scoreSupport', acc.supportScore);
+
+  const eventsTbody = document.getElementById("eventsTableBody");
+  eventsTbody.innerHTML = "";
+  acc.events.forEach(ev => {
+    let trendClass = "trend-flat";
+    if (ev.trend.includes("↓")) trendClass = "trend-down";
+    if (ev.trend.includes("↑")) trendClass = "trend-up";
+    eventsTbody.innerHTML += `
+      <tr>
+        <td><strong>${ev.name}</strong></td>
+        <td>${ev.count}</td>
+        <td class="${trendClass}">${ev.trend}</td>
+        <td><span class="status-chip">${ev.status}</span></td>
+      </tr>`;
+  });
+
+  const aiContainer = document.getElementById("aiAlertContainer");
+  aiContainer.innerHTML = `
+    <div class="ai-alert-box" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08);">
+      <div class="ai-alert-header" style="color: #60a5fa;">🔗 Signal 3 — LinkedIn &amp; Social Engagement</div>
+      <div class="ai-alert-body">${acc.linkedInSignal}</div>
+    </div>`;
+  acc.aiAnalysis.forEach(ai => {
+    aiContainer.innerHTML += `
+      <div class="ai-alert-box">
+        <div class="ai-alert-header">🚨 ${ai.title}</div>
+        <div class="ai-alert-body">${ai.body}</div>
+      </div>`;
+  });
+}
+
+function setBar(prefix, value){
+  document.getElementById(prefix+"Val").innerText = value + "%";
+  const bar = document.getElementById(prefix+"Bar");
+  bar.style.width = value + "%";
+  bar.style.background = value < 35 ? 'var(--critical)' : (value < 60 ? 'var(--warning)' : 'var(--healthy)');
+}
+
+function setFilter(filter, el) {
+  activeFilter = filter;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  renderAccountList();
+}
+
+function filterAccounts() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll(".account-item").forEach(item => {
+    const txt = item.innerText.toLowerCase();
+    item.style.display = txt.includes(q) ? "block" : "none";
+  });
+}
+
+function openModal(type) {
+  const acc = accountsData.find(a => a.id === currentSelectedId);
+  const modal = document.getElementById("actionModal");
+  const title = document.getElementById("modalTitle");
+  const body = document.getElementById("modalBody");
+  modal.classList.add("show");
+
+  if (type === 'log-call') {
+    title.innerText = `📞 Log Outreach Call — ${acc.name}`;
+    body.innerHTML = `
+      <div class="form-group">
+        <label>Call Sentiment</label>
+        <select id="callSentiment">
+          <option>Positive — Champion Re-engaged</option>
+          <option>Neutral — Requires Follow-up</option>
+          <option selected>High Risk — Customer Expressed Frustration</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Call Notes / Key Signals</label>
+        <textarea rows="4" placeholder="Enter key conversation points, new Salesforce Admin details, or feature requests..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Auto-Trigger Next Action</label>
+        <select>
+          <option>Schedule Technical Onboarding Session with Support</option>
+          <option>Send MSR Multi-Step Report Automation Guide</option>
+          <option>Alert Account Executive for Renewal Plan</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="justify-content: center;" onclick="submitModalAction('Call logged. Health_Score_Status__c updated in Salesforce via REST API.')">Save Call Log</button>`;
+  } else if (type === 'ai-email') {
+    const domain = acc.name.toLowerCase().replace(/[^a-z]/g, '');
+    title.innerText = `✉️ AI Generated Champion Email — ${acc.name}`;
+    body.innerHTML = `
+      <div class="form-group"><label>Recipient Email</label><input type="text" value="admin@${domain}.org"></div>
+      <div class="form-group"><label>Subject Line</label><input type="text" value="Quick question regarding your Apsona Multi-Step Reports &amp; Automation"></div>
+      <div class="form-group">
+        <label>AI Drafted Body</label>
+        <textarea rows="6">Hi team,
+
+I noticed usage on Document Merge and MSR multi-step reporting has slowed recently on your account. I wanted to check in and see if anything changed on your end, or if there's a new point of contact I should be looping in.
+
+Are you available for a brief chat this Thursday?
+
+Best regards,
+Rishav Kumar | Apsona Success Team</textarea>
+      </div>
+      <button class="btn btn-ai" style="justify-content: center;" onclick="submitModalAction('Email queued for send and logged to the Case timeline.')">Send Email</button>`;
+  } else if (type === 'ai-playbook') {
+    title.innerText = `⚡ AI Churn Prevention Playbook`;
+    body.innerHTML = `
+      <div style="background: rgba(139, 92, 246, 0.15); padding: 12px; border-radius: 6px; font-size: 13px;">
+        ✔ Preemptive churn mitigation workflow generated for <strong>${acc.name}</strong>.
+      </div>
+      <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+        <li>Task assigned to CS team: <i>Schedule MSR health check</i>.</li>
+        <li>Salesforce field updated: <code>Health_Score_Status__c</code> = <b>Under Intervention</b>.</li>
+        <li>LinkedIn profile alert created for the new CRM admin, once identified.</li>
+      </ul>
+      <button class="btn btn-primary" style="justify-content: center; margin-top: 10px;" onclick="submitModalAction('Playbook executed and logged.')">Acknowledge &amp; Close</button>`;
+  } else if (type === 'book-session') {
+    title.innerText = `📅 Book Technical Workshop — ${acc.name}`;
+    body.innerHTML = `
+      <div class="form-group">
+        <label>Workshop Topic</label>
+        <select>
+          <option>MSR Multi-Step Reporting &amp; Scheduler Setup</option>
+          <option>Deduplication &amp; Data Cleansing Mastery</option>
+          <option>Document Merge &amp; Trigger Automation</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Assigned Technical Specialist</label><input type="text" value="Kiran (Apsona Operations)"></div>
+      <button class="btn btn-primary" style="justify-content: center;" onclick="submitModalAction('Workshop booked and calendar invite sent.')">Confirm Booking</button>`;
+  }
+}
+
+function closeModal() { document.getElementById("actionModal").classList.remove("show"); }
+function submitModalAction(msg) { alert(msg); closeModal(); }
+function flagRenewalRisk(){ alert('Account flagged in Salesforce: Renewal_Risk__c = true. Renewal team notified.'); }
+
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+
+renderAccountList();
+selectAccount("1");
+</script>
+</body>
+</html>

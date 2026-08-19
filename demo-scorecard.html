@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Use-Case Prioritization Scorecard — Live Demo | Rishav</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{
+    --ink:#F5F6FB;--panel:#FFFFFF;--panel-2:#F7F8FD;--line:#E4E7F1;--line-soft:#EDEFF8;
+    --fog:#5B6178;--fog-dim:#9BA1B8;--paper:#1C2333;--amber:#3457D5;--navy:#1C2A48;
+    --mint:#16A34A;--coral:#DC2626;--display:'Playfair Display', serif;--body:'Inter', sans-serif;--mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ink);color:var(--paper);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  header{border-bottom:1px solid var(--line-soft);padding:18px 0;}
+  .back{font-family:var(--mono);font-size:12.5px;color:var(--fog);display:inline-flex;align-items:center;gap:6px;}
+  .back:hover{color:var(--amber);}
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--fog-dim);margin-bottom:14px;}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,38px);margin-bottom:10px;}
+  .problem{color:var(--fog);font-size:15px;max-width:560px;margin-bottom:36px;line-height:1.7;}
+  .demo-box{border:1px solid var(--line);border-radius:14px;padding:28px;background:var(--panel-2);box-shadow:0 20px 50px -30px rgba(28,42,72,0.15);}
+  .demo-label{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);margin-bottom:16px;}
+  .demo-suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .demo-suggestions button, .demo-box select{font-family:var(--mono);font-size:12.5px;padding:9px 13px;border-radius:6px;border:1px solid var(--line);color:var(--paper);background:var(--panel);}
+  .demo-suggestions button:hover{border-color:var(--amber);}
+  .demo-answer{font-size:14.5px;color:var(--paper);line-height:1.7;min-height:24px;}
+  .dl-src{font-family:var(--mono);font-size:11px;color:var(--mint);margin-bottom:6px;}
+  .dl-tag{font-family:var(--mono);font-size:11px;color:var(--fog-dim);}
+  table.demo-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:16px;}
+  table.demo-table th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);padding:9px 6px;border-bottom:1px solid var(--line);}
+  table.demo-table td{padding:11px 6px;border-bottom:1px solid var(--line-soft);color:var(--paper);}
+  .bar-track{background:var(--line-soft);border-radius:6px;height:8px;width:100%;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--mint);border-radius:6px;transition:width 0.8s ease;width:0%;}
+  .bar-fill.warn{background:var(--amber);}
+  .class-tag{font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:20px;}
+  .class-tag.ok{background:rgba(22,163,74,0.12);color:var(--mint);border:1px solid rgba(22,163,74,0.3);}
+  .class-tag.warn{background:rgba(52,87,213,0.12);color:var(--amber);border:1px solid rgba(52,87,213,0.3);}
+  .class-tag.bad{background:rgba(220,38,38,0.12);color:var(--coral);border:1px solid rgba(220,38,38,0.3);}
+  .slider-row{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .slider-row label{font-family:var(--mono);font-size:11px;color:var(--fog-dim);display:flex;justify-content:space-between;}
+  .slider-row input[type=range]{width:100%;accent-color:var(--amber);}
+  .btn{font-family:var(--body);font-size:13px;font-weight:600;padding:11px 18px;border-radius:8px;border:1px solid var(--line);display:inline-flex;align-items:center;gap:8px;background:var(--panel);}
+  .btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+  footer{border-top:1px solid var(--line-soft);padding:24px 0;text-align:center;font-family:var(--mono);font-size:11.5px;color:var(--fog-dim);}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="back" href="index.html">&larr; Back to portfolio</a></div></header>
+<main><div class="wrap">
+<div class="eyebrow">Live Demo</div>
+<h1>AI Use-Case Prioritization Scorecard</h1>
+<p class="problem">Drag the weights and watch the AM/BnL backlog re-rank live. Every number here is traceable back to the raw impact, effort, and strategic-fit inputs.</p>
+
+<div class="demo-box">
+  <div class="demo-label">Adjust weights and watch the ranking change</div>
+  <div class="slider-row"><label>Impact weight <span id="w-impact-val">1.0</span></label><input type="range" id="w-impact" min="0" max="2" step="0.1" value="1" oninput="recalcScorecard()"></div>
+  <div class="slider-row"><label>Low-effort weight <span id="w-effort-val">1.0</span></label><input type="range" id="w-effort" min="0" max="2" step="0.1" value="1" oninput="recalcScorecard()"></div>
+  <div class="slider-row"><label>Strategic fit weight <span id="w-strategic-val">1.0</span></label><input type="range" id="w-strategic" min="0" max="2" step="0.1" value="1" oninput="recalcScorecard()"></div>
+  <table class="demo-table"><thead><tr><th>Use case</th><th>Impact</th><th>Effort</th><th>Strategic</th><th>Weighted Total</th></tr></thead>
+  <tbody id="sc-body"></tbody></table>
+</div>
+<script>
+var USE_CASES = [
+  {name:'Invoice Sending Automation', impact:8, effort:4, strategic:7},
+  {name:'Dedupe / Triage Engine', impact:6, effort:6, strategic:5},
+  {name:'Case Reply Automation', impact:7, effort:5, strategic:6},
+  {name:'Health Score Outreach', impact:9, effort:3, strategic:8}
+];
+function recalcScorecard(){
+  var wI = parseFloat(document.getElementById('w-impact').value);
+  var wE = parseFloat(document.getElementById('w-effort').value);
+  var wS = parseFloat(document.getElementById('w-strategic').value);
+  document.getElementById('w-impact-val').textContent = wI.toFixed(1);
+  document.getElementById('w-effort-val').textContent = wE.toFixed(1);
+  document.getElementById('w-strategic-val').textContent = wS.toFixed(1);
+  var scored = USE_CASES.map(function(u){
+    var total = u.impact*wI + (10-u.effort)*wE + u.strategic*wS;
+    return {u:u, total: Math.round(total*10)/10};
+  }).sort(function(a,b){return b.total-a.total;});
+  document.getElementById('sc-body').innerHTML = scored.map(function(s){
+    return '<tr><td>'+s.u.name+'</td><td>'+s.u.impact+'</td><td>'+s.u.effort+'</td><td>'+s.u.strategic+'</td><td>'+s.total+'</td></tr>';
+  }).join('');
+}
+recalcScorecard();
+</script>
+</div></main>
+<footer>RISHAV.PM — LIVE PROTOTYPE, NOT PRODUCTION DATA</footer>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTM Pipeline — Agentified | Rishav</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{
+    --bg:#0B0E16; --panel:#12161F; --panel-2:#171C27; --line:rgba(255,255,255,0.09); --line-soft:rgba(255,255,255,0.06);
+    --t1:#EAECF0; --t2:#8A93A6; --t3:#5A6374;
+    --em:#34D399; --em-soft:rgba(52,211,153,0.12);
+    --amb:#F2B544; --amb-soft:rgba(242,181,68,0.12);
+    --sf:#00A1E0;
+    --display:'Space Grotesk', sans-serif; --body:'Inter', sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--t1);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  header{border-bottom:1px solid var(--line-soft);padding:18px 0;position:sticky;top:0;background:rgba(11,14,22,0.9);backdrop-filter:blur(8px);z-index:5;}
+  .back{font-family:var(--mono);font-size:12px;color:var(--t2);display:inline-flex;align-items:center;gap:6px;}
+  .back:hover{color:var(--em);}
+  .hero{padding:40px 0 24px;}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--em);margin-bottom:12px;}
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.6vw,36px);margin-bottom:10px;}
+  .sub{color:var(--t2);font-size:14.5px;max-width:640px;line-height:1.7;}
+
+  .controls{display:flex;align-items:center;gap:12px;margin:26px 0;flex-wrap:wrap;}
+  .btn{font-family:var(--mono);font-size:12.5px;padding:10px 18px;border-radius:8px;border:1px solid var(--line);display:inline-flex;align-items:center;gap:8px;}
+  .btn.primary{background:var(--em);color:#04140D;border-color:var(--em);font-weight:700;}
+  .btn.ghost{color:var(--t1);}
+  .btn.ghost:hover{border-color:var(--t3);}
+  .progress-track{flex:1;min-width:160px;height:6px;background:var(--line-soft);border-radius:20px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;background:var(--em);transition:width .4s;}
+  .stage-counter{font-family:var(--mono);font-size:12px;color:var(--t2);white-space:nowrap;}
+
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:24px;padding-bottom:80px;}
+  @media (max-width:900px){.grid{grid-template-columns:1fr;}}
+
+  .agent-list{display:flex;flex-direction:column;gap:8px;}
+  .agent-item{border:1px solid var(--line);border-radius:10px;padding:13px 14px;background:var(--panel);display:flex;align-items:center;gap:12px;transition:border-color .2s, background .2s;}
+  .agent-item:hover{border-color:var(--t3);}
+  .agent-item.active{border-color:var(--em);background:var(--em-soft);}
+  .agent-item.done{opacity:0.75;}
+  .agent-num{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--t2);flex-shrink:0;}
+  .agent-item.active .agent-num{border-color:var(--em);color:var(--em);}
+  .agent-item.done .agent-num{background:var(--em);color:#04140D;border-color:var(--em);}
+  .agent-item.done .agent-num::after{content:'✓';}
+  .agent-item.done .agent-num span{display:none;}
+  .agent-name{font-family:var(--display);font-size:13.5px;font-weight:600;}
+  .agent-tool{font-family:var(--mono);font-size:10.5px;color:var(--t3);margin-top:2px;}
+
+  .panel{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:24px;margin-bottom:18px;}
+  .panel h3{font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:12px;color:var(--em);}
+  .kv{margin-bottom:16px;}
+  .kv .k{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:5px;}
+  .kv .v{font-size:13.5px;color:var(--t1);line-height:1.65;}
+  .kv .v.rule{color:var(--amb);background:var(--amb-soft);border:1px solid rgba(242,181,68,0.25);border-radius:8px;padding:10px 12px;font-size:13px;}
+  .sf-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;background:var(--sf);padding:3px 8px;border-radius:5px;margin-left:8px;}
+
+  .log{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;}
+  .log-line{font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.6;opacity:0;animation:fadein .35s forwards;}
+  .log-line b{color:var(--em);}
+  @keyframes fadein{to{opacity:1;}}
+  .log-empty{font-family:var(--mono);font-size:12px;color:var(--t3);}
+
+  pre.json{font-family:var(--mono);font-size:12px;color:#B9E6D2;background:#070A10;border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;max-height:280px;}
+  .json .k2{color:#7DB8F0;}
+  .json .s2{color:#F2B544;}
+
+  footer{border-top:1px solid var(--line-soft);padding:24px 0;text-align:center;font-family:var(--mono);font-size:11px;color:var(--t3);}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="back" href="index.html">&larr; Back to portfolio</a></div></header>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Live Demo — Agentic Redesign</div>
+    <h1>GTM Pipeline, Agentified</h1>
+    <p class="sub">
+      The manual version of this pipeline works, but it lives in one person's head: Apollo for lists,
+      6Sense for intent, a Python script for scoring, ZeroBounce for validation, PhantomBuster for LinkedIn,
+      and a lot of judgment calls in between. Below is the same pipeline redesigned as 10 specialized agents
+      passing one shared record — each with a hard validation gate instead of a judgment call, and a metric
+      that proves it's working. Click an agent to inspect its contract, or run the pipeline to watch the handoff.
+    </p>
+  </div>
+
+  <div class="controls">
+    <button class="btn primary" id="run-btn" onclick="runPipeline()">▶ Run Pipeline</button>
+    <button class="btn ghost" onclick="resetPipeline()">↺ Reset</button>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="stage-counter" id="stage-counter">Stage 0 / 10</div>
+  </div>
+
+  <div class="grid">
+    <div class="agent-list" id="agent-list"></div>
+
+    <div>
+      <div class="panel" id="detail-panel"></div>
+      <div class="panel">
+        <h3>Agent Message Log</h3>
+        <div class="log" id="log"><div class="log-empty">No messages yet — click Run Pipeline, or select an agent on the left.</div></div>
+      </div>
+      <div class="panel">
+        <h3>Shared Lead Record</h3>
+        <pre class="json" id="record-json">{}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>RISHAV.PM — AGENT CONTRACTS ARE ILLUSTRATIVE, MODELED ON A REAL MANUAL WORKFLOW</footer>
+
+<script>
+var AGENTS = [
+  {
+    id:'lister', name:'Lister Agent', tool:'Apollo', sf:false,
+    role:'Builds the raw candidate list against ICP filters (US, 250+ employees) instead of a person running an Apollo search by hand.',
+    rule:'An account only enters the pipeline if it passes both the employee-count filter AND has a resolvable company domain — no manual "looks about right" adds.',
+    metric:'% of listed accounts matching ICP on manual audit (target: 95%+).',
+    emit:{accountId:'acc_4471', company:'Acme Manufacturing', domain:'acmemfg.com', employeeCount:310, source:'Apollo'}
+  },
+  {
+    id:'dedupe', name:'Dedupe Agent', tool:'Apsona · Salesforce', sf:true,
+    role:'Checks the account against existing Salesforce records before anything else happens downstream.',
+    rule:'Suppression only fires on an exact domain match. A fuzzy or partial match routes to a human review queue — it is never auto-suppressed.',
+    metric:'False-suppression rate (accounts wrongly marked as already-in-CRM).',
+    emit:{inCrm:false, checkedAgainst:'Salesforce Account.Website', matchType:'exact_domain'}
+  },
+  {
+    id:'intent', name:'Intent Agent', tool:'6Sense · Apify', sf:false,
+    role:'Scans for buying signals (hiring surges, tech-stack changes, content engagement) and tags the account with a reason, not just a score.',
+    rule:'A signal only gets tagged "hot" if at least one corroborating source confirms it — a single weak signal is logged but not escalated.',
+    metric:'Intent-tag precision vs. accounts that actually engaged within 30 days.',
+    emit:{intentSignals:['hiring_surge_ops_team'], sources:['6Sense','Apify_job_boards'], corroborated:true}
+  },
+  {
+    id:'scoring', name:'Scoring Agent', tool:'Python model · 0–100', sf:false,
+    role:'Combines fit and intent signals into a single score and tier (A / B / C), and re-runs weekly for anything held at Tier C.',
+    rule:'Every score ships with its feature breakdown attached. A score with no explainable inputs is rejected before it reaches the next agent — no black-box numbers downstream.',
+    metric:'Tier-to-conversion correlation, tracked monthly by cohort.',
+    emit:{score:58, tier:'C', features:{firmographic:22,intent:18,engagement:18}, action:'hold_for_weekly_rescore'}
+  },
+  {
+    id:'contact', name:'Contact-Resolution Agent', tool:'Apollo · ZeroBounce', sf:true,
+    role:'Finds the right named contact (Admin / RevOps persona) for a prioritized account and validates the email before it goes anywhere.',
+    rule:'Hard gate: the sequence cannot start unless email status = "valid". "Risky" or "unknown" routes to a re-validation queue, never straight to send.',
+    metric:'Bounce rate on the first send (target: under 2%).',
+    emit:{contact:{name:'J. Rivera', title:'RevOps Admin'}, emailStatus:'valid', validator:'ZeroBounce'}
+  },
+  {
+    id:'personalize', name:'Personalization Agent', tool:'LLM drafting', sf:false,
+    role:'Researches the contact and drafts a single-CTA email around one angle, instead of sending a generic template.',
+    rule:'A draft must cite at least one real signal handed off by the Intent Agent. Ungrounded, generic drafts are rejected before they reach Outreach.',
+    metric:'Reply rate by angle type, tracked to find which angles actually work.',
+    emit:{angle:'dedupe_pain', groundedIn:'hiring_surge_ops_team', draftReady:true, ctaCount:1}
+  },
+  {
+    id:'outreach', name:'Outreach Agent', tool:'Gmail · PhantomBuster', sf:true,
+    role:'Sends the email, queues a LinkedIn touch, and manages the follow-up sequence.',
+    rule:'A hard cap of 3 touches without a reply before the sequence auto-pauses — no infinite follow-up loops running quietly in the background.',
+    metric:'Sequence completion rate and reply lift from the LinkedIn touch specifically.',
+    emit:{sequenceStep:2, channels:['email','linkedin'], touchesSoFar:2, autoPauseAt:3}
+  },
+  {
+    id:'classify', name:'Reply-Classification Agent', tool:'LLM classifier', sf:false,
+    role:'Reads an inbound reply and classifies it as Positive / Not now / Referral / Not interested, then routes accordingly.',
+    rule:'Below a 0.75 confidence threshold, the reply routes to a human review queue instead of auto-branching. Confidence is never assumed.',
+    metric:'Classification accuracy vs. a human-labeled sample, audited monthly.',
+    emit:{replyClass:'positive', confidence:0.91, routedTo:'scheduling_agent'}
+  },
+  {
+    id:'scheduling', name:'Scheduling Agent', tool:'Calendar API', sf:true,
+    role:'Proposes meeting times, books the confirmed slot, and preps a pre-meeting brief for the seller.',
+    rule:'Only proposes and books against the seller\'s actual free/busy calendar — it never offers a slot it hasn\'t confirmed is open.',
+    metric:'No-show rate and time-to-book, tracked from first proposal to confirmed meeting.',
+    emit:{meeting:{proposedSlots:3, booked:true}, briefGenerated:true}
+  },
+  {
+    id:'crmsync', name:'CRM-Sync Agent', tool:'Salesforce REST API', sf:true,
+    role:'Writes Account, Contact, and Activity records to Salesforce at every step — not just at the end — so the deal state is always visible, and hands off to the seller.',
+    rule:'Writes are idempotent by leadId. Re-running any stage never creates a duplicate Salesforce record.',
+    metric:'Sync latency and record-completeness audit (every touch has a matching Activity record).',
+    emit:{sfSync:'complete', recordsWritten:['Account','Contact','Activity x6'], handoff:'seller_queue'}
+  }
+];
+
+var record = {};
+var currentIndex = -1;
+var running = false;
+
+function renderAgentList(){
+  var list = document.getElementById('agent-list');
+  list.innerHTML = AGENTS.map(function(a, i){
+    var cls = i < currentIndex ? 'done' : (i === currentIndex ? 'active' : '');
+    return '<div class="agent-item '+cls+'" id="agent-item-'+i+'" onclick="selectAgent('+i+')">' +
+      '<div class="agent-num"><span>'+(i+1)+'</span></div>' +
+      '<div><div class="agent-name">'+a.name+(a.sf?'<span class="sf-badge">SF</span>':'')+'</div>' +
+      '<div class="agent-tool">'+a.tool+'</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderDetail(i){
+  var a = AGENTS[i];
+  document.getElementById('detail-panel').innerHTML =
+    '<h3>'+a.name+'</h3>' +
+    '<div class="kv"><div class="k">Role</div><div class="v">'+a.role+'</div></div>' +
+    '<div class="kv"><div class="k">Validation Rule</div><div class="v rule">'+a.rule+'</div></div>' +
+    '<div class="kv"><div class="k">Evaluation Metric</div><div class="v">'+a.metric+'</div></div>';
+}
+
+function selectAgent(i){
+  if(running) return;
+  currentIndex = i;
+  renderAgentList();
+  renderDetail(i);
+}
+
+function renderJson(){
+  document.getElementById('record-json').textContent = JSON.stringify(record, null, 2);
+}
+
+function pushLog(text){
+  var log = document.getElementById('log');
+  if(log.querySelector('.log-empty')) log.innerHTML = '';
+  var line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = text;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function resetPipeline(){
+  running = false;
+  currentIndex = -1;
+  record = {};
+  document.getElementById('log').innerHTML = '<div class="log-empty">No messages yet — click Run Pipeline, or select an agent on the left.</div>';
+  document.getElementById('detail-panel').innerHTML = '<h3>Select an agent</h3><div class="kv"><div class="v">Click any agent on the left to see its role, validation rule, and evaluation metric — or run the pipeline to watch the handoff happen live.</div></div>';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('stage-counter').textContent = 'Stage 0 / 10';
+  renderJson();
+  renderAgentList();
+}
+
+function runPipeline(){
+  if(running) return;
+  running = true;
+  currentIndex = -1;
+  record = {};
+  document.getElementById('log').innerHTML = '';
+  renderJson();
+  document.getElementById('run-btn').textContent = '⏳ Running…';
+  stepThrough(0);
+}
+
+function stepThrough(i){
+  if(i >= AGENTS.length){
+    running = false;
+    document.getElementById('run-btn').textContent = '▶ Run Pipeline';
+    pushLog('<b>Pipeline complete.</b> Lead handed off to seller queue with full Salesforce trail.');
+    return;
+  }
+  currentIndex = i;
+  renderAgentList();
+  renderDetail(i);
+  var a = AGENTS[i];
+  var prev = i === 0 ? 'Lister Agent trigger' : AGENTS[i-1].name;
+  pushLog('<b>'+prev+' → '+a.name+':</b> '+JSON.stringify(a.emit));
+  Object.assign(record, a.emit);
+  renderJson();
+  document.getElementById('progress-fill').style.width = (((i+1)/AGENTS.length)*100)+'%';
+  document.getElementById('stage-counter').textContent = 'Stage '+(i+1)+' / '+AGENTS.length;
+  setTimeout(function(){ stepThrough(i+1); }, 1100);
+}
+
+renderAgentList();
+resetPipeline();
+</script>
+</body>
+</html>

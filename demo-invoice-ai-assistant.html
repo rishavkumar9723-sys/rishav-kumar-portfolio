@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Invoice AI Assistant Prototype</title>
+<style>
+  :root{
+    --sf-bg:#f3f2f2; --sf-card:#ffffff; --sf-border:#dddbda;
+    --sf-text:#181818; --sf-text-secondary:#706e6b;
+    --sf-blue:#0176d3; --sf-blue-dark:#014486; --sf-header:#16325c;
+    --apsona-orange:#d9531e; --apsona-dark:#2b2826;
+    --ai-accent:#5a4fcf; --ai-accent-light:#efedfd;
+    --success:#2e844a; --warn:#b25000; --warn-light:#fdf1ec;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--sf-bg);color:var(--sf-text);font-size:13px;}
+
+  .topbar{background:var(--sf-header);color:#fff;padding:8px 16px;display:flex;align-items:center;gap:16px;font-size:13px;}
+  .topbar .brand{font-weight:700;letter-spacing:.3px;}
+  .topbar .crumbs{opacity:.75;font-size:12px;}
+  .topbar .spacer{flex:1;}
+  .topbar .avatar{width:24px;height:24px;border-radius:50%;background:#4b6a94;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
+
+  .app{display:flex;max-width:1220px;margin:0 auto;gap:14px;padding:14px;}
+  .left-col{flex:0 0 600px;} .right-col{flex:1;min-width:380px;}
+
+  .card{background:var(--sf-card);border:1px solid var(--sf-border);border-radius:6px;margin-bottom:14px;overflow:hidden;}
+  .card-body{padding:16px;}
+  .case-title{display:flex;align-items:flex-start;gap:10px;padding:16px;border-bottom:1px solid var(--sf-border);}
+  .case-icon{width:32px;height:32px;border-radius:6px;background:#e0edff;color:var(--sf-blue-dark);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .case-title .meta{font-size:11px;color:var(--sf-text-secondary);margin-bottom:2px;}
+  .case-title h1{font-size:16px;margin:0;font-weight:600;line-height:1.3;}
+
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;}
+  .field label{display:block;font-size:11px;color:var(--sf-text-secondary);margin-bottom:3px;}
+  .field .value{font-size:13px;} .field .value.link{color:var(--sf-blue);cursor:pointer;}
+
+  .thread{margin-top:14px;}
+  .thread .msg{padding:12px;background:#fafaf9;border:1px solid var(--sf-border);border-radius:4px;font-size:12.5px;line-height:1.5;margin-bottom:8px;}
+  .thread .msg .who{font-weight:600;font-size:11.5px;color:var(--sf-text-secondary);margin-bottom:4px;}
+  .thread .msg.highlight{background:#fff8ec;border-color:#f0d9a8;}
+  .thread .msg .hl{background:#ffe9b3;padding:0 3px;border-radius:2px;font-weight:600;}
+
+  .draft-btn-wrap{padding:14px 16px;border-top:1px solid var(--sf-border);display:flex;justify-content:flex-end;}
+  .draft-btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:10px 18px;border-radius:20px;border:none;background:linear-gradient(135deg,var(--ai-accent),#8a7ffb);color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(90,79,207,.35);}
+  .draft-btn[disabled]{opacity:.5;}
+  .btn{font-size:13px;font-weight:600;padding:8px 16px;border-radius:4px;border:1px solid var(--sf-border);background:#fff;cursor:pointer;color:var(--sf-blue);}
+  .btn-primary{background:var(--ai-accent);border-color:var(--ai-accent);color:#fff;}
+  .btn-ghost{background:transparent;color:var(--sf-text-secondary);}
+
+  .ai-panel{background:var(--sf-card);border:1px solid var(--sf-border);border-radius:6px;min-height:560px;display:flex;flex-direction:column;}
+  .ai-panel-header{padding:14px 16px;background:var(--ai-accent-light);border-bottom:1px solid var(--sf-border);display:flex;align-items:center;gap:8px;}
+  .ai-panel-header .dot{width:8px;height:8px;border-radius:50%;background:var(--ai-accent);}
+  .ai-panel-header span{font-size:12px;font-weight:700;color:var(--ai-accent);text-transform:uppercase;letter-spacing:.4px;}
+
+  .ai-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--sf-text-secondary);text-align:center;padding:40px 24px;gap:8px;}
+  .ai-empty .big-icon{font-size:36px;opacity:.5;margin-bottom:8px;}
+  .ai-empty p{margin:0;font-size:13px;max-width:260px;line-height:1.5;}
+
+  .steps{padding:18px;}
+  .step{display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:12.5px;opacity:0;transform:translateY(4px);}
+  .step.show{animation:stepIn .35s ease forwards;}
+  @keyframes stepIn{to{opacity:1;transform:translateY(0);}}
+  .step .check{width:16px;height:16px;border-radius:50%;background:var(--ai-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;}
+  .step .check.flag{background:var(--warn);}
+  .step .txt{color:var(--sf-text);line-height:1.4;}
+  .step .txt b{font-weight:700;}
+  .step .subtxt{font-size:11px;color:var(--sf-text-secondary);margin-top:2px;}
+
+  .draft-wrap{padding:0 18px 18px 18px;display:none;}
+  .draft-wrap.show{display:block;animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .banner{border-radius:6px;padding:12px 14px;font-size:12.5px;line-height:1.55;margin-bottom:12px;}
+  .banner.quote{background:var(--ai-accent-light);border:1px solid #d9d5ff;color:#3a3266;}
+  .banner.quote b{color:var(--ai-accent);}
+  .banner.locked{background:var(--warn-light);border:1px solid #f0d0b8;color:#7a3010;}
+  .banner.locked b{color:var(--warn);}
+  .banner.flagged{background:#fffaf0;border:1px solid #f0d9a8;color:#6b4a00;}
+
+  .doc{border:1px solid var(--sf-border);border-radius:6px;overflow:hidden;}
+  .doc-head{padding:16px;border-bottom:2px solid var(--apsona-orange);display:flex;justify-content:space-between;align-items:flex-start;background:#fafaf9;}
+  .doc-logo{font-size:18px;font-weight:800;}
+  .doc-logo .ap{color:var(--apsona-orange);} .doc-logo .sona{color:var(--apsona-dark);}
+  .doc-logo .tag{display:block;font-size:9px;font-weight:400;color:var(--sf-text-secondary);margin-top:1px;}
+  .doc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.3px;}
+  .doc-badge.quote{background:var(--ai-accent-light);color:var(--ai-accent);}
+  .doc-badge.invoice{background:#eaf6ee;color:var(--success);}
+  .doc-meta{text-align:right;font-size:11px;color:var(--sf-text-secondary);}
+  .doc-body{padding:14px 16px;}
+
+  .row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px;}
+  .row label{width:120px;color:var(--sf-text-secondary);flex-shrink:0;}
+  .row .rowval{flex:1;padding:4px 8px;border:1px solid var(--sf-border);border-radius:4px;background:#fffef9;}
+  .row .rowval.locked{background:#f5f5f5;color:var(--sf-text-secondary);border-style:dashed;}
+  .row .rowval.flagged{background:#fff8ec;border-color:#f0d9a8;font-weight:600;color:#6b4a00;}
+  .lock-icon{font-size:11px;color:var(--sf-text-secondary);}
+
+  table.line{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;}
+  table.line th{text-align:left;font-size:10px;text-transform:uppercase;color:var(--sf-text-secondary);padding:5px 4px;border-bottom:1px solid var(--sf-border);}
+  table.line th.num,table.line td.num{text-align:right;}
+  table.line td{padding:6px 4px;border-bottom:1px solid #f0efec;}
+  table.line tr.flagged td{background:#fff8ec;font-weight:600;}
+  table.line tr.total td{font-weight:700;border-top:1px solid var(--sf-border);border-bottom:none;padding-top:8px;}
+
+  .doc-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;background:#fafaf9;border-top:1px solid var(--sf-border);}
+
+  .sent-state{display:none;text-align:center;padding:36px 24px;}
+  .sent-state.show{display:block;animation:fadeUp .4s ease;}
+  .sent-state .icon{width:44px;height:44px;border-radius:50%;background:#eaf6ee;color:var(--success);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 12px auto;}
+  .sent-state h3{margin:0 0 6px 0;font-size:14px;}
+  .sent-state p{margin:0;font-size:12px;color:var(--sf-text-secondary);}
+
+  .queue-view{max-width:1220px;margin:0 auto;padding:14px;}
+  .queue-header{padding:12px 16px;font-size:13px;color:var(--sf-text-secondary);}
+  .queue-list{background:var(--sf-card);border:1px solid var(--sf-border);border-radius:6px;overflow:hidden;}
+  .queue-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--sf-border);cursor:pointer;}
+  .queue-row:last-child{border-bottom:none;} .queue-row:hover{background:#fafaf9;}
+  .queue-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:#e0edff;color:var(--sf-blue-dark);}
+  .queue-main{flex:1;min-width:0;}
+  .queue-subject{font-size:13.5px;font-weight:600;}
+  .queue-meta{font-size:11.5px;color:var(--sf-text-secondary);}
+  .path-badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:11px;white-space:nowrap;flex-shrink:0;}
+  .path-quote{background:var(--ai-accent-light);color:var(--ai-accent);}
+  .path-confirmed{background:#eaf6ee;color:var(--success);}
+  .path-direct{background:#fdf1ec;color:var(--apsona-orange);}
+  .queue-arrow{color:var(--sf-text-secondary);font-size:14px;flex-shrink:0;}
+
+  .detail-view{display:none;} .detail-view.show{display:block;}
+  .queue-view.hide{display:none;}
+  .back-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--sf-blue);cursor:pointer;padding:12px 16px 0 16px;max-width:1220px;margin:0 auto;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">☁ Salesforce</div>
+  <div class="crumbs">Cases &nbsp;›&nbsp; Billing and Licensing Queue</div>
+  <div class="spacer"></div>
+  <div class="avatar">SM</div>
+</div>
+
+<!-- QUEUE -->
+<div class="queue-view" id="queueView">
+  <div class="queue-header">
+    Invoice AI Assistant reads each case's full context first — including whether the customer asked for pricing only, already confirmed a quote, or asked for an invoice directly — before deciding what to draft.
+  </div>
+  <div class="queue-list" id="queueList"></div>
+</div>
+
+<!-- DETAIL -->
+<div class="detail-view" id="detailView">
+  <div class="back-link" onclick="backToQueue()">← Back to case queue</div>
+  <div class="app">
+
+    <div class="left-col">
+      <div class="card">
+        <div class="case-title">
+          <div class="case-icon" id="caseIcon">✉</div>
+          <div>
+            <div class="meta" id="caseMeta"></div>
+            <h1 id="caseSubject"></h1>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-grid">
+            <div class="field"><label>Account</label><div class="value link" id="caseAccount"></div></div>
+            <div class="field"><label>Case Owner</label><div class="value">Shinjini M.</div></div>
+            <div class="field"><label>Status</label><div class="value" id="caseStatus"></div></div>
+            <div class="field"><label>Priority</label><div class="value">Low</div></div>
+          </div>
+          <div class="thread" id="caseThread"></div>
+        </div>
+        <div class="draft-btn-wrap">
+          <button class="draft-btn" id="draftBtn" onclick="startDraft()">
+            <span>✦</span> <span id="draftBtnLabel">Draft with AI</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="ai-panel">
+        <div class="ai-panel-header"><div class="dot"></div><span>Invoice AI Assistant</span></div>
+        <div class="ai-empty" id="emptyState">
+          <div class="big-icon">✦</div>
+          <p id="emptyText">Click the button to have the assistant read this case's full context and decide what to prepare.</p>
+        </div>
+        <div class="steps" id="stepsWrap" style="display:none;"></div>
+        <div class="draft-wrap" id="draftWrap"></div>
+        <div class="sent-state" id="sentState"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CASES = {
+  quote: {
+    id: '00131102',
+    icon: '💬',
+    subject: 'Pricing question before we renew',
+    account: 'Habitat for Humanity East Bay/Silicon Valley',
+    status: 'New',
+    pathLabel: 'Quote requested',
+    pathClass: 'path-quote',
+    thread: [
+      { who: 'Sheridan Mathias · 3 days ago', text: 'Hi, before we commit to renewing, could you send over current pricing? I need to run it by our finance team.', hl: null }
+    ],
+    steps: [
+      "Reading case and matched Lead: <b>Sheridan Mathias</b>, Habitat for Humanity",
+      "Detected intent: <b>pricing/quote requested</b> — customer is not ready to commit yet",
+      "Checked license history — no seat changes mentioned in this thread",
+      "Checked last 3 payments on file — inferred payment type as <b>Check</b>",
+      "Publishing <b>apsona__Apsona_Trigger_Merge__e</b> platform event (Merge Action: 2026 Pricing Quote)",
+      "Merge completed — reading generated Excel via ContentDocumentLink",
+      "Quote #3547 ready for review"
+    ],
+    finalType: 'quote',
+    draftBtnLabel: 'Draft with AI',
+    emptyText: "Click to have the assistant detect intent, generate the pricing quote, and prepare it for reply.",
+    doc: {
+      badge: 'QUOTE', number: '3547', date: '08/17/2026',
+      company: 'Habitat for Humanity East Bay/Silicon Valley',
+      paymentType: 'Check',
+      lines: [
+        { d: 'Apsona for Salesforce', q: 13, t: 299.18, flag: false },
+        { d: 'Document and Mail Merge', q: 13, t: 169.53, flag: false }
+      ],
+      total: '408.50',
+      excelUrl: '#',
+      replyTo: 'Sheridan Mathias <smathias@habitatebsv.org>',
+      replySubject: 'Re: Pricing question before we renew — Apsona Quote #3547',
+      replyBody: "Hi Sheridan,\n\nThanks for reaching out. Please find attached our current pricing (Quote #3547) for your review — this should give your finance team what they need before deciding on the renewal.\n\nLet me know if you have any questions, or if you'd like to proceed, just reply and we'll get the invoice sent over.\n\nBest,\nShinjini\nTeam Apsona"
+    }
+  },
+  confirmed: {
+    id: '00131087',
+    icon: '✔',
+    subject: 'Re: Quote #2609 looks good',
+    account: 'Medical Teams International',
+    status: 'Customer Responded',
+    pathLabel: 'Quote confirmed',
+    pathClass: 'path-confirmed',
+    thread: [
+      { who: 'Apsona Team · 6 days ago', text: 'Please find attached your renewal quote #2609 for review.', hl: null },
+      { who: 'Priya Nair · today, 8:40 AM', text: 'This looks good, please go ahead and send us the invoice.', hl: 'looks good' }
+    ],
+    steps: [
+      "Reading case and matched Lead: <b>Medical Teams International</b>",
+      "Found prior Quote <b>#2609</b> already attached to this record",
+      "Detected customer confirmation: <b>\"looks good\"</b> — treating Quote #2609 as final",
+      "Retrieved Quote #2609 values via ContentDocumentLink — no re-generation needed",
+      "Rule enforced: <b>invoice must exactly match the confirmed quote</b>, not last year's invoice",
+      "Draft invoice built with values locked to Quote #2609"
+    ],
+    finalType: 'invoice-locked',
+    draftBtnLabel: 'Draft with AI',
+    emptyText: "Click to have the assistant retrieve the confirmed quote and draft an invoice matching it exactly.",
+    doc: {
+      badge: 'INVOICE', number: '19802', date: '08/17/2026',
+      company: 'Medical Teams International',
+      lines: [
+        { d: 'Apsona for Salesforce', q: 20, t: 5400.00, flag: false },
+        { d: 'Multi-step Reports', q: 20, t: 5400.00, flag: false },
+        { d: 'Dedupe and Match', q: 5, t: 1935.00, flag: false }
+      ],
+      total: '12,735.00',
+      note: 'Values are locked to match confirmed Quote #2609 exactly — this is enforced, not just carried forward for convenience.',
+      locked: true,
+      refQuote: {
+        label: 'Confirmed Quote #2609',
+        subtitle: 'Sent 6 days ago · Customer confirmed "looks good"',
+        lines: [
+          { d: 'Apsona for Salesforce', q: 20, t: 5400.00 },
+          { d: 'Multi-step Reports', q: 20, t: 5400.00 },
+          { d: 'Dedupe and Match', q: 5, t: 1935.00 }
+        ],
+        total: '12,735.00'
+      },
+      replyTo: 'Priya Nair <priya.nair@medicalteams.org>',
+      replySubject: 'Re: Quote #2609 looks good — Apsona Invoice #19802',
+      replyBody: "Hi Priya,\n\nThanks for confirming! Please find your renewal invoice attached — the amount matches the quote you approved exactly.\n\nYou can pay directly via the link below, or let us know if you have any questions.\n\nBest,\nShinjini\nTeam Apsona"
+    }
+  },
+  direct: {
+    id: '00131055',
+    icon: '✉',
+    subject: 'Re: Important — Your Apsona subscription is expiring soon',
+    account: 'Edge Communications',
+    status: 'Customer Responded',
+    pathLabel: 'Direct invoice request',
+    pathClass: 'path-direct',
+    thread: [
+      { who: 'Rose Gonzalez · today, 9:14 AM', text: 'Sounds good, please go ahead and send the invoice. Oh — we might need 2 more seats this year, our team grew a bit.', hl: '2 more seats' }
+    ],
+    steps: [
+      "Reading case and matched Account: <b>Edge Communications</b>",
+      "Detected intent: <b>direct invoice request</b> — no quote step mentioned by customer",
+      "Per standard process, generating an internal reference quote first for validation",
+      "Publishing <b>apsona__Apsona_Trigger_Merge__e</b> platform event (Merge Action: 2026 Pricing Quote)",
+      "Reading generated reference Excel via ContentDocumentLink",
+      "Scanning case thread for license changes — <b>found: \"2 more seats\"</b>",
+      "Adjusting AFS seat count from 5 → 7 to reflect this",
+      "Payment type inferred as <b>PayPal</b> from last 3 payments on file",
+      "Draft invoice ready — seat count change flagged for review"
+    ],
+    finalType: 'invoice-flagged',
+    draftBtnLabel: 'Draft with AI',
+    emptyText: "Click to have the assistant generate a reference quote, check for mentioned changes, and draft the invoice.",
+    doc: {
+      badge: 'INVOICE', number: '19803', date: '08/17/2026',
+      company: 'Edge Communications',
+      lines: [
+        { d: 'Apsona for Salesforce', q: 7, t: 2100.00, flag: true },
+        { d: 'Multi-step Reports', q: 5, t: 1500.00, flag: false },
+        { d: 'Document and Mail Merge', q: 5, t: 850.00, flag: false }
+      ],
+      total: '4,450.00',
+      note: 'Seat count was increased from 5 → 7 based on the customer\'s message — flagged for your review before sending.',
+      flagged: true,
+      refQuote: {
+        label: 'Internal Reference Quote #3612',
+        subtitle: 'Generated just now for validation — not sent to the customer',
+        lines: [
+          { d: 'Apsona for Salesforce', q: 5, t: 1500.00 },
+          { d: 'Multi-step Reports', q: 5, t: 1500.00 },
+          { d: 'Document and Mail Merge', q: 5, t: 850.00 }
+        ],
+        total: '3,850.00'
+      },
+      replyTo: 'Rose Gonzalez <rose.gonzalez@edge.com>',
+      replySubject: 'Re: Your Apsona subscription is expiring soon — Invoice #19803',
+      replyBody: "Hi Rose,\n\nThanks for confirming! I've gone ahead and included the 2 additional seats you mentioned in this year's renewal.\n\nPlease find your invoice attached — let me know if anything looks off.\n\nBest,\nShinjini\nTeam Apsona"
+    }
+  }
+};
+
+function renderQueueSkeleton(){
+  const list = document.getElementById('queueList');
+  list.innerHTML = '';
+  Object.values(CASES).forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'queue-row';
+    row.onclick = () => openCase(c.id);
+    row.innerHTML = `
+      <div class="queue-icon">${c.icon}</div>
+      <div class="queue-main">
+        <div class="queue-subject">${c.subject}</div>
+        <div class="queue-meta">#${c.id} · ${c.account}</div>
+      </div>
+      <div class="path-badge ${c.pathClass}">${c.pathLabel}</div>
+      <div class="queue-arrow">›</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function findCase(id){ return Object.values(CASES).find(c => c.id === id); }
+
+function openCase(id){
+  const c = findCase(id);
+  document.getElementById('caseIcon').textContent = c.icon;
+  document.getElementById('caseSubject').textContent = c.subject;
+  document.getElementById('caseMeta').textContent = '#' + c.id + ' · Billing and Licensing';
+  document.getElementById('caseAccount').textContent = c.account;
+  document.getElementById('caseStatus').textContent = c.status;
+  document.getElementById('draftBtnLabel').textContent = c.draftBtnLabel;
+  document.getElementById('emptyText').textContent = c.emptyText;
+
+  const thread = document.getElementById('caseThread');
+  thread.innerHTML = '';
+  c.thread.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg' + (m.hl ? ' highlight' : '');
+    let text = m.text;
+    if(m.hl) text = text.replace(m.hl, `<span class="hl">${m.hl}</span>`);
+    div.innerHTML = `<div class="who">${m.who}</div>${text}`;
+    thread.appendChild(div);
+  });
+
+  window.currentCase = c;
+  document.getElementById('queueView').classList.add('hide');
+  document.getElementById('detailView').classList.add('show');
+  resetDemo(false);
+}
+
+function backToQueue(){
+  document.getElementById('detailView').classList.remove('show');
+  document.getElementById('queueView').classList.remove('hide');
+}
+
+function startDraft(){
+  const c = window.currentCase;
+  document.getElementById('draftBtn').setAttribute('disabled','true');
+  document.getElementById('emptyState').style.display = 'none';
+  const stepsWrap = document.getElementById('stepsWrap');
+  stepsWrap.style.display = 'block';
+  stepsWrap.innerHTML = '';
+
+  let i = 0;
+  function addStep(){
+    if(i >= c.steps.length){
+      setTimeout(() => renderDraft(c), 300);
+      return;
+    }
+    const isFlag = c.steps[i].includes('found:') || c.steps[i].includes('Adjusting');
+    const el = document.createElement('div');
+    el.className = 'step';
+    el.innerHTML = `<div class="check ${isFlag ? 'flag' : ''}">${isFlag ? '!' : '···'}</div><div class="txt">${c.steps[i]}</div>`;
+    stepsWrap.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    i++;
+    setTimeout(addStep, 480);
+  }
+  addStep();
+}
+
+function renderDraft(c){
+  const wrap = document.getElementById('draftWrap');
+  const d = c.doc;
+  const isInvoice = c.finalType !== 'quote';
+
+  let bannerHtml = '';
+  if(c.finalType === 'invoice-locked'){
+    bannerHtml = `<div class="banner locked"><b>Locked to confirmed quote.</b> ${d.note}</div>`;
+  } else if(c.finalType === 'invoice-flagged'){
+    bannerHtml = `<div class="banner flagged"><b>Change detected and applied.</b> ${d.note}</div>`;
+  }
+
+  let refQuoteToggle = '';
+  let refQuotePanel = '';
+  if(d.refQuote){
+    const rq = d.refQuote;
+    refQuoteToggle = `<button class="btn-link" onclick="toggleRefQuote()" id="refQuoteToggle" style="background:none;border:none;padding:0;font-size:12px;font-weight:700;color:var(--ai-accent);cursor:pointer;text-decoration:underline;margin-bottom:10px;display:inline-block;">📄 View ${rq.label} — cross-check before sending</button>`;
+    const rqRows = rq.lines.map(l => `<tr><td>${l.d}</td><td class="num">${l.q}</td><td class="num">$${l.t.toFixed(2)}</td></tr>`).join('');
+    refQuotePanel = `
+      <div id="refQuotePanel" style="display:none;background:#fbfaf7;border:1px dashed var(--sf-border);border-radius:6px;padding:12px 14px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--sf-text-secondary);border-bottom:1px solid var(--sf-border);padding-bottom:8px;margin-bottom:8px;">
+          <span>${rq.subtitle}</span>
+          <button class="btn-link" onclick="toggleRefQuote()" style="background:none;border:none;padding:0;font-size:12px;font-weight:700;color:var(--ai-accent);cursor:pointer;">Hide</button>
+        </div>
+        <table class="line">
+          <thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Amount</th></tr></thead>
+          <tbody>${rqRows}<tr class="total"><td>Total</td><td></td><td class="num">$${rq.total}</td></tr></tbody>
+        </table>
+      </div>`;
+  }
+
+  let rowsHtml;
+  if(isInvoice){
+    rowsHtml = d.lines.map((l,idx) => `
+      <tr class="${l.flag ? 'flagged' : ''}">
+        <td>${l.d}${l.flag ? ' <span style="font-size:10px;color:#b25000;">(updated)</span>' : ''}</td>
+        <td class="num"><input type="number" value="${l.q}" oninput="flagLineEdit(this)" style="width:50px;text-align:right;border:1px solid var(--sf-border);border-radius:3px;padding:2px 4px;"/></td>
+        <td class="num">$${l.t.toFixed(2)}</td>
+      </tr>`).join('');
+  } else {
+    rowsHtml = d.lines.map(l => `<tr><td>${l.d}</td><td class="num">${l.q}</td><td class="num">$${l.t.toFixed(2)}</td></tr>`).join('');
+  }
+
+  const paymentRow = d.paymentType ? `<p style="margin:6px 0 0 0;font-size:12px;color:var(--sf-text-secondary);">Payment Type: <strong style="color:var(--sf-text);">${d.paymentType}</strong></p>` : '';
+  const excelLinkHtml = d.excelUrl ? `<div style="margin-top:10px;font-size:12px;"><a href="${d.excelUrl}" onclick="return false;" style="color:var(--sf-blue);text-decoration:underline;">📊 Open source Excel — AI-filled (payment type &amp; values already applied)</a><span style="color:var(--sf-text-secondary);"> — edit here if you want to change anything before sending; the PDF above is generated from this file</span></div>` : '';
+
+  let replyPreviewHtml = '';
+  if(c.finalType === 'quote' && d.replyBody){
+    replyPreviewHtml = buildReplyCard(d, `Quote-${d.number}-${c.account.split(' ').slice(0,2).join('')}.pdf`);
+  }
+
+  const actionsHtml = isInvoice ? `
+    <div class="doc-actions" id="invoiceActions" style="margin-top:12px;border:1px solid var(--sf-border);border-radius:6px;">
+      <button class="btn btn-ghost" onclick="resetDemo()">Discard</button>
+      <button class="btn" id="prepareBtn" onclick="handlePrepare()">Prepare</button>
+    </div>
+    <div id="postPrepareArea"></div>
+  ` : `
+    <div class="doc-actions" style="margin-top:12px;border:1px solid var(--sf-border);border-radius:6px;">
+      <button class="btn btn-ghost" onclick="resetDemo()">Discard</button>
+    </div>
+  `;
+
+  wrap.innerHTML = `
+    ${bannerHtml}
+    ${refQuoteToggle}
+    ${refQuotePanel}
+    <div class="doc">
+      <div class="doc-head">
+        <div><div class="doc-logo"><span class="ap">ap</span><span class="sona">sona</span><span class="tag">SIMPLE. RELIABLE. EFFECTIVE.</span></div></div>
+        <div class="doc-meta"><span class="doc-badge ${d.badge === 'QUOTE' ? 'quote' : 'invoice'}">${d.badge}</span><br/># ${d.number}<br/>${d.date}</div>
+      </div>
+      <div class="doc-body">
+        <p style="margin:0 0 10px 0;"><strong>${d.company}</strong></p>
+        <table class="line">
+          <thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Amount</th></tr></thead>
+          <tbody>${rowsHtml}<tr class="total"><td>Total</td><td></td><td class="num">$${d.total}</td></tr></tbody>
+        </table>
+        ${paymentRow}
+        ${excelLinkHtml}
+      </div>
+    </div>
+    ${replyPreviewHtml}
+    ${actionsHtml}
+  `;
+  wrap.classList.add('show');
+  window.currentDoc = d;
+}
+
+function toggleRefQuote(){
+  const panel = document.getElementById('refQuotePanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function flagLineEdit(el){
+  // purely visual — marks the row as manually touched
+  const row = el.closest('tr');
+  if(row && !row.classList.contains('flagged')) row.style.background = '#fff8ec';
+}
+
+function buildReplyCard(d, attachmentName){
+  return `
+    <div class="card" style="margin-top:12px;">
+      <div style="padding:12px 14px;border-bottom:1px solid var(--sf-border);background:#fafaf9;">
+        <div style="font-size:11px;color:var(--sf-text-secondary);margin-bottom:2px;">To: ${d.replyTo}</div>
+        <div style="font-size:12.5px;font-weight:600;">${d.replySubject}</div>
+      </div>
+      <div style="padding:14px;">
+        <textarea id="replyBodyBox" style="width:100%;min-height:150px;font-family:inherit;font-size:12.5px;line-height:1.5;border:1px solid var(--sf-border);border-radius:4px;padding:10px;resize:vertical;">${d.replyBody}</textarea>
+        <div style="margin-top:8px;font-size:11.5px;color:var(--sf-text-secondary);">📎 ${attachmentName} attached</div>
+      </div>
+      <div style="padding:10px 14px;background:#fafaf9;border-top:1px solid var(--sf-border);display:flex;justify-content:flex-end;gap:8px;">
+        <span id="draftedNote" style="font-size:11.5px;color:var(--sf-text-secondary);align-self:center;margin-right:auto;">Message drafted — not yet sent</span>
+        <button class="btn btn-primary" onclick="confirmSend()">Send</button>
+      </div>
+    </div>`;
+}
+
+function handlePrepare(){
+  const btn = document.getElementById('prepareBtn');
+  btn.setAttribute('disabled', 'true');
+  btn.textContent = 'Preparing...';
+  setTimeout(() => {
+    const d = window.currentDoc;
+    document.getElementById('invoiceActions').style.display = 'none';
+    const area = document.getElementById('postPrepareArea');
+    area.innerHTML = `
+      <div style="font-size:11.5px;color:var(--success);margin:10px 0;">✓ Prepared — public invoice link generated</div>
+      <div class="doc-actions" style="border:1px solid var(--sf-border);border-radius:6px;margin-bottom:12px;">
+        <button class="btn btn-ghost" onclick="resetDemo()">Discard</button>
+        <button class="btn" onclick="handleSave()">Save</button>
+      </div>
+      ${buildReplyCard(d, `Invoice-${d.number}-public-link.pdf`)}
+    `;
+  }, 900);
+}
+
+function handleSave(){
+  const area = document.getElementById('postPrepareArea');
+  const existing = document.getElementById('saveNote');
+  if(existing) return;
+  const note = document.createElement('div');
+  note.id = 'saveNote';
+  note.style.fontSize = '11.5px';
+  note.style.color = 'var(--success)';
+  note.style.margin = '0 0 12px 0';
+  note.textContent = '✓ Invoice saved';
+  area.insertBefore(note, area.children[1]);
+}
+
+function confirmSend(){
+  const note = document.getElementById('draftedNote');
+  if(note) note.textContent = 'Sending...';
+  setTimeout(() => sendFinal(window.currentCase.finalType), 500);
+}
+
+function sendFinal(type){
+  document.getElementById('draftWrap').classList.remove('show');
+  document.getElementById('stepsWrap').style.display = 'none';
+  const sent = document.getElementById('sentState');
+  let html = '';
+  if(type === 'quote'){
+    html = `<div class="icon">✓</div><h3>Quote sent to customer</h3><p>Sheridan Mathias will receive the pricing quote by email as a PDF. The case remains open awaiting their decision.</p>`;
+  } else if(type === 'invoice-locked'){
+    html = `<div class="icon">✓</div><h3>Invoice sent — matches Quote #2609</h3><p>Priya Nair has been emailed the invoice with a payment link. Values were locked to the customer-confirmed quote.</p>`;
+  } else {
+    html = `<div class="icon">✓</div><h3>Invoice sent with reviewed seat count</h3><p>Rose Gonzalez has been emailed the invoice with a payment link. The seat count increase was flagged and applied before sending.</p>`;
+  }
+  sent.innerHTML = html;
+  setTimeout(() => sent.classList.add('show'), 200);
+}
+
+function resetDemo(goToQueue = true){
+  document.getElementById('draftWrap').classList.remove('show');
+  document.getElementById('draftWrap').innerHTML = '';
+  document.getElementById('stepsWrap').style.display = 'none';
+  document.getElementById('stepsWrap').innerHTML = '';
+  document.getElementById('sentState').classList.remove('show');
+  document.getElementById('sentState').innerHTML = '';
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('draftBtn').removeAttribute('disabled');
+  if(goToQueue) backToQueue();
+}
+
+renderQueueSkeleton();
+</script>
+
+</body>
+</html>

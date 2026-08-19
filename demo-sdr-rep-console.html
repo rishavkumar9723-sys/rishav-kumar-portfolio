@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pursuit — Outbound Console | Apsona</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{
+    --bg:#EDEEF2; --panel:#FFFFFF; --panel-2:#F6F7FA; --line:#DFE1E8; --line-soft:#E9EAF0;
+    --fog:#5B5F6B; --fog-dim:#9497A3; --ink:#14151A;
+    --blue:#E8562F; --blue-soft:rgba(232,86,47,0.09); --navy:#14151A; --navy-2:#1E2027;
+    --green:#1E8E5A; --green-soft:rgba(30,142,90,0.1);
+    --amber:#B8790A; --amber-soft:rgba(184,121,10,0.1);
+    --red:#C43D2D; --red-soft:rgba(196,61,45,0.1);
+    --gray-soft:rgba(91,95,107,0.07);
+    --shadow-sm:0 1px 2px rgba(20,20,24,0.05);
+    --shadow-md:0 10px 22px -10px rgba(20,20,24,0.16), 0 2px 4px -1px rgba(20,20,24,0.08);
+    --shadow-lg:0 26px 60px -20px rgba(20,20,24,0.3);
+    --display:'Oswald', sans-serif; --body:'Inter', sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+  input,select{font-family:inherit;}
+  svg.ic{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+  h1,h3,.brand-name,.company,.trail-agent,.rp-step-name,.int-name,.drawer-company{text-transform:uppercase;letter-spacing:0.3px;}
+
+  #app{display:grid;grid-template-columns:246px 1fr;min-height:100vh;}
+  @media (max-width:840px){#app{grid-template-columns:1fr;}#sidebar{display:none;}}
+
+  #sidebar{background:var(--navy);color:#fff;padding:22px 16px;display:flex;flex-direction:column;border-right:3px solid var(--blue);}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+  .brand-mark{width:30px;height:30px;border-radius:3px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:14px;position:relative;}
+  .brand-mark::after{content:'';position:absolute;inset:-4px;border:1px solid rgba(232,86,47,0.5);border-radius:50%;}
+  .brand-name{font-family:var(--display);font-weight:600;font-size:15px;}
+  .brand-sub{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4);margin:2px 0 26px 40px;text-transform:none;}
+  .navitem{display:flex;align-items:center;gap:10px;padding:10.5px 12px;border-radius:3px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.65);margin-bottom:3px;transition:background .15s;text-transform:none;letter-spacing:0;}
+  .navitem svg.ic{stroke:rgba(255,255,255,0.55);}
+  .navitem:hover{background:rgba(255,255,255,0.06);}
+  .navitem.active{background:rgba(255,255,255,0.13);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08);}
+  .navitem.active svg.ic{stroke:#fff;}
+  .navitem span.lbl{flex:1;}
+  .navbadge{background:var(--blue);color:#fff;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;position:relative;}
+  .navbadge::after{content:'';position:absolute;inset:-3px;border:1px solid var(--blue);border-radius:20px;animation:ping 1.8s infinite;}
+  @keyframes ping{0%{opacity:0.7;transform:scale(1);}100%{opacity:0;transform:scale(1.6);}}
+  @media (prefers-reduced-motion: reduce){.navbadge::after{animation:none;display:none;}}
+  .rep-card{margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px;}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#7B93F0);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+  .rep-name{font-size:13px;font-weight:600;}
+  .rep-role{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px;}
+  .back-link{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:6px;margin-bottom:22px;}
+  .back-link:hover{color:#fff;}
+
+  #main{padding:30px 36px 60px;}
+  .page-head{margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+  .page-head h1{font-family:var(--display);font-size:24px;font-weight:700;}
+  .page-head p{color:var(--fog);font-size:13.5px;margin-top:4px;max-width:520px;}
+
+  table.queue{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:var(--shadow-md);}
+  table.queue th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);padding:13px 16px;border-bottom:1px solid var(--line);background:var(--panel-2);}
+  table.queue td{padding:15px 16px;border-bottom:1px solid var(--line-soft);font-size:13.5px;vertical-align:middle;}
+  table.queue tr:last-child td{border-bottom:none;}
+  table.queue tr.rowlink{cursor:pointer;transition:background .15s;}
+  table.queue tr.rowlink:hover{background:var(--panel-2);}
+  .lead-cell{display:flex;align-items:center;gap:11px;}
+  .company{font-weight:600;}
+  .company-sub{font-family:var(--mono);font-size:11px;color:var(--fog-dim);margin-top:2px;}
+
+  .tier{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:0.3px;}
+  .tier.A{background:var(--navy);color:#fff;}
+  .tier.B{background:var(--gray-soft);color:var(--fog);border:1px solid var(--line);}
+  .tier.C{background:transparent;color:var(--fog-dim);border:1px dashed var(--line);}
+
+  .status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;}
+  .status .dot{width:6px;height:6px;border-radius:50%;}
+  .status.on_track{background:var(--green-soft);color:var(--green);}
+  .status.on_track .dot{background:var(--green);}
+  .status.needs_review{background:var(--amber-soft);color:var(--amber);}
+  .status.needs_review .dot{background:var(--amber);}
+  .status.blocked{background:var(--gray-soft);color:var(--fog);}
+  .status.blocked .dot{background:var(--fog-dim);}
+  .status.closed{background:var(--gray-soft);color:var(--fog-dim);}
+  .status.closed .dot{background:var(--fog-dim);}
+
+  .stagebar{display:flex;gap:2.5px;align-items:center;}
+  .stagebar .seg{width:11px;height:5px;border-radius:2px;background:var(--line);}
+  .stagebar .seg.on{background:var(--blue);}
+  .stagebar .seg.amber{background:var(--amber);}
+  .stagebar .seg.done{background:var(--fog-dim);}
+  .stage-label{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);margin-top:5px;}
+
+  .review-card{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:6px;padding:22px 24px;margin-bottom:14px;box-shadow:var(--shadow-md);}
+  .review-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+  .review-top h3{font-family:var(--display);font-size:16.5px;font-weight:600;}
+  .review-reason{background:var(--amber-soft);border:1px solid rgba(217,119,6,0.22);border-radius:4px;padding:12px 14px;font-size:13px;color:var(--ink);margin-bottom:14px;line-height:1.65;}
+  .review-reason b{color:var(--amber);}
+  .review-actions{display:flex;gap:10px;flex-wrap:wrap;}
+  .btn{font-family:var(--body);font-size:13px;font-weight:600;padding:10px 16px;border-radius:4px;border:1px solid var(--line);display:inline-flex;align-items:center;gap:7px;transition:transform .12s, box-shadow .12s;}
+  .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 6px 16px -6px rgba(52,87,213,0.55);}
+  .btn.primary:hover{transform:translateY(-1px);}
+  .btn.ghost{background:var(--panel);color:var(--ink);}
+  .btn.ghost:hover{border-color:var(--fog-dim);}
+  .btn.sm{padding:8px 13px;font-size:12.5px;}
+  .btn.zoom{background:#fff;color:#2D8CFF;border-color:#2D8CFF;}
+  .btn.calendly{background:#fff;color:#006BFF;border-color:#006BFF;}
+  .btn:disabled{opacity:0.45;cursor:default;transform:none;}
+  .empty-state{color:var(--fog-dim);font-size:13.5px;padding:50px 0;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:6px;}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+  @media (max-width:840px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  .stat-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:19px 21px;box-shadow:var(--shadow-sm);}
+  .stat-num{font-family:var(--display);font-size:29px;font-weight:700;}
+  .stat-label{font-family:var(--mono);font-size:10.5px;letter-spacing:0.5px;text-transform:uppercase;color:var(--fog-dim);margin-top:4px;}
+  .insight-card{background:linear-gradient(135deg,var(--blue-soft),transparent);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:6px;padding:20px 22px;}
+  .insight-card h3{font-family:var(--display);font-size:15px;margin-bottom:9px;}
+  .insight-card p{font-size:13.5px;color:var(--fog);line-height:1.7;}
+
+  /* ===== Integrations ===== */
+  .int-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  @media (max-width:840px){.int-grid{grid-template-columns:1fr;}}
+  .int-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px 22px;box-shadow:var(--shadow-sm);display:flex;gap:14px;}
+  .int-logo{width:42px;height:42px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:15px;color:#fff;}
+  .int-body{flex:1;}
+  .int-name-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .int-name{font-family:var(--display);font-weight:600;font-size:14.5px;}
+  .int-desc{font-size:12.5px;color:var(--fog);margin:4px 0 10px;line-height:1.6;}
+  .int-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+  .int-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:5px;background:var(--panel-2);border:1px solid var(--line);color:var(--fog);}
+  .int-foot{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);}
+  .int-status{display:inline-flex;align-items:center;gap:5px;color:var(--green);}
+  .int-status .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+
+  /* ===== Run Pipeline ===== */
+  .rp-controls{display:flex;align-items:center;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .rp-select{font-family:var(--mono);font-size:12.5px;padding:10px 14px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--ink);}
+  .rp-progress-track{flex:1;min-width:140px;height:6px;background:var(--line-soft);border-radius:20px;overflow:hidden;}
+  .rp-progress-fill{height:100%;width:0%;background:var(--blue);transition:width .4s;}
+  .rp-counter{font-family:var(--mono);font-size:12px;color:var(--fog-dim);white-space:nowrap;}
+  .rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media (max-width:900px){.rp-grid{grid-template-columns:1fr;}}
+  .rp-stepper{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;box-shadow:var(--shadow-md);max-height:560px;overflow-y:auto;}
+  .rp-step{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:4px;margin-bottom:2px;transition:background .2s;}
+  .rp-step.active{background:var(--blue-soft);}
+  .rp-step.done{opacity:0.6;}
+  .rp-step-num{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--fog-dim);flex-shrink:0;}
+  .rp-step.active .rp-step-num{background:var(--blue);color:#fff;border-color:var(--blue);}
+  .rp-step.done .rp-step-num{background:var(--green);color:#fff;border-color:var(--green);}
+  .rp-step-name{font-family:var(--display);font-size:13px;font-weight:600;}
+  .rp-step-tool{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);margin-top:1px;}
+  .rp-code{background:#0B0E16;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:18px 20px;box-shadow:var(--shadow-md);height:560px;overflow-y:auto;font-family:var(--mono);font-size:12.5px;color:#B9E6D2;}
+  .rp-code .ln{margin-bottom:7px;opacity:0;animation:fadein .3s forwards;line-height:1.7;}
+  .rp-code .ln .pfx{color:#5A6374;}
+  .rp-code .ln .fn{color:#7DB8F0;}
+  .rp-code .ln .ok{color:#34D399;}
+  .rp-code .ln .warn{color:#F2B544;}
+  @keyframes fadein{to{opacity:1;}}
+  .rp-code-empty{color:#5A6374;}
+  .rp-done-banner{display:none;margin-top:18px;background:var(--green-soft);border:1px solid rgba(22,163,74,0.3);border-radius:5px;padding:16px 20px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .rp-done-banner.show{display:flex;}
+  .rp-done-banner span{font-size:13.5px;color:var(--ink);}
+  .rp-done-banner b{color:var(--green);}
+
+  /* ===== Lead detail overlay ===== */
+  .overlay{position:fixed;inset:0;background:rgba(15,18,32,0.6);z-index:100;display:none;align-items:flex-start;justify-content:flex-end;}
+  .overlay.open{display:flex;}
+  .drawer{width:min(600px,100%);height:100vh;background:var(--panel);overflow-y:auto;box-shadow:var(--shadow-lg);}
+  .drawer-head{padding:26px 28px 0;border-bottom:1px solid var(--line-soft);position:sticky;top:0;background:var(--panel);z-index:2;padding-bottom:18px;}
+  .drawer-close{position:absolute;top:24px;right:24px;width:32px;height:32px;border:1px solid var(--line);border-radius:4px;color:var(--fog);}
+  .drawer-close:hover{color:var(--ink);border-color:var(--fog-dim);}
+  .drawer-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .drawer-avatar{width:44px;height:44px;border-radius:5px;background:linear-gradient(135deg,var(--blue),#7B93F0);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;color:#fff;font-size:16px;}
+  .drawer-company{font-family:var(--display);font-size:19px;font-weight:700;}
+  .drawer-contact{font-size:12.5px;color:var(--fog);margin-top:1px;}
+  .drawer-tabs{display:flex;gap:4px;padding:0 28px;border-bottom:1px solid var(--line-soft);}
+  .dtab{font-family:var(--mono);font-size:12px;padding:12px 6px;margin-right:20px;color:var(--fog-dim);border-bottom:2px solid transparent;}
+  .dtab.active{color:var(--blue);border-bottom-color:var(--blue);}
+  .drawer-body{padding:22px 28px 60px;}
+  .dpane{display:none;}
+  .dpane.active{display:block;}
+
+  .fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  .fact{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:13px 15px;}
+  .fact .k{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);margin-bottom:4px;}
+  .fact .v{font-size:13.5px;font-weight:600;}
+
+  .meeting-card{border:1px solid var(--line);border-radius:5px;padding:16px 18px;margin-bottom:22px;background:var(--panel-2);}
+  .meeting-card h4{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);margin-bottom:10px;}
+  .meeting-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .meeting-time{font-size:13.5px;font-weight:600;}
+
+  .trail-item{position:relative;padding-left:26px;padding-bottom:22px;border-left:2px solid var(--line-soft);margin-left:8px;}
+  .trail-item:last-child{border-left-color:transparent;padding-bottom:0;}
+  .trail-dot{position:absolute;left:-7px;top:0;width:12px;height:12px;border-radius:50%;border:2px solid var(--panel);}
+  .trail-dot.pass{background:var(--green);}
+  .trail-dot.fail{background:var(--amber);}
+  .trail-dot.rep{background:var(--blue);}
+  .trail-agent{font-family:var(--display);font-size:14px;font-weight:600;}
+  .trail-time{font-family:var(--mono);font-size:10.5px;color:var(--fog-dim);margin-top:1px;margin-bottom:8px;}
+  .trail-rule{font-size:12.5px;background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:6px;color:var(--fog);}
+  .trail-rule b{color:var(--ink);}
+  .trail-reason{font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:6px;}
+  .trail-meta{display:flex;gap:8px;align-items:center;}
+  .badge-outcome{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;}
+  .badge-outcome.pass{background:var(--green-soft);color:var(--green);}
+  .badge-outcome.fail{background:var(--amber-soft);color:var(--amber);}
+  .badge-outcome.rep{background:var(--blue-soft);color:var(--blue);}
+  .confidence{font-family:var(--mono);font-size:11px;color:var(--fog-dim);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <a class="back-link" href="index.html">&larr; Back to portfolio</a>
+    <div class="brand"><div class="brand-mark">A</div><div class="brand-name">Pursuit</div></div>
+    <div class="brand-sub">Apsona · rep console</div>
+
+    <div class="navitem active" data-tab="run" onclick="switchMainTab('run')">
+      <svg class="ic" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg><span class="lbl">Run Sequence</span>
+    </div>
+    <div class="navitem" data-tab="queue" onclick="switchMainTab('queue')">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="lbl">Target List</span>
+    </div>
+    <div class="navitem" data-tab="review" onclick="switchMainTab('review')">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.3 3.9L2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      <span class="lbl">Flagged</span><span class="navbadge" id="review-badge">0</span>
+    </div>
+    <div class="navitem" data-tab="metrics" onclick="switchMainTab('metrics')">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span class="lbl">Hit Rate</span>
+    </div>
+    <div class="navitem" data-tab="integrations" onclick="switchMainTab('integrations')">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="lbl">Integrations</span>
+    </div>
+
+    <div class="rep-card">
+      <div class="avatar">PS</div>
+      <div><div class="rep-name">Priya Shah</div><div class="rep-role">Outbound Rep · Apsona</div></div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="pane-run"></div>
+    <div id="pane-queue" style="display:none;"></div>
+    <div id="pane-review" style="display:none;"></div>
+    <div id="pane-metrics" style="display:none;"></div>
+    <div id="pane-integrations" style="display:none;"></div>
+  </div>
+</div>
+
+<div class="overlay" id="drawer-overlay" onclick="if(event.target===this) closeDrawer()">
+  <div class="drawer">
+    <div class="drawer-head">
+      <button class="drawer-close" onclick="closeDrawer()">✕</button>
+      <div class="drawer-top">
+        <div class="drawer-avatar" id="drawer-avatar"></div>
+        <div>
+          <div class="drawer-company" id="drawer-company"></div>
+          <div class="drawer-contact" id="drawer-contact"></div>
+        </div>
+      </div>
+      <div id="drawer-badges"></div>
+    </div>
+    <div class="drawer-tabs">
+      <button class="dtab active" data-dtab="overview" onclick="switchDrawerTab('overview')">Overview</button>
+      <button class="dtab" data-dtab="trail" onclick="switchDrawerTab('trail')">Agent Trail</button>
+    </div>
+    <div class="drawer-body">
+      <div class="dpane active" id="dpane-overview"></div>
+      <div class="dpane" id="dpane-trail"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= AGENT DEFINITIONS (for Run Pipeline) ================= */
+var PIPELINE_AGENTS = [
+  {name:'Lister Agent', tool:'Apollo', log:['<span class="fn">apollo.search</span>(employees&gt;=250, country="US")', '<span class="ok">&gt; matched 1 account — Solstice Retail Co (312 employees)</span>']},
+  {name:'Dedupe Agent', tool:'Apsona · Salesforce', log:['<span class="fn">salesforce.query</span>(Account.Website = "solsticeretail.com")', '<span class="ok">&gt; no exact match — proceeding</span>']},
+  {name:'Intent Agent', tool:'6Sense · Apify', log:['<span class="fn">sixsense.getSignals</span>(accountId)', 'apify.scrapeJobBoards(domain)', '<span class="ok">&gt; corroborated: hiring surge (ops), confidence 0.82</span>']},
+  {name:'Scoring Agent', tool:'Python model', log:['<span class="fn">score_lead</span>(features)', '<span class="ok">&gt; score 71 — Tier B, breakdown attached</span>']},
+  {name:'Contact-Resolution Agent', tool:'Apollo · ZeroBounce', log:['<span class="fn">apollo.findPersona</span>(domain, role="Ops")', 'zerobounce.<span class="fn">validate</span>(email)', '<span class="warn">&gt; status: "risky" — hard gate triggered, escalating to rep</span>']}
+];
+
+/* ================= LEAD DATA ================= */
+var LEADS = [
+  {
+    id:'acme', company:'Acme Manufacturing', domain:'acmemfg.com', contact:'J. Rivera · RevOps Admin',
+    tier:'A', stage:'Meeting Booked', status:'on_track', updated:'Just now', stageIndex:10,
+    facts:{employees:310, intent:'Hiring surge (ops team)', seller:'Diego M.'},
+    meeting:{booked:true, time:'Thu, Aug 21 · 2:00 PM IST', zoom:'https://zoom.us/j/00000000000', calendly:'https://calendly.com/apsona-diego/reschedule'},
+    trail:[
+      {agent:'Lister Agent', time:'Mon 9:02 AM', result:'pass', rule:'Account must have 250+ employees and a resolvable domain.', reasoning:'Matched ICP filter: 310 employees, domain resolved via Apollo.'},
+      {agent:'Dedupe Agent', time:'Mon 9:03 AM', result:'pass', rule:'Suppress only on an exact domain match against Salesforce.', reasoning:'No exact match found in Salesforce Account.Website.'},
+      {agent:'Intent Agent', time:'Mon 9:05 AM', result:'pass', rule:'Tag "hot" only with a corroborating second source.', reasoning:'Hiring surge confirmed by both 6Sense and a job-board scrape (Apify).', confidence:0.88},
+      {agent:'Scoring Agent', time:'Mon 9:06 AM', result:'fail', rule:'Score must ship with an explainable feature breakdown.', reasoning:'Initial score 58 — Tier C. Held for weekly re-score rather than discarded.'},
+      {agent:'Scoring Agent', time:'Thu 9:00 AM', result:'pass', rule:'Re-scored on the weekly Tier-C loop.', reasoning:'Score rose to 74 after fresh intent data — promoted to Tier A.'},
+      {agent:'Contact-Resolution Agent', time:'Thu 9:15 AM', result:'pass', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found J. Rivera, RevOps Admin via Apollo. ZeroBounce returned "valid".'},
+      {agent:'Personalization Agent', time:'Thu 9:20 AM', result:'pass', rule:'Draft must cite a real signal from the Intent Agent.', reasoning:'Drafted around the hiring-surge angle with a single CTA.'},
+      {agent:'Outreach Agent', time:'Thu 9:25 AM', result:'pass', rule:'Cap of 3 touches without reply before auto-pause.', reasoning:'Email sent (step 1). No reply after 3 days — follow-up sent (touch 2/3).'},
+      {agent:'Reply-Classification Agent', time:'Mon 10:40 AM', result:'pass', rule:'Below 0.75 confidence, route to human review.', reasoning:'Reply: "Sounds interesting, when can we chat?" classified positive.', confidence:0.91},
+      {agent:'Scheduling Agent', time:'Mon 10:41 AM', result:'pass', rule:'Only book against the seller\'s actual free/busy calendar.', reasoning:'Proposed 3 slots via Calendly, booked Thu 2:00 PM with Diego M. Brief generated.'},
+      {agent:'CRM-Sync Agent', time:'Mon 10:41 AM', result:'pass', rule:'Writes are idempotent by lead ID.', reasoning:'Account, Contact, and 7 Activity records written to Salesforce. Handed off to seller queue.'}
+    ]
+  },
+  {
+    id:'northfield', company:'Northfield Logistics', domain:'northfieldlog.com', contact:'K. Alvarez · Ops Manager',
+    tier:'B', stage:'Outreach — awaiting reply', status:'on_track', updated:'2 hrs ago', stageIndex:7,
+    facts:{employees:640, intent:'Tech-stack change (new WMS)', seller:'Diego M.'},
+    meeting:{booked:false},
+    trail:[
+      {agent:'Lister Agent', time:'Tue 8:10 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'642 employees, domain resolved.'},
+      {agent:'Dedupe Agent', time:'Tue 8:11 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match in Salesforce.'},
+      {agent:'Intent Agent', time:'Tue 8:13 AM', result:'pass', rule:'Corroborating source required for "hot".', reasoning:'WMS migration confirmed via 6Sense only — tagged "warm", not "hot".', confidence:0.74},
+      {agent:'Scoring Agent', time:'Tue 8:14 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 66 — Tier B.'},
+      {agent:'Contact-Resolution Agent', time:'Tue 8:20 AM', result:'pass', rule:'Hard gate: valid email required.', reasoning:'Found K. Alvarez, Ops Manager. ZeroBounce: valid.'},
+      {agent:'Personalization Agent', time:'Tue 8:22 AM', result:'pass', rule:'Draft must cite a real signal.', reasoning:'Angle: WMS migration timing.'},
+      {agent:'Outreach Agent', time:'Tue 8:25 AM', result:'pass', rule:'Cap of 3 touches without reply.', reasoning:'Email sent, 1 follow-up sent (2/3). Awaiting reply.'}
+    ]
+  },
+  {
+    id:'bramble', company:'Bramble & Co', domain:'brambleco.com', contact:'M. Okafor · Head of Ops',
+    tier:'A', stage:'Contact Resolution — blocked', status:'needs_review', updated:'40 min ago', stageIndex:5,
+    facts:{employees:420, intent:'Budget signal (new headcount req)', seller:'—'},
+    meeting:{booked:false},
+    reviewReason:'ZeroBounce flagged the resolved contact email as "risky" — the domain looks like a catch-all, so the Contact-Resolution Agent\'s hard gate stopped the sequence rather than guessing.',
+    trail:[
+      {agent:'Lister Agent', time:'Wed 9:40 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'420 employees.'},
+      {agent:'Dedupe Agent', time:'Wed 9:41 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match in Salesforce.'},
+      {agent:'Intent Agent', time:'Wed 9:43 AM', result:'pass', rule:'Corroborating source required.', reasoning:'Budget signal confirmed via 6Sense + Apify job posting.', confidence:0.83},
+      {agent:'Scoring Agent', time:'Wed 9:44 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 79 — Tier A.'},
+      {agent:'Contact-Resolution Agent', time:'Wed 10:20 AM', result:'fail', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found M. Okafor, Head of Ops. ZeroBounce returned "risky" — possible catch-all domain. Escalated instead of guessing.', confidence:0.52}
+    ]
+  },
+  {
+    id:'halden', company:'Halden Retail Group', domain:'haldenretail.co', contact:'Unresolved',
+    tier:'C', stage:'Dedupe — blocked', status:'needs_review', updated:'1 hr ago', stageIndex:2,
+    facts:{employees:275, intent:'Not yet evaluated', seller:'—'},
+    meeting:{booked:false},
+    reviewReason:'Domain haldenretail.co is a 92% fuzzy match against an existing Salesforce account, "Halden Retail LLC" (haldenretail.com) — not an exact match, so the Dedupe Agent routed it to you instead of auto-suppressing.',
+    trail:[
+      {agent:'Lister Agent', time:'Wed 11:02 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'275 employees.'},
+      {agent:'Dedupe Agent', time:'Wed 11:03 AM', result:'fail', rule:'Suppress only on an exact domain match — fuzzy matches route to review.', reasoning:'haldenretail.co is a 92% similarity match to existing Account "Halden Retail LLC" (haldenretail.com). Not exact — held for your call.', confidence:0.92}
+    ]
+  },
+  {
+    id:'ferro', company:'Ferro Industrial', domain:'ferroindustrial.com', contact:'S. Kwan · Procurement Lead',
+    tier:'B', stage:'Reply Classification — blocked', status:'needs_review', updated:'3 hrs ago', stageIndex:8,
+    facts:{employees:510, intent:'Hiring surge (procurement)', seller:'Amara L.'},
+    meeting:{booked:false},
+    reviewReason:'The reply "Let\'s reconnect after Q3 budgeting wraps up" classified as ambiguous at 0.61 confidence — below the 0.75 auto-route threshold, so it\'s waiting on your read of the actual intent.',
+    trail:[
+      {agent:'Lister Agent', time:'Mon 8:00 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'510 employees.'},
+      {agent:'Dedupe Agent', time:'Mon 8:01 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match in Salesforce.'},
+      {agent:'Intent Agent', time:'Mon 8:03 AM', result:'pass', rule:'Corroborating source required.', reasoning:'Hiring surge confirmed via 6Sense + Apify.', confidence:0.79},
+      {agent:'Scoring Agent', time:'Mon 8:04 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 70 — Tier B.'},
+      {agent:'Contact-Resolution Agent', time:'Mon 8:15 AM', result:'pass', rule:'Hard gate: valid email required.', reasoning:'Found S. Kwan, Procurement Lead. ZeroBounce: valid.'},
+      {agent:'Outreach Agent', time:'Mon 8:20 AM', result:'pass', rule:'Cap of 3 touches.', reasoning:'Email sent. Reply received same day.'},
+      {agent:'Reply-Classification Agent', time:'Mon 3:10 PM', result:'fail', rule:'Below 0.75 confidence, route to human review — never assume intent.', reasoning:'Reply: "Let\'s reconnect after Q3 budgeting wraps up." Ambiguous between Positive and Not Now.', confidence:0.61}
+    ]
+  },
+  {
+    id:'solace', company:'Solace Health', domain:'solacehealth.org', contact:'Unresolved',
+    tier:'C', stage:'Scoring — held for weekly re-score', status:'blocked', updated:'1 day ago', stageIndex:4,
+    facts:{employees:260, intent:'Single weak signal (content download)', seller:'—'},
+    meeting:{booked:false},
+    trail:[
+      {agent:'Lister Agent', time:'Tue 7:30 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'260 employees.'},
+      {agent:'Dedupe Agent', time:'Tue 7:31 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match.'},
+      {agent:'Intent Agent', time:'Tue 7:33 AM', result:'pass', rule:'Corroborating source required for "hot" tag.', reasoning:'Only a single content-download signal — logged, not escalated to "hot".', confidence:0.41},
+      {agent:'Scoring Agent', time:'Tue 7:34 AM', result:'fail', rule:'Feature breakdown required; low scores hold rather than discard.', reasoning:'Score 52 — Tier C. Held for next weekly re-score cycle (in 4 days).'}
+    ]
+  },
+  {
+    id:'vantage', company:'Vantage Freight', domain:'vantagefreight.com', contact:'D. Osei · Dir. RevOps',
+    tier:'A', stage:'Closed — Suppressed', status:'closed', updated:'2 days ago', stageIndex:8,
+    facts:{employees:390, intent:'Hiring surge', seller:'—'},
+    meeting:{booked:false},
+    trail:[
+      {agent:'Lister Agent', time:'Fri 9:00 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'390 employees.'},
+      {agent:'Dedupe Agent', time:'Fri 9:01 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match.'},
+      {agent:'Intent Agent', time:'Fri 9:03 AM', result:'pass', rule:'Corroborating source required.', reasoning:'Hiring surge confirmed.', confidence:0.85},
+      {agent:'Scoring Agent', time:'Fri 9:04 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 81 — Tier A.'},
+      {agent:'Contact-Resolution Agent', time:'Fri 9:20 AM', result:'pass', rule:'Hard gate: valid email required.', reasoning:'Found D. Osei, Dir. RevOps. Valid.'},
+      {agent:'Outreach Agent', time:'Fri 9:25 AM', result:'pass', rule:'Cap of 3 touches.', reasoning:'Email sent.'},
+      {agent:'Reply-Classification Agent', time:'Mon 11:00 AM', result:'pass', rule:'Below 0.75 confidence routes to human.', reasoning:'Reply: "Not a fit for us right now, please remove me." Classified not_interested.', confidence:0.94},
+      {agent:'CRM-Sync Agent', time:'Mon 11:00 AM', result:'pass', rule:'Idempotent write by lead ID.', reasoning:'Added to suppression list. Activity logged to Salesforce. Closed.'}
+    ]
+  }
+];
+
+var INTEGRATIONS = [
+  {name:'Apollo', color:'#7C4DFF', mark:'AP', desc:'Prospecting, firmographic filters, and persona/contact lookup.', usedBy:['Lister Agent','Contact-Resolution Agent'], stat:'1,204 calls today'},
+  {name:'6Sense', color:'#00B8A9', mark:'6S', desc:'Buying-intent signals scored against the account\'s digital footprint.', usedBy:['Intent Agent'], stat:'318 accounts scanned today'},
+  {name:'Apify', color:'#FF6E40', mark:'AF', desc:'Job-board and web scraping used to corroborate intent signals.', usedBy:['Intent Agent'], stat:'42 scrapes today'},
+  {name:'ZeroBounce', color:'#2D6CDF', mark:'ZB', desc:'Real-time email validation — the hard gate before any send.', usedBy:['Contact-Resolution Agent'], stat:'96 validations today'},
+  {name:'PhantomBuster', color:'#5B3A99', mark:'PB', desc:'LinkedIn outreach automation, sequenced alongside email.', usedBy:['Outreach Agent'], stat:'54 LinkedIn touches today'},
+  {name:'Salesforce REST API', color:'#00A1E0', mark:'SF', desc:'System of record — every agent writes back an Account, Contact, or Activity record.', usedBy:['Dedupe Agent','Contact-Resolution Agent','Outreach Agent','Scheduling Agent','CRM-Sync Agent'], stat:'212 records synced today'},
+  {name:'Calendar API', color:'#0F9D58', mark:'CA', desc:'Free/busy lookup and booking — Calendly-style scheduling, never a phantom slot.', usedBy:['Scheduling Agent'], stat:'6 meetings booked today'},
+  {name:'Gmail API', color:'#EA4335', mark:'GM', desc:'Sends the personalized email and threads the reply back for classification.', usedBy:['Outreach Agent','Reply-Classification Agent'], stat:'89 emails sent today'}
+];
+
+var currentDrawerLead = null;
+var runInProgress = false;
+
+/* ================= NAV ================= */
+function switchMainTab(tab){
+  ['run','queue','review','metrics','integrations'].forEach(function(t){
+    document.getElementById('pane-'+t).style.display = (t===tab) ? 'block' : 'none';
+    var nav = document.querySelector('.navitem[data-tab="'+t+'"]');
+    if(nav) nav.classList.toggle('active', t===tab);
+  });
+  if(tab==='run') renderRunPipeline();
+  if(tab==='queue') renderQueue();
+  if(tab==='review') renderReview();
+  if(tab==='metrics') renderMetrics();
+  if(tab==='integrations') renderIntegrations();
+}
+
+/* ================= STAGE BAR ================= */
+function stageBarHtml(lead){
+  var total = 10, filled = lead.stageIndex;
+  var segClass = lead.status === 'needs_review' ? 'amber' : (lead.status === 'closed' || lead.status === 'blocked' ? 'done' : 'on');
+  var segs = '';
+  for(var i=1;i<=total;i++){
+    segs += '<div class="seg '+(i<=filled ? segClass : '')+'"></div>';
+  }
+  return '<div class="stagebar">'+segs+'</div><div class="stage-label">Stage '+filled+' / '+total+'</div>';
+}
+
+/* ================= QUEUE ================= */
+function renderQueue(){
+  var pane = document.getElementById('pane-queue');
+  pane.innerHTML =
+    '<div class="page-head"><div><h1>Target List</h1><p>Every account currently moving through the pursuit pipeline, assigned to you.</p></div></div>' +
+    '<table class="queue"><thead><tr><th>Company</th><th>Tier</th><th>Stage progress</th><th>Status</th><th>Updated</th></tr></thead><tbody>' +
+    LEADS.map(function(l){
+      return '<tr class="rowlink" onclick="openDrawer(\''+l.id+'\')">' +
+        '<td><div class="lead-cell"><div class="avatar" style="background:linear-gradient(135deg,var(--blue),#7B93F0);width:34px;height:34px;font-size:12px;">'+initials(l.company)+'</div>' +
+        '<div><div class="company">'+l.company+'</div><div class="company-sub">'+l.contact+'</div></div></div></td>' +
+        '<td><span class="tier '+l.tier+'">TIER '+l.tier+'</span></td>' +
+        '<td>'+stageBarHtml(l)+'</td>' +
+        '<td>'+statusChip(l.status)+'</td>' +
+        '<td style="color:var(--fog-dim);font-family:var(--mono);font-size:11.5px;">'+l.updated+'</td>' +
+      '</tr>';
+    }).join('') +
+    '</tbody></table>';
+}
+function initials(name){
+  return name.split(' ').filter(function(w){return w[0]===w[0].toUpperCase() && /[A-Za-z]/.test(w[0]);}).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();
+}
+function statusChip(status){
+  var labels = {on_track:'On Track', needs_review:'Needs Review', blocked:'Waiting', closed:'Closed'};
+  return '<span class="status '+status+'"><span class="dot"></span>'+labels[status]+'</span>';
+}
+
+/* ================= NEEDS REVIEW ================= */
+function renderReview(){
+  var pane = document.getElementById('pane-review');
+  var items = LEADS.filter(function(l){ return l.status === 'needs_review'; });
+  document.getElementById('review-badge').textContent = items.length;
+
+  if(items.length === 0){
+    pane.innerHTML = '<div class="page-head"><div><h1>Flagged for You</h1><p>Escalations where an agent hit a validation gate and stopped rather than guessing.</p></div></div>' +
+      '<div class="empty-state">Nothing waiting on you right now.</div>';
+    return;
+  }
+
+  pane.innerHTML = '<div class="page-head"><div><h1>Flagged for You</h1><p>Escalations where an agent hit a validation gate and stopped rather than guessing.</p></div></div>' +
+    items.map(function(l){
+      return '<div class="review-card">' +
+        '<div class="review-top"><h3>'+l.company+' <span style="color:var(--fog-dim);font-weight:400;font-size:13px;">— '+l.stage+'</span></h3>' +
+        '<span class="tier '+l.tier+'">TIER '+l.tier+'</span></div>' +
+        '<div class="review-reason"><b>Why it stopped:</b> '+l.reviewReason+'</div>' +
+        '<div class="review-actions">' + reviewActionsFor(l) + '</div>' +
+      '</div>';
+    }).join('');
+}
+
+function reviewActionsFor(l){
+  if(l.id === 'bramble' || l.id === 'solstice'){
+    return '<button class="btn primary sm" onclick="resolveReview(\''+l.id+'\',\'alt_contact\')">Find Alternate Contact</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\''+l.id+'\',\'discard\')">Discard Lead</button>' +
+           '<button class="btn ghost sm" onclick="openDrawer(\''+l.id+'\')">View Full Trail</button>';
+  }
+  if(l.id === 'halden'){
+    return '<button class="btn primary sm" onclick="resolveReview(\'halden\',\'confirm_suppress\')">Confirm Same Account — Suppress</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\'halden\',\'not_match\')">Not a Match — Continue</button>' +
+           '<button class="btn ghost sm" onclick="openDrawer(\'halden\')">View Full Trail</button>';
+  }
+  if(l.id === 'ferro'){
+    return '<button class="btn primary sm" onclick="resolveReview(\'ferro\',\'mark_positive\')">Mark Positive — Send to Scheduling</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\'ferro\',\'mark_not_now\')">Mark Not Now — Snooze 90d</button>' +
+           '<button class="btn ghost sm" onclick="openDrawer(\'ferro\')">View Full Trail</button>';
+  }
+  return '';
+}
+
+function resolveReview(id, action){
+  var lead = LEADS.filter(function(l){ return l.id === id; })[0];
+  if(!lead) return;
+  var entry = {agent:'Rep Decision', time:'Just now', result:'rep', rule:'Human review resolution.', reasoning:''};
+
+  if(id === 'bramble' || id === 'solstice'){
+    if(action === 'alt_contact'){
+      lead.status = 'on_track'; lead.stage = 'Personalization'; lead.stageIndex = 6;
+      entry.reasoning = 'Rep found an alternate contact with a valid email — pipeline resumed.';
+    } else {
+      lead.status = 'closed'; lead.stage = 'Closed — Discarded';
+      entry.reasoning = 'Rep discarded — no reliable contact could be confirmed.';
+    }
+  }
+  if(id === 'halden'){
+    if(action === 'confirm_suppress'){
+      lead.status = 'closed'; lead.stage = 'Closed — Suppressed (confirmed duplicate)';
+      entry.reasoning = 'Rep confirmed this is the same account under a different domain — suppressed and linked to the existing Salesforce Account.';
+    } else {
+      lead.status = 'on_track'; lead.stage = 'Intent Detection'; lead.stageIndex = 3;
+      entry.reasoning = 'Rep confirmed this is a genuinely different company — pipeline resumed from Intent Agent.';
+    }
+  }
+  if(id === 'ferro'){
+    if(action === 'mark_positive'){
+      lead.status = 'on_track'; lead.stage = 'Scheduling'; lead.stageIndex = 9;
+      entry.reasoning = 'Rep read the full thread and determined real intent to meet post-Q3 — routed to Scheduling Agent with a note to expect a Q4 follow-through.';
+    } else {
+      lead.status = 'closed'; lead.stage = 'Snoozed 90 days';
+      entry.reasoning = 'Rep read the reply as a soft no for now — snoozed rather than pushed further.';
+    }
+  }
+
+  lead.updated = 'Just now';
+  lead.trail.push(entry);
+  delete lead.reviewReason;
+  renderReview();
+  renderQueue();
+}
+
+/* ================= METRICS ================= */
+function renderMetrics(){
+  var pane = document.getElementById('pane-metrics');
+  var total = LEADS.length;
+  var needsReview = LEADS.filter(function(l){return l.status==='needs_review';}).length;
+  var onTrack = LEADS.filter(function(l){return l.status==='on_track';}).length;
+  var allSteps = LEADS.reduce(function(acc,l){ return acc.concat(l.trail); }, []);
+  var passCount = allSteps.filter(function(s){return s.result==='pass';}).length;
+  var passRate = Math.round((passCount / allSteps.length) * 100);
+
+  pane.innerHTML =
+    '<div class="page-head"><div><h1>Hit Rate</h1><p>Aggregate view across every agent, not just end-to-end conversion.</p></div></div>' +
+    '<div class="stat-grid">' +
+      '<div class="stat-card"><div class="stat-num">'+total+'</div><div class="stat-label">Leads in pipeline</div></div>' +
+      '<div class="stat-card"><div class="stat-num">'+needsReview+'</div><div class="stat-label">Needs rep review</div></div>' +
+      '<div class="stat-card"><div class="stat-num">'+onTrack+'</div><div class="stat-label">On track, no touch needed</div></div>' +
+      '<div class="stat-card"><div class="stat-num">'+passRate+'%</div><div class="stat-label">Validation gates passed clean</div></div>' +
+    '</div>' +
+    '<div class="insight-card"><h3>Why gate pass-rate matters more than conversion rate</h3>' +
+    '<p>A single end-to-end conversion number hides where the pipeline is actually struggling. Tracking each agent\'s gate pass-rate separately shows, for example, that Contact-Resolution and Dedupe are where most escalations originate — which is where to invest in better source data before touching the scoring model.</p></div>';
+}
+
+/* ================= INTEGRATIONS ================= */
+function renderIntegrations(){
+  var pane = document.getElementById('pane-integrations');
+  pane.innerHTML =
+    '<div class="page-head"><div><h1>Integrations</h1><p>Every tool and API the agents call underneath this console.</p></div></div>' +
+    '<div class="int-grid">' +
+    INTEGRATIONS.map(function(i){
+      return '<div class="int-card">' +
+        '<div class="int-logo" style="background:'+i.color+';">'+i.mark+'</div>' +
+        '<div class="int-body">' +
+          '<div class="int-name-row"><div class="int-name">'+i.name+'</div></div>' +
+          '<div class="int-desc">'+i.desc+'</div>' +
+          '<div class="int-tags">'+i.usedBy.map(function(a){return '<span class="int-tag">'+a+'</span>';}).join('')+'</div>' +
+          '<div class="int-foot"><span class="int-status"><span class="dot"></span>Connected</span><span>'+i.stat+'</span></div>' +
+        '</div>' +
+      '</div>';
+    }).join('') +
+    '</div>';
+}
+
+/* ================= RUN PIPELINE ================= */
+function renderRunPipeline(){
+  var pane = document.getElementById('pane-run');
+  pane.innerHTML =
+    '<div class="page-head"><div><h1>Run Sequence</h1><p>Watch a new target move through the agents in real time, with the underlying calls logged step by step. When it finishes, the result lands in your list.</p></div></div>' +
+    '<div class="rp-controls">' +
+      '<button class="btn primary" id="rp-run-btn" onclick="runPipelineDemo()">▶ Run Sequence</button>' +
+      '<button class="btn ghost" onclick="resetPipelineDemo()">↺ Reset</button>' +
+      '<div class="rp-progress-track"><div class="rp-progress-fill" id="rp-progress-fill"></div></div>' +
+      '<div class="rp-counter" id="rp-counter">Stage 0 / 5</div>' +
+    '</div>' +
+    '<div class="rp-grid">' +
+      '<div class="rp-stepper" id="rp-stepper"></div>' +
+      '<div class="rp-code" id="rp-code"><div class="rp-code-empty">Click "Run Pipeline" to watch each agent\'s calls execute here.</div></div>' +
+    '</div>' +
+    '<div class="rp-done-banner" id="rp-done-banner">' +
+      '<span>✅ <b>Solstice Retail Co</b> processed — hit a validation gate at Contact-Resolution and needs your review.</span>' +
+      '<button class="btn primary sm" onclick="switchMainTab(\'review\')">Go to Needs My Review</button>' +
+    '</div>';
+  renderStepper(-1);
+}
+
+function renderStepper(activeIdx){
+  var html = PIPELINE_AGENTS.map(function(a,i){
+    var cls = i < activeIdx ? 'done' : (i === activeIdx ? 'active' : '');
+    var numContent = i < activeIdx ? '✓' : (i+1);
+    return '<div class="rp-step '+cls+'"><div class="rp-step-num">'+numContent+'</div>' +
+      '<div><div class="rp-step-name">'+a.name+'</div><div class="rp-step-tool">'+a.tool+'</div></div></div>';
+  }).join('');
+  document.getElementById('rp-stepper').innerHTML = html;
+}
+
+function resetPipelineDemo(){
+  runInProgress = false;
+  document.getElementById('rp-code').innerHTML = '<div class="rp-code-empty">Click "Run Pipeline" to watch each agent\'s calls execute here.</div>';
+  document.getElementById('rp-progress-fill').style.width = '0%';
+  document.getElementById('rp-counter').textContent = 'Stage 0 / '+PIPELINE_AGENTS.length;
+  document.getElementById('rp-done-banner').classList.remove('show');
+  document.getElementById('rp-run-btn').textContent = '▶ Run Sequence';
+  renderStepper(-1);
+  // remove solstice if it was added, so re-running is clean
+  var idx = LEADS.findIndex(function(l){return l.id==='solstice';});
+  if(idx > -1) LEADS.splice(idx,1);
+}
+
+function runPipelineDemo(){
+  if(runInProgress) return;
+  runInProgress = true;
+  resetPipelineDemo();
+  runInProgress = true;
+  document.getElementById('rp-run-btn').textContent = '⏳ Running…';
+  document.getElementById('rp-code').innerHTML = '';
+  stepPipeline(0);
+}
+
+function stepPipeline(i){
+  if(i >= PIPELINE_AGENTS.length){
+    runInProgress = false;
+    document.getElementById('rp-run-btn').textContent = '▶ Run Sequence';
+    document.getElementById('rp-done-banner').classList.add('show');
+    addSolsticeLead();
+    return;
+  }
+  renderStepper(i);
+  var a = PIPELINE_AGENTS[i];
+  var code = document.getElementById('rp-code');
+  var header = document.createElement('div');
+  header.className = 'ln';
+  header.innerHTML = '<span class="pfx">// '+a.name+' ('+a.tool+')</span>';
+  code.appendChild(header);
+  a.log.forEach(function(line, li){
+    setTimeout(function(){
+      var ln = document.createElement('div');
+      ln.className = 'ln';
+      ln.innerHTML = '<span class="pfx">&gt;</span> ' + line;
+      code.appendChild(ln);
+      code.scrollTop = code.scrollHeight;
+    }, li*260);
+  });
+  document.getElementById('rp-progress-fill').style.width = (((i+1)/PIPELINE_AGENTS.length)*100)+'%';
+  document.getElementById('rp-counter').textContent = 'Stage '+(i+1)+' / '+PIPELINE_AGENTS.length;
+  setTimeout(function(){ stepPipeline(i+1); }, 1000 + a.log.length*260);
+}
+
+function addSolsticeLead(){
+  if(LEADS.some(function(l){return l.id==='solstice';})) return;
+  LEADS.push({
+    id:'solstice', company:'Solstice Retail Co', domain:'solsticeretail.com', contact:'T. Whitfield · Ops Director',
+    tier:'B', stage:'Contact Resolution — blocked', status:'needs_review', updated:'Just now', stageIndex:5,
+    facts:{employees:312, intent:'Hiring surge (ops)', seller:'—'},
+    meeting:{booked:false},
+    reviewReason:'ZeroBounce flagged the resolved contact email as "risky" — the Contact-Resolution Agent\'s hard gate stopped the sequence rather than guessing.',
+    trail:[
+      {agent:'Lister Agent', time:'Just now', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'312 employees, domain resolved via Apollo.'},
+      {agent:'Dedupe Agent', time:'Just now', result:'pass', rule:'Exact domain match only.', reasoning:'No match found in Salesforce.'},
+      {agent:'Intent Agent', time:'Just now', result:'pass', rule:'Corroborating source required.', reasoning:'Hiring surge corroborated by 6Sense + Apify.', confidence:0.82},
+      {agent:'Scoring Agent', time:'Just now', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 71 — Tier B.'},
+      {agent:'Contact-Resolution Agent', time:'Just now', result:'fail', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found T. Whitfield, Ops Director. ZeroBounce returned "risky". Escalated instead of guessing.', confidence:0.55}
+    ]
+  });
+}
+
+/* ================= DRAWER ================= */
+function openDrawer(id){
+  currentDrawerLead = LEADS.filter(function(l){ return l.id === id; })[0];
+  if(!currentDrawerLead) return;
+  document.getElementById('drawer-avatar').textContent = initials(currentDrawerLead.company);
+  document.getElementById('drawer-company').textContent = currentDrawerLead.company;
+  document.getElementById('drawer-contact').textContent = currentDrawerLead.contact + ' · ' + currentDrawerLead.domain;
+  document.getElementById('drawer-badges').innerHTML =
+    '<span class="tier '+currentDrawerLead.tier+'" style="margin-right:8px;">TIER '+currentDrawerLead.tier+'</span>' + statusChip(currentDrawerLead.status);
+  renderDrawerOverview();
+  renderDrawerTrail();
+  switchDrawerTab('overview');
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+function closeDrawer(){ document.getElementById('drawer-overlay').classList.remove('open'); }
+function switchDrawerTab(tab){
+  document.querySelectorAll('.dtab').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-dtab')===tab); });
+  document.querySelectorAll('.dpane').forEach(function(p){ p.classList.toggle('active', p.id==='dpane-'+tab); });
+}
+function renderDrawerOverview(){
+  var l = currentDrawerLead;
+  var meetingHtml;
+  if(l.meeting && l.meeting.booked){
+    meetingHtml = '<div class="meeting-card"><h4>Meeting</h4><div class="meeting-row">' +
+      '<div class="meeting-time">'+l.meeting.time+'</div>' +
+      '<div><a class="btn zoom sm" href="'+l.meeting.zoom+'" target="_blank" rel="noopener">🎥 Join Zoom</a> ' +
+      '<a class="btn calendly sm" href="'+l.meeting.calendly+'" target="_blank" rel="noopener">📅 Reschedule</a></div>' +
+    '</div></div>';
+  } else {
+    meetingHtml = '<div class="meeting-card"><h4>Meeting</h4><div class="meeting-row">' +
+      '<div style="color:var(--fog-dim);font-size:13px;">No meeting scheduled yet.</div>' +
+      '<button class="btn ghost sm" disabled>📅 Propose Times</button>' +
+    '</div></div>';
+  }
+  document.getElementById('dpane-overview').innerHTML =
+    stageBarHtml(l) +
+    '<div class="fact-grid" style="margin-top:16px;">' +
+      '<div class="fact"><div class="k">Current Stage</div><div class="v">'+l.stage+'</div></div>' +
+      '<div class="fact"><div class="k">Employees</div><div class="v">'+l.facts.employees+'</div></div>' +
+      '<div class="fact"><div class="k">Intent Signal</div><div class="v">'+l.facts.intent+'</div></div>' +
+      '<div class="fact"><div class="k">Assigned Seller</div><div class="v">'+l.facts.seller+'</div></div>' +
+      '<div class="fact"><div class="k">Last Updated</div><div class="v">'+l.updated+'</div></div>' +
+      '<div class="fact"><div class="k">Domain</div><div class="v">'+l.domain+'</div></div>' +
+    '</div>' +
+    meetingHtml +
+    (l.reviewReason ? '<div class="review-reason"><b>Why it stopped:</b> '+l.reviewReason+'</div>' : '');
+}
+function renderDrawerTrail(){
+  var l = currentDrawerLead;
+  document.getElementById('dpane-trail').innerHTML = l.trail.map(function(t){
+    var dotClass = t.result === 'pass' ? 'pass' : (t.result === 'rep' ? 'rep' : 'fail');
+    var badgeClass = dotClass;
+    var badgeLabel = t.result === 'pass' ? 'PASSED' : (t.result === 'rep' ? 'REP DECISION' : 'ESCALATED');
+    return '<div class="trail-item">' +
+      '<div class="trail-dot '+dotClass+'"></div>' +
+      '<div class="trail-agent">'+t.agent+'</div>' +
+      '<div class="trail-time">'+t.time+'</div>' +
+      (t.rule ? '<div class="trail-rule"><b>Rule checked:</b> '+t.rule+'</div>' : '') +
+      '<div class="trail-reason">'+t.reasoning+'</div>' +
+      '<div class="trail-meta">' +
+        '<span class="badge-outcome '+badgeClass+'">'+badgeLabel+'</span>' +
+        (t.confidence !== undefined ? '<span class="confidence">confidence '+Math.round(t.confidence*100)+'%</span>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+
+/* ================= INIT ================= */
+switchMainTab('run');
+</script>
+</body>
+</html>
