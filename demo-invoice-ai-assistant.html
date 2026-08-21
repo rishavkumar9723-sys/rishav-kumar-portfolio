@@ -143,7 +143,7 @@
 <!-- QUEUE -->
 <div class="queue-view" id="queueView">
   <div class="queue-header">
-    Invoice AI Assistant reads each case's full context first — including whether the customer asked for pricing only, already confirmed a quote, or asked for an invoice directly — before deciding what to draft.
+    Invoice AI Assistant reads each case's full context first (including whether the customer asked for pricing only, already confirmed a quote, or asked for an invoice directly) before deciding what to draft.
   </div>
   <div class="queue-list" id="queueList"></div>
 </div>
@@ -210,11 +210,11 @@ const CASES = {
     ],
     steps: [
       "Reading case and matched Lead: <b>Sheridan Mathias</b>, Habitat for Humanity",
-      "Detected intent: <b>pricing/quote requested</b> — customer is not ready to commit yet",
-      "Checked license history — no seat changes mentioned in this thread",
-      "Checked last 3 payments on file — inferred payment type as <b>Check</b>",
+      "Detected intent: <b>pricing/quote requested</b>, customer is not ready to commit yet",
+      "Checked license history: no seat changes mentioned in this thread",
+      "Checked last 3 payments on file: inferred payment type as <b>Check</b>",
       "Publishing <b>apsona__Apsona_Trigger_Merge__e</b> platform event (Merge Action: 2026 Pricing Quote)",
-      "Merge completed — reading generated Excel via ContentDocumentLink",
+      "Merge completed: reading generated Excel via ContentDocumentLink",
       "Quote #3547 ready for review"
     ],
     finalType: 'quote',
@@ -231,8 +231,8 @@ const CASES = {
       total: '408.50',
       excelUrl: '#',
       replyTo: 'Sheridan Mathias <smathias@habitatebsv.org>',
-      replySubject: 'Re: Pricing question before we renew — Apsona Quote #3547',
-      replyBody: "Hi Sheridan,\n\nThanks for reaching out. Please find attached our current pricing (Quote #3547) for your review — this should give your finance team what they need before deciding on the renewal.\n\nLet me know if you have any questions, or if you'd like to proceed, just reply and we'll get the invoice sent over.\n\nBest,\nShinjini\nTeam Apsona"
+      replySubject: 'Re: Pricing question before we renew: Apsona Quote #3547',
+      replyBody: "Hi Sheridan,\n\nThanks for reaching out. Please find attached our current pricing (Quote #3547) for your review, this should give your finance team what they need before deciding on the renewal.\n\nLet me know if you have any questions, or if you'd like to proceed, just reply and we'll get the invoice sent over.\n\nBest,\nShinjini\nTeam Apsona"
     }
   },
   confirmed: {
@@ -250,8 +250,8 @@ const CASES = {
     steps: [
       "Reading case and matched Lead: <b>Medical Teams International</b>",
       "Found prior Quote <b>#2609</b> already attached to this record",
-      "Detected customer confirmation: <b>\"looks good\"</b> — treating Quote #2609 as final",
-      "Retrieved Quote #2609 values via ContentDocumentLink — no re-generation needed",
+      "Detected customer confirmation: <b>\"looks good\"</b>, treating Quote #2609 as final",
+      "Retrieved Quote #2609 values via ContentDocumentLink, no re-generation needed",
       "Rule enforced: <b>invoice must exactly match the confirmed quote</b>, not last year's invoice",
       "Draft invoice built with values locked to Quote #2609"
     ],
@@ -267,7 +267,7 @@ const CASES = {
         { d: 'Dedupe and Match', q: 5, t: 1935.00, flag: false }
       ],
       total: '12,735.00',
-      note: 'Values are locked to match confirmed Quote #2609 exactly — this is enforced, not just carried forward for convenience.',
+      note: 'Values are locked to match confirmed Quote #2609 exactly, this is enforced, not just carried forward for convenience.',
       locked: true,
       refQuote: {
         label: 'Confirmed Quote #2609',
@@ -280,31 +280,31 @@ const CASES = {
         total: '12,735.00'
       },
       replyTo: 'Priya Nair <priya.nair@medicalteams.org>',
-      replySubject: 'Re: Quote #2609 looks good — Apsona Invoice #19802',
-      replyBody: "Hi Priya,\n\nThanks for confirming! Please find your renewal invoice attached — the amount matches the quote you approved exactly.\n\nYou can pay directly via the link below, or let us know if you have any questions.\n\nBest,\nShinjini\nTeam Apsona"
+      replySubject: 'Re: Quote #2609 looks good: Apsona Invoice #19802',
+      replyBody: "Hi Priya,\n\nThanks for confirming! Please find your renewal invoice attached: the amount matches the quote you approved exactly.\n\nYou can pay directly via the link below, or let us know if you have any questions.\n\nBest,\nShinjini\nTeam Apsona"
     }
   },
   direct: {
     id: '00131055',
     icon: '✉',
-    subject: 'Re: Important — Your Apsona subscription is expiring soon',
+    subject: 'Re: Important: Your Apsona subscription is expiring soon',
     account: 'Edge Communications',
     status: 'Customer Responded',
     pathLabel: 'Direct invoice request',
     pathClass: 'path-direct',
     thread: [
-      { who: 'Rose Gonzalez · today, 9:14 AM', text: 'Sounds good, please go ahead and send the invoice. Oh — we might need 2 more seats this year, our team grew a bit.', hl: '2 more seats' }
+      { who: 'Rose Gonzalez · today, 9:14 AM', text: 'Sounds good, please go ahead and send the invoice. Oh: we might need 2 more seats this year, our team grew a bit.', hl: '2 more seats' }
     ],
     steps: [
       "Reading case and matched Account: <b>Edge Communications</b>",
-      "Detected intent: <b>direct invoice request</b> — no quote step mentioned by customer",
+      "Detected intent: <b>direct invoice request</b>, no quote step mentioned by customer",
       "Per standard process, generating an internal reference quote first for validation",
       "Publishing <b>apsona__Apsona_Trigger_Merge__e</b> platform event (Merge Action: 2026 Pricing Quote)",
       "Reading generated reference Excel via ContentDocumentLink",
-      "Scanning case thread for license changes — <b>found: \"2 more seats\"</b>",
+      "Scanning case thread for license changes: <b>found: \"2 more seats\"</b>",
       "Adjusting AFS seat count from 5 → 7 to reflect this",
       "Payment type inferred as <b>PayPal</b> from last 3 payments on file",
-      "Draft invoice ready — seat count change flagged for review"
+      "Draft invoice ready: seat count change flagged for review"
     ],
     finalType: 'invoice-flagged',
     draftBtnLabel: 'Draft with AI',
@@ -318,11 +318,11 @@ const CASES = {
         { d: 'Document and Mail Merge', q: 5, t: 850.00, flag: false }
       ],
       total: '4,450.00',
-      note: 'Seat count was increased from 5 → 7 based on the customer\'s message — flagged for your review before sending.',
+      note: 'Seat count was increased from 5 → 7 based on the customer\'s message, flagged for your review before sending.',
       flagged: true,
       refQuote: {
         label: 'Internal Reference Quote #3612',
-        subtitle: 'Generated just now for validation — not sent to the customer',
+        subtitle: 'Generated just now for validation: not sent to the customer',
         lines: [
           { d: 'Apsona for Salesforce', q: 5, t: 1500.00 },
           { d: 'Multi-step Reports', q: 5, t: 1500.00 },
@@ -331,8 +331,8 @@ const CASES = {
         total: '3,850.00'
       },
       replyTo: 'Rose Gonzalez <rose.gonzalez@edge.com>',
-      replySubject: 'Re: Your Apsona subscription is expiring soon — Invoice #19803',
-      replyBody: "Hi Rose,\n\nThanks for confirming! I've gone ahead and included the 2 additional seats you mentioned in this year's renewal.\n\nPlease find your invoice attached — let me know if anything looks off.\n\nBest,\nShinjini\nTeam Apsona"
+      replySubject: 'Re: Your Apsona subscription is expiring soon: Invoice #19803',
+      replyBody: "Hi Rose,\n\nThanks for confirming! I've gone ahead and included the 2 additional seats you mentioned in this year's renewal.\n\nPlease find your invoice attached: let me know if anything looks off.\n\nBest,\nShinjini\nTeam Apsona"
     }
   }
 };
@@ -433,7 +433,7 @@ function renderDraft(c){
   let refQuotePanel = '';
   if(d.refQuote){
     const rq = d.refQuote;
-    refQuoteToggle = `<button class="btn-link" onclick="toggleRefQuote()" id="refQuoteToggle" style="background:none;border:none;padding:0;font-size:12px;font-weight:700;color:var(--ai-accent);cursor:pointer;text-decoration:underline;margin-bottom:10px;display:inline-block;">📄 View ${rq.label} — cross-check before sending</button>`;
+    refQuoteToggle = `<button class="btn-link" onclick="toggleRefQuote()" id="refQuoteToggle" style="background:none;border:none;padding:0;font-size:12px;font-weight:700;color:var(--ai-accent);cursor:pointer;text-decoration:underline;margin-bottom:10px;display:inline-block;">📄 View ${rq.label}: cross-check before sending</button>`;
     const rqRows = rq.lines.map(l => `<tr><td>${l.d}</td><td class="num">${l.q}</td><td class="num">$${l.t.toFixed(2)}</td></tr>`).join('');
     refQuotePanel = `
       <div id="refQuotePanel" style="display:none;background:#fbfaf7;border:1px dashed var(--sf-border);border-radius:6px;padding:12px 14px;margin-bottom:12px;">
@@ -461,7 +461,7 @@ function renderDraft(c){
   }
 
   const paymentRow = d.paymentType ? `<p style="margin:6px 0 0 0;font-size:12px;color:var(--sf-text-secondary);">Payment Type: <strong style="color:var(--sf-text);">${d.paymentType}</strong></p>` : '';
-  const excelLinkHtml = d.excelUrl ? `<div style="margin-top:10px;font-size:12px;"><a href="${d.excelUrl}" onclick="return false;" style="color:var(--sf-blue);text-decoration:underline;">📊 Open source Excel — AI-filled (payment type &amp; values already applied)</a><span style="color:var(--sf-text-secondary);"> — edit here if you want to change anything before sending; the PDF above is generated from this file</span></div>` : '';
+  const excelLinkHtml = d.excelUrl ? `<div style="margin-top:10px;font-size:12px;"><a href="${d.excelUrl}" onclick="return false;" style="color:var(--sf-blue);text-decoration:underline;">📊 Open source Excel: AI-filled (payment type &amp; values already applied)</a><span style="color:var(--sf-text-secondary);">, edit here if you want to change anything before sending; the PDF above is generated from this file</span></div>` : '';
 
   let replyPreviewHtml = '';
   if(c.finalType === 'quote' && d.replyBody){
@@ -512,7 +512,7 @@ function toggleRefQuote(){
 }
 
 function flagLineEdit(el){
-  // purely visual — marks the row as manually touched
+  // purely visual: marks the row as manually touched
   const row = el.closest('tr');
   if(row && !row.classList.contains('flagged')) row.style.background = '#fff8ec';
 }
@@ -529,7 +529,7 @@ function buildReplyCard(d, attachmentName){
         <div style="margin-top:8px;font-size:11.5px;color:var(--sf-text-secondary);">📎 ${attachmentName} attached</div>
       </div>
       <div style="padding:10px 14px;background:#fafaf9;border-top:1px solid var(--sf-border);display:flex;justify-content:flex-end;gap:8px;">
-        <span id="draftedNote" style="font-size:11.5px;color:var(--sf-text-secondary);align-self:center;margin-right:auto;">Message drafted — not yet sent</span>
+        <span id="draftedNote" style="font-size:11.5px;color:var(--sf-text-secondary);align-self:center;margin-right:auto;">Message drafted: not yet sent</span>
         <button class="btn btn-primary" onclick="confirmSend()">Send</button>
       </div>
     </div>`;
@@ -544,7 +544,7 @@ function handlePrepare(){
     document.getElementById('invoiceActions').style.display = 'none';
     const area = document.getElementById('postPrepareArea');
     area.innerHTML = `
-      <div style="font-size:11.5px;color:var(--success);margin:10px 0;">✓ Prepared — public invoice link generated</div>
+      <div style="font-size:11.5px;color:var(--success);margin:10px 0;">✓ Prepared: public invoice link generated</div>
       <div class="doc-actions" style="border:1px solid var(--sf-border);border-radius:6px;margin-bottom:12px;">
         <button class="btn btn-ghost" onclick="resetDemo()">Discard</button>
         <button class="btn" onclick="handleSave()">Save</button>
@@ -581,7 +581,7 @@ function sendFinal(type){
   if(type === 'quote'){
     html = `<div class="icon">✓</div><h3>Quote sent to customer</h3><p>Sheridan Mathias will receive the pricing quote by email as a PDF. The case remains open awaiting their decision.</p>`;
   } else if(type === 'invoice-locked'){
-    html = `<div class="icon">✓</div><h3>Invoice sent — matches Quote #2609</h3><p>Priya Nair has been emailed the invoice with a payment link. Values were locked to the customer-confirmed quote.</p>`;
+    html = `<div class="icon">✓</div><h3>Invoice sent: matches Quote #2609</h3><p>Priya Nair has been emailed the invoice with a payment link. Values were locked to the customer-confirmed quote.</p>`;
   } else {
     html = `<div class="icon">✓</div><h3>Invoice sent with reviewed seat count</h3><p>Rose Gonzalez has been emailed the invoice with a payment link. The seat count increase was flagged and applied before sending.</p>`;
   }

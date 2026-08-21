@@ -3,49 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rishav — Product Manager, AI × Salesforce Ecosystem</title>
-<meta name="description" content="Rishav — Associate Product Manager at Apsona Technologies. Builds AI-driven automation pipelines across Salesforce and Google Workspace.">
+<title>Rishav: Product Manager, AI × Salesforce Ecosystem</title>
+<meta name="description" content="Rishav: Associate Product Manager at Apsona Technologies. Builds AI-driven automation pipelines across Salesforce and Google Workspace.">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
   :root{
-    --ink:#F5F6FB;
+    --ink:#F4F5F7;
     --panel:#FFFFFF;
-    --panel-2:#F7F8FD;
-    --line:#E4E7F1;
-    --line-soft:#EDEFF8;
-    --fog:#5B6178;
-    --fog-dim:#9BA1B8;
-    --paper:#1C2333;
-    --amber:#3457D5;
-    --navy:#1C2A48;
-    --mint:#16A34A;
-    --coral:#DC2626;
-    --amber-rgb:52,87,213;
-    --mint-rgb:22,163,74;
-    --coral-rgb:220,38,38;
-    --fog-rgb:91,97,120;
-    --display:'Playfair Display', serif;
+    --panel-2:#EDEFF3;
+    --line:#DCE1E8;
+    --line-soft:#E7EBF0;
+    --fog:#535F6D;
+    --fog-dim:#8792A1;
+    --paper:#141C25;
+    --amber:#B45309;
+    --navy:#141C25;
+    --mint:#15803D;
+    --coral:#B91C1C;
+    --amber-rgb:180,83,9;
+    --mint-rgb:21,128,61;
+    --coral-rgb:185,28,28;
+    --fog-rgb:83,95,109;
+    --display:'Space Grotesk', sans-serif;
     --body:'Inter', sans-serif;
     --mono:'JetBrains Mono', monospace;
   }
   :root[data-theme="dark"]{
-    --ink:#0F1329;
-    --panel:#171C3C;
-    --panel-2:#1D2349;
-    --line:#2B3268;
-    --line-soft:#232A57;
-    --fog:#8C92BE;
-    --fog-dim:#666C9C;
-    --paper:#ECEAF6;
-    --amber:#F2A93B;
-    --navy:#F2A93B;
-    --mint:#5FD9A8;
-    --coral:#F2665B;
-    --amber-rgb:242,169,59;
-    --mint-rgb:95,217,168;
-    --coral-rgb:242,102,91;
-    --fog-rgb:140,146,190;
+    --ink:#0E141A;
+    --panel:#151D26;
+    --panel-2:#1B242F;
+    --line:#2A3744;
+    --line-soft:#222C38;
+    --fog:#94A3B3;
+    --fog-dim:#6B7A8A;
+    --paper:#E8EEF4;
+    --amber:#E9A13B;
+    --navy:#E9A13B;
+    --mint:#4ADE80;
+    --coral:#F87171;
+    --amber-rgb:233,161,59;
+    --mint-rgb:74,222,128;
+    --coral-rgb:248,113,113;
+    --fog-rgb:148,163,179;
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -69,8 +69,8 @@
   .grid-bg{
     position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
-      radial-gradient(46% 38% at 82% 8%, rgba(52,87,213,0.10), transparent 70%),
-      radial-gradient(38% 30% at 8% 60%, rgba(52,87,213,0.06), transparent 70%);
+      radial-gradient(46% 38% at 82% 8%, rgba(180,83,9,0.09), transparent 70%),
+      radial-gradient(38% 30% at 8% 60%, rgba(20,28,37,0.06), transparent 70%);
   }
   :root[data-theme="dark"] .grid-bg{
     background-image:
@@ -128,7 +128,7 @@
     color:var(--paper);
   }
   .role-line{
-    font-family:var(--display);font-style:italic;font-weight:600;
+    font-family:var(--display);font-weight:600;letter-spacing:-0.2px;
     font-size:clamp(22px,2.6vw,28px);color:var(--amber);margin-top:6px;
   }
   h1 .accent{color:var(--amber);}
@@ -155,7 +155,7 @@
     width:min(100%,320px);aspect-ratio:1/1;border-radius:50%;
     background:linear-gradient(160deg,var(--panel-2),var(--panel));
     border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
-    box-shadow:0 30px 60px -20px rgba(52,87,213,0.18);
+    box-shadow:0 30px 60px -20px rgba(20,28,37,0.16);
   }
   .hero-photo span{font-family:var(--display);font-size:96px;font-weight:700;color:var(--amber);}
   .hero-badge{
@@ -165,33 +165,17 @@
   .hero-badge-top{font-family:var(--display);font-weight:700;font-size:16px;color:var(--paper);}
   .hero-badge-sub{font-family:var(--body);font-size:12px;color:var(--fog);margin-top:2px;}
 
-  /* ---------- STATUS DASHBOARD ---------- */
-  .dash{margin-top:56px;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);}
-  .dash-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;color:var(--fog-dim);letter-spacing:1px;}
-  .dash-head .lights{display:flex;gap:6px;}
-  .dash-head .lights span{width:8px;height:8px;border-radius:50%;background:var(--line);}
-  .dash-row{display:grid;grid-template-columns:1.6fr 2fr auto;gap:16px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(6px);animation:rise 0.5s ease forwards;}
-  .dash-row:last-child{border-bottom:none;}
-  .dash-row:nth-child(2){animation-delay:0.05s;}
-  .dash-row:nth-child(3){animation-delay:0.15s;}
-  .dash-row:nth-child(4){animation-delay:0.25s;}
-  .dash-row:nth-child(5){animation-delay:0.25s;}
-  .dash-row:nth-child(6){animation-delay:0.35s;}
-  @keyframes rise{to{opacity:1;transform:translateY(0);}}
-  .dash-name{font-family:var(--display);font-weight:600;font-size:14.5px;}
-  .dash-flow{font-family:var(--mono);font-size:11.5px;color:var(--fog-dim);letter-spacing:0.3px;}
-  .pill{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+    .pill{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
   .status-pill{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
   .pill .dot, .status-pill .dot{width:6px;height:6px;border-radius:50%;}
   .pill.live, .status-pill.live{background:rgba(var(--mint-rgb),0.12);color:var(--mint);border:1px solid rgba(var(--mint-rgb),0.3);}
   .pill.live .dot, .status-pill.live .dot{background:var(--mint);animation:pulse 1.8s infinite;}
-  .pill.shipped, .status-pill.shipped{background:rgba(var(--amber-rgb),0.12);color:var(--amber);border:1px solid rgba(var(--amber-rgb),0.3);}
-  .pill.shipped .dot, .status-pill.shipped .dot{background:var(--amber);}
-  .pill.proto, .status-pill.proto{background:rgba(var(--fog-rgb),0.1);color:var(--fog);border:1px dashed var(--line);}
-  .pill.proto .dot, .status-pill.proto .dot{background:var(--fog);}
+  .pill.built, .status-pill.built{background:rgba(var(--amber-rgb),0.12);color:var(--amber);border:1px solid rgba(var(--amber-rgb),0.3);}
+  .pill.built .dot, .status-pill.built .dot{background:var(--amber);}
+  .pill.concept, .status-pill.concept{background:rgba(var(--fog-rgb),0.1);color:var(--fog);border:1px dashed var(--line);}
+  .pill.concept .dot, .status-pill.concept .dot{background:var(--fog);}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--mint-rgb),0.5);}50%{box-shadow:0 0 0 4px rgba(var(--mint-rgb),0);}}
-  @media (prefers-reduced-motion: reduce){.pill.live .dot{animation:none;}.dash-row{animation:none;opacity:1;transform:none;}}
-  @media (max-width:640px){.dash-row{grid-template-columns:1fr;gap:8px;}}
+  @media (prefers-reduced-motion: reduce){.pill.live .dot{animation:none;}}
 
   .pipeline-strip{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--fog-dim);margin:0 0 40px;}
   .pipeline-strip .seg{display:flex;align-items:center;gap:10px;}
@@ -224,27 +208,33 @@
   .exp-body li::marker{color:var(--amber);}
 
   /* ---------- PROJECT CARDS (generated, inline case-study layout) ---------- */
-  #projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;}
+  #projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;align-items:start;}
   .proj{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:28px;display:flex;flex-direction:column;transition:border-color .25s, transform .25s;}
   .proj:hover{border-color:var(--fog-dim);transform:translateY(-2px);}
-  .proj-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--amber),#6C86E8);margin-bottom:14px;}
+  .proj-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--amber),#D98324);margin-bottom:14px;}
   .proj-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
   .proj-badge{font-family:var(--body);font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;background:var(--panel-2);color:var(--fog);border:1px solid var(--line);}
   .proj h3{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.3;margin-bottom:4px;}
-  .proj-tagline{font-family:var(--display);font-style:italic;color:var(--amber);font-size:14.5px;margin-bottom:14px;}
+  .proj-tagline{font-family:var(--body);font-weight:500;color:var(--paper);font-size:14.5px;line-height:1.6;margin-bottom:16px;}
   .proj-desc{color:var(--fog);font-size:14px;margin-bottom:20px;line-height:1.7;}
   .proj-cs-block{margin-bottom:16px;}
   .proj-cs-block h5{font-family:var(--display);font-size:14px;font-weight:600;color:var(--paper);margin-bottom:5px;}
   .proj-cs-block p{color:var(--fog);font-size:13.5px;line-height:1.65;}
-  .proj-flow{font-family:var(--mono);font-size:11px;color:var(--mint);letter-spacing:0.2px;background:rgba(var(--mint-rgb),0.06);border:1px solid rgba(var(--mint-rgb),0.18);border-radius:8px;padding:9px 12px;margin-bottom:18px;overflow-x:auto;white-space:nowrap;}
+  .proj-flow{font-family:var(--mono);font-size:11px;color:var(--mint);letter-spacing:0.2px;background:rgba(var(--mint-rgb),0.06);border:1px solid rgba(var(--mint-rgb),0.18);border-radius:8px;padding:9px 12px;margin-top:auto;margin-bottom:18px;white-space:normal;overflow-wrap:anywhere;line-height:1.7;}
+  .proj-outcomes{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:18px;}
+  .proj-outcome{background:var(--panel-2);padding:12px 10px;}
+  .proj-outcome .k{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--fog-dim);display:block;margin-bottom:5px;line-height:1.3;}
+  .proj-outcome .v{font-family:var(--display);font-size:15px;font-weight:600;color:var(--paper);line-height:1.25;display:block;}
+  @media (max-width:420px){.proj-outcomes{grid-template-columns:1fr;}}
   .proj-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px;}
   .proj-tags .tag{font-size:11px;padding:4px 9px;}
-  .proj-actions{display:flex;flex-direction:column;gap:8px;margin-top:auto;}
+  .proj-actions{display:flex;flex-direction:column;gap:8px;margin-top:0;}
   .proj-actions .btn{font-size:12.5px;padding:11px 14px;justify-content:center;}
   .status-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:20px;margin-bottom:14px;}
 
   /* ---------- SKILLS ---------- */
   .skill-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .layer-tag{font-family:var(--mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:8px;}
   @media (max-width:700px){.skill-grid{grid-template-columns:1fr;}}
   .skill-card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:24px;}
   .skill-card h4{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);margin-bottom:14px;}
@@ -390,37 +380,6 @@
       </div>
     </div>
 
-    <div class="dash">
-      <div class="dash-head">
-        <span>ACTIVE_PIPELINES.LOG</span>
-        <div class="lights"><span></span><span></span><span></span></div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-name">Anchor — Support Console</div>
-        <div class="dash-flow">SALESFORCE → HTTP → VERTEX AI SEARCH → GEMINI ENTERPRISE → CHATTER</div>
-        <div class="pill shipped"><span class="dot"></span>Migrated to enterprise stack</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-name">Health Score Pipeline</div>
-        <div class="dash-flow">SCHEDULER → GMAIL → APPS SCRIPT → SHEETS → SF REST API</div>
-        <div class="pill live"><span class="dot"></span>Live · monthly refresh</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-name">Invoice Renewal AI Assistant</div>
-        <div class="dash-flow">APEX TRIGGER → CLASSIFY → LWC QUICK ACTION → GEMINI</div>
-        <div class="pill proto"><span class="dot"></span>v1 Prototype</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-name">Pursuit — GTM Pipeline, Agentified</div>
-        <div class="dash-flow">APOLLO → 10 AGENTS → CLAUDE SCORING → SALESFORCE → SLACK</div>
-        <div class="pill shipped"><span class="dot"></span>Redesigned as 10 agents</div>
-      </div>
-      <div class="dash-row">
-        <div class="dash-name">Customer Insights — Churn Engine</div>
-        <div class="dash-flow">HEALTH SCORE + USAGE EVENTS + LINKEDIN → AI SYNTHESIS</div>
-        <div class="pill proto"><span class="dot"></span>Concept · Target Q1 2027</div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -439,10 +398,10 @@
         AppExchange ISV building data management and automation tools for nonprofit and B2B
         customers. I lead an AI pod focused on product and go-to-market automation, working
         remotely out of Bangalore.</p>
-        <p>My pattern is consistent: I don't just scope AI projects, I build them end-to-end —
-        Apex triggers, Lightning Web Components, Apps Script pipelines, Gemini and Claude
-        integrations — while also owning the PRDs, stakeholder approvals, and the metrics that
-        make the numbers defensible in a room with senior leadership.</p>
+        <p>My pattern is consistent: I don't just scope AI projects, I build them end-to-end (Apex triggers,
+        Lightning Web Components, Apps Script pipelines, Gemini and Claude integrations)
+        while also owning the PRDs, stakeholder approvals, and the metrics that make the
+        numbers defensible in a room with senior leadership.</p>
         <p>I hold an <strong>MBA from IIT Kanpur</strong> with a focus on Product Management, and
         I work comfortably across English and Hindi/Hinglish depending on the room I'm in.</p>
       </div>
@@ -467,6 +426,72 @@
   </div>
 </section>
 
+<!-- ================= SKILLS ================= -->
+<section id="skills">
+  <div class="wrap">
+    <div class="pipeline-strip">
+      <div class="seg"><span class="node"></span>BUILD</div><div class="bar"></div>
+      <div class="seg"><span class="node"></span>DOCUMENT</div><div class="bar"></div>
+      <div class="seg"><span class="node"></span>DEFEND</div>
+    </div>
+    <div class="sec-head">
+      <h2>Skills & Tools</h2>
+      <p class="sec-sub">Every project I build moves through the same layers, from system of record to the metric I get judged on. This is where I am hands-on in each.</p>
+    </div>
+    <div class="skill-grid">
+      <div class="skill-card">
+        <span class="layer-tag">System of record</span>
+        <h4>Salesforce Ecosystem</h4>
+        <div class="tags">
+          <span class="tag">Apex</span><span class="tag">LWC</span><span class="tag">SOQL</span>
+          <span class="tag">Flows</span><span class="tag">REST API</span><span class="tag">AppExchange (ISV)</span>
+          <span class="tag">Agentforce</span><span class="tag">Data Cloud</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <span class="layer-tag">Judgment layer</span>
+        <h4>AI / LLM Systems</h4>
+        <div class="tags">
+          <span class="tag">Claude API</span><span class="tag">Gemini API</span><span class="tag">Agent Orchestration</span>
+          <span class="tag">n8n</span><span class="tag">Prompt Engineering</span><span class="tag">LLM Grounding</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <span class="layer-tag">Measurement</span>
+        <h4>Data &amp; Analytics</h4>
+        <div class="tags">
+          <span class="tag">SQL</span><span class="tag">Python (Pandas/NumPy)</span><span class="tag">Power BI (DAX)</span>
+          <span class="tag">Tableau</span><span class="tag">ETL Pipelines</span><span class="tag">Cohort &amp; Funnel Analysis</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <span class="layer-tag">Data in, delivery out</span>
+        <h4>Google Workspace</h4>
+        <div class="tags">
+          <span class="tag">Apps Script</span><span class="tag">Workspace Studio</span>
+          <span class="tag">Sheets</span><span class="tag">Gmail</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <span class="layer-tag">Definition and defence</span>
+        <h4>Product Craft</h4>
+        <div class="tags">
+          <span class="tag">PRDs &amp; User Stories</span><span class="tag">A/B Testing</span><span class="tag">Stakeholder Management</span>
+          <span class="tag">Prioritization Frameworks</span><span class="tag">Roadmapping</span><span class="tag">Agile/Scrum</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <span class="layer-tag">Build and track</span>
+        <h4>Systems &amp; Tools</h4>
+        <div class="tags">
+          <span class="tag">Postgres</span><span class="tag">Git</span><span class="tag">Figma</span>
+          <span class="tag">Jira</span><span class="tag">Notion</span><span class="tag">Whimsical</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= EXPERIENCE ================= -->
 <section id="experience">
   <div class="wrap">
@@ -481,10 +506,10 @@
         <span class="role">Jun 2026 – Present</span>
       </div>
       <div class="exp-body">
-        <h3>Associate Product Manager — AI Pod Lead</h3>
+        <h3>Associate Product Manager: AI Pod Lead</h3>
         <ul>
-          <li>Architected an AI-native outbound (GTM) engine that shifts the SDR judgment-and-writing layer to the Claude API, orchestrating 8 external APIs (Apollo, 6Sense, Apify, ZeroBounce, Instantly, PhantomBuster, Google Calendar, Salesforce) across a 15-stage pipeline — intent detection, 0–100 account scoring and A/B/C tiering, contact/email verification, personalized outreach, and 4-way reply classification — designed for 2,000+ accounts/week with idempotent CRM writes as the system of record.</li>
-          <li>Built a two-layer AI support-email triage system: rule-based Salesforce Flow filters as a low-cost first pass, plus a Claude-powered decision step for judgment cases, grounded in a real inbox audit — routing only genuine product issues to the drafting agent and protecting the AI run budget.</li>
+          <li>Architected an AI-native outbound (GTM) engine that shifts the SDR judgment-and-writing layer to the Claude API, orchestrating 8 external APIs (Apollo, 6Sense, Apify, ZeroBounce, Instantly, PhantomBuster, Google Calendar, Salesforce) across a 15-stage pipeline (intent detection, 0–100 account scoring and A/B/C tiering, contact/email verification, personalized outreach, and 4-way reply classification) designed for 2,000+ accounts/week with idempotent CRM writes as the system of record.</li>
+          <li>Built a two-layer AI support-email triage system: rule-based Salesforce Flow filters as a low-cost first pass, plus a Claude-powered decision step for judgment cases, grounded in a real inbox audit, routing only genuine product issues to the drafting agent and protecting the AI run budget.</li>
           <li>Drove hands-on prototyping of the agent stack: evaluated orchestration approaches (Claude Code vs. n8n), built scoring logic and CRM dedupe rules in Python, designed a managed Postgres state store to track every prospect at scale, and maintained a living Whimsical workflow diagram aligning Product, Engineering, and GTM.</li>
           <li>Defined the v2 roadmap for AI support automation: confidence-gating to suppress low-quality drafts, routing by product area and urgency, and a keep/edit/discard feedback loop to surface weak documentation.</li>
         </ul>
@@ -500,9 +525,9 @@
         <h3>Product Intern</h3>
         <ul>
           <li>Identified a $12.26M upsell opportunity by analyzing feature-level purchase behavior across 1,700+ accounts; developed a bundled-pricing proposal for the top 100 high-fit customers, enabling targeting of 20+ clients.</li>
-          <li>Designed and built an AI Support Agent on Salesforce Agentforce (Apex, LWC, Flows, Data Cloud), leading end-to-end development and integrating 500+ PDFs/logs — cut case volume by 30% and improved first-response time by 25%.</li>
+          <li>Designed and built an AI Support Agent on Salesforce Agentforce (Apex, LWC, Flows, Data Cloud), leading end-to-end development and integrating 500+ PDFs/logs, cut case volume by 30% and improved first-response time by 25%.</li>
           <li>Ran a deep-dive analysis of CRUD activity across 1,700+ accounts, generating user segmentation, feature-adoption insights, and churn-risk alerts; identified the 3 core features driving 70% of usage and isolated onboarding friction points.</li>
-          <li>Engineered a security &amp; compliance framework for AgentExchange (grounding, guardrailing, injection handling) aligned with SOC 2, GDPR, and PDPA — cut clearance cycle time by 40%.</li>
+          <li>Engineered a security &amp; compliance framework for AgentExchange (grounding, guardrailing, injection handling) aligned with SOC 2, GDPR, and PDPA, cut clearance cycle time by 40%.</li>
         </ul>
       </div>
     </div>
@@ -515,8 +540,8 @@
       <div class="exp-body">
         <h3>Business Analyst</h3>
         <ul>
-          <li>Led development of three internal analytics products — a Project Delivery Tracker, Client Profitability Dashboard, and Resource Allocation System — across system design, data-flow architecture, and backend API integrations, reducing manual reconciliation by 40%.</li>
-          <li>Architected a Power BI &amp; SQL data infrastructure — ETL pipelines, relational schemas, scheduled refresh logic, role-based access — processing 25K+ monthly records and cutting data latency from 7 days to 24 hours.</li>
+          <li>Led development of three internal analytics products (a Project Delivery Tracker, Client Profitability Dashboard, and Resource Allocation System) across system design, data-flow architecture, and backend API integrations, reducing manual reconciliation by 40%.</li>
+          <li>Architected a Power BI &amp; SQL data infrastructure (ETL pipelines, relational schemas, scheduled refresh logic, role-based access) processing 25K+ monthly records and cutting data latency from 7 days to 24 hours.</li>
           <li>Analyzed 30,000+ multi-source datasets (CRM, ERP, finance logs, project tools) with SQL, Python, and DAX; surfaced the top 3 customer segments driving 68% of revenue and high-leakage workflows.</li>
           <li>Partnered across Engineering, UX, Sales, and Finance to convert business needs into functional specs and KPIs; findings on 3 workflow bottlenecks led to redesigned approval flows that boosted on-time delivery by 22%.</li>
         </ul>
@@ -530,69 +555,9 @@
   <div class="wrap">
     <div class="sec-head">
       <h2>Featured Projects</h2>
-      <p class="sec-sub">The full challenge, solution, and impact for each system — scroll to read. Live Demo opens a real interactive prototype in a new tab.</p>
+      <p class="sec-sub">The full challenge, solution, and impact for each system, scroll to read. Live Demo opens a real interactive prototype in a new tab.</p>
     </div>
     <div id="projects-grid"></div>
-  </div>
-</section>
-
-<!-- ================= SKILLS ================= -->
-<section id="skills">
-  <div class="wrap">
-    <div class="pipeline-strip">
-      <div class="seg"><span class="node"></span>BUILD</div><div class="bar"></div>
-      <div class="seg"><span class="node"></span>DOCUMENT</div><div class="bar"></div>
-      <div class="seg"><span class="node"></span>DEFEND</div>
-    </div>
-    <div class="sec-head">
-      <h2>Skills & Tools</h2>
-      <p class="sec-sub">The four layers every one of my projects moves through.</p>
-    </div>
-    <div class="skill-grid">
-      <div class="skill-card">
-        <h4>Salesforce Ecosystem</h4>
-        <div class="tags">
-          <span class="tag">Apex</span><span class="tag">LWC</span><span class="tag">SOQL</span>
-          <span class="tag">Flows</span><span class="tag">REST API</span><span class="tag">AppExchange (ISV)</span>
-          <span class="tag">Agentforce</span><span class="tag">Data Cloud</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <h4>AI / LLM Systems</h4>
-        <div class="tags">
-          <span class="tag">Claude API</span><span class="tag">Gemini API</span><span class="tag">Agent Orchestration</span>
-          <span class="tag">n8n</span><span class="tag">Prompt Engineering</span><span class="tag">LLM Grounding</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <h4>Data &amp; Analytics</h4>
-        <div class="tags">
-          <span class="tag">SQL</span><span class="tag">Python (Pandas/NumPy)</span><span class="tag">Power BI (DAX)</span>
-          <span class="tag">Tableau</span><span class="tag">ETL Pipelines</span><span class="tag">Cohort &amp; Funnel Analysis</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <h4>Google Workspace</h4>
-        <div class="tags">
-          <span class="tag">Apps Script</span><span class="tag">Workspace Studio</span>
-          <span class="tag">Sheets</span><span class="tag">Gmail</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <h4>Product Craft</h4>
-        <div class="tags">
-          <span class="tag">PRDs &amp; User Stories</span><span class="tag">A/B Testing</span><span class="tag">Stakeholder Management</span>
-          <span class="tag">Prioritization Frameworks</span><span class="tag">Roadmapping</span><span class="tag">Agile/Scrum</span>
-        </div>
-      </div>
-      <div class="skill-card">
-        <h4>Systems &amp; Tools</h4>
-        <div class="tags">
-          <span class="tag">Postgres</span><span class="tag">Git</span><span class="tag">Figma</span>
-          <span class="tag">Jira</span><span class="tag">Notion</span><span class="tag">Whimsical</span>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -600,9 +565,9 @@
 <section id="education">
   <div class="wrap">
     <div class="sec-head"><h2>Education & Certification</h2></div>
-    <div class="edu-row"><h4>MBA, Product Management &amp; Business Analytics — IIT Kanpur</h4><span>CGPA 8.61 · 2024–26</span></div>
-    <div class="edu-row"><h4>B.Tech, Mechanical Engineering — Ahmedabad Institute of Technology</h4><span>CGPA 8.3 · 2016–20</span></div>
-    <div class="edu-row"><h4>Claude Certified Architect — Foundations</h4><span>IN PROGRESS</span></div>
+    <div class="edu-row"><h4>MBA in Product Management &amp; Business Analytics, IIT Kanpur</h4><span>CGPA 8.61 · 2024–26</span></div>
+    <div class="edu-row"><h4>B.Tech in Mechanical Engineering, Ahmedabad Institute of Technology</h4><span>CGPA 8.3 · 2016–20</span></div>
+    <div class="edu-row"><h4>Claude Certified Architect: Foundations</h4><span>IN PROGRESS</span></div>
   </div>
 </section>
 
@@ -623,7 +588,7 @@
   </div>
 </section>
 
-<footer>RISHAV.PM — BUILT END TO END, LIKE EVERYTHING ELSE</footer>
+<footer>RISHAV.PM: BUILT END TO END, LIKE EVERYTHING ELSE</footer>
 
 <!-- ================= MODAL ================= -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()">
@@ -652,15 +617,16 @@
 var PROJECTS = [
   {
     id:'support-agent',
-    title:'Anchor — Vertex AI Search + Gemini Enterprise',
-    status:'shipped', statusLabel:'Migrated to enterprise stack',
+    outcomes:[['Runs / month','~400'],['Grounding sources','5 systems'],['Hallucinated citations','Target 0']],
+    title:'Anchor: Vertex AI Search + Gemini Enterprise',
+    status:'live', statusLabel:'Live · enterprise stack',
     tagline:'Migrated the original NotebookLM-based agent to Vertex AI Search and Gemini Enterprise for grounded, multi-source, zero-hallucination replies.',
     flow:'Salesforce Case → HTTP POST → MCP Context Server → Vertex AI Search (Drive · Fathom · Confluence · Jira · Help Center) → Gemini Enterprise → Chatter Post-back',
-    challenge:'The original agent ran on Google Workspace Studio with NotebookLM as the grounding layer — enough for a single knowledge base and roughly 400 runs a month, but closed-off: no clean way to get exact external URLs back into Salesforce, no way to pull in call recordings or engineering tickets, and no structured case context beyond the raw case text.',
-    solution:'Rebuilt on Vertex AI Search and Gemini Enterprise Agent Builder. An MCP server feeds every request full case context (customer tier, prior case history) before drafting starts. Vertex AI Search grounds against Drive docs (via webViewLink), Fathom call recordings, Confluence known-issue pages, and Jira tickets in one datastore. A dedicated Citation & Grounding Agent checks every technical claim against the retrieved metadata and refuses to ship a claim with no matching source — and a Chatter-Post Agent resolves any Google redirect-wrapped links into clean, public Apsona Help Center URLs before the draft ever reaches a customer.',
+    challenge:'The original agent ran on Google Workspace Studio with NotebookLM as the grounding layer, enough for a single knowledge base and roughly 400 runs a month, but closed-off: no clean way to get exact external URLs back into Salesforce, no way to pull in call recordings or engineering tickets, and no structured case context beyond the raw case text.',
+    solution:'Rebuilt on Vertex AI Search and Gemini Enterprise Agent Builder. An MCP server feeds every request full case context (customer tier, prior case history) before drafting starts. Vertex AI Search grounds against Drive docs (via webViewLink), Fathom call recordings, Confluence known-issue pages, and Jira tickets in one datastore. A dedicated Citation & Grounding Agent checks every technical claim against the retrieved metadata and refuses to ship a claim with no matching source, and a Chatter-Post Agent resolves any Google redirect-wrapped links into clean, public Apsona Help Center URLs before the draft ever reaches a customer.',
     impact:'Moves the project from a single-knowledge-base tool to a multi-source, multi-agent system that traces recurring bugs back to open Jira tickets instead of re-answering them, and produces help-center links clean enough to reuse directly in customer-facing email.',
     ac:[
-      'No citation is ever displayed unless it was explicitly present in the search tool\'s retrieved metadata — the agent never generates or guesses a link.',
+      'No citation is ever displayed unless it was explicitly present in the search tool\'s retrieved metadata, the agent never generates or guesses a link.',
       'A technical claim with no matching retrieved source is dropped from the draft and the case is escalated to a rep, never shipped unsupported.',
       'A pattern of 3+ cases on the same issue with an open Jira ticket routes to a human before drafting, instead of auto-replying with a workaround to a known bug.',
       'Every draft is checked by the Citation & Grounding Agent before the Chatter-Post Agent is allowed to post it.'
@@ -672,7 +638,7 @@ var PROJECTS = [
     ],
     stack:['Vertex AI Search','Gemini Enterprise','Google Drive','Fathom','Confluence','Jira','MCP Server','Salesforce Chatter API'],
     code:{lang:'Agent Builder system instructions (illustrative)', content:
-"# Gemini Enterprise Agent — system instructions\n"+
+"# Gemini Enterprise Agent: system instructions\n"+
 "\n"+
 "You must draft your support response in the support team's voice.\n"+
 "\n"+
@@ -689,12 +655,13 @@ var PROJECTS = [
     },
     demoType:'support', demoUrl:'demo-support-enterprise-console.html',
     designUrl:'design-anchor-architecture.html',
-    designNote:'Interactive API data flow and system architecture for the grounded support console — how a case reaches Vertex AI Search, gets grounded against the docs corpus, and comes back as a cited answer.'
+    designNote:'Interactive API data flow and system architecture for the grounded support console: how a case reaches Vertex AI Search, gets grounded against the docs corpus, and comes back as a cited answer.'
   },
   {
     id:'invoice-renewal',
+    outcomes:[['Invoice types classified','4'],['Steps to send, before','6 clicks'],['After','1 quick action']],
     title:'AI-Assisted Invoice Renewal Automation',
-    status:'proto', statusLabel:'v1 Prototype',
+    status:'built', statusLabel:'Built · v1 prototype',
     tagline:'Classifies renewal invoices automatically and routes them through a Lightning quick action.',
     flow:'Apex Trigger → Classification Engine → LWC Quick Action → Gemini API',
     challenge:'The BnL team classified and processed invoice renewals by hand, with no intelligent routing layer to separate auto-renewals from cases that needed review.',
@@ -729,22 +696,23 @@ var PROJECTS = [
     },
     demoType:'invoice', demoUrl:'demo-invoice-ai-assistant.html', flowUrl:'demo-invoice-dataflow.html',
     designUrl:'demo-invoice-dataflow.html',
-    designNote:'Animated architecture of the renewal pipeline — case intake and intent triage, the deterministic Apex context engine, the Gemini reasoning and pass/fail verification gate, and the Apsona merge into an editable AM draft.'
+    designNote:'Animated architecture of the renewal pipeline: case intake and intent triage, the deterministic Apex context engine, the Gemini reasoning and pass/fail verification gate, and the Apsona merge into an editable AM draft.'
   },
   {
     id:'gtm-engine',
-    title:'Pursuit — GTM Pipeline, Agentified',
-    status:'shipped', statusLabel:'Redesigned as 10 agents',
+    outcomes:[['Accounts / week','2,000+'],['APIs orchestrated','8'],['Pipeline stages','15']],
+    title:'Pursuit: GTM Pipeline, Agentified',
+    status:'built', statusLabel:'Built · 10-agent redesign',
     tagline:'Turned a one-person manual SDR workflow into 10 agents that hand off a shared record instead of one script doing everything.',
     flow:'Lister (Apollo) → Dedupe (Apsona/SF) → Intent (6Sense/Apify) → Scoring (Python) → Contact Resolution (Apollo/ZeroBounce) → Personalization → Outreach (Gmail/PhantomBuster) → Reply Classification → Scheduling → CRM Sync (Salesforce)',
-    challenge:'The manual SDR workflow worked, but it lived in one process end to end: build a list in Apollo, dedupe against Salesforce, check 6Sense for intent, run a Python script to score and tier, find and validate a contact, write and send outreach, classify replies, book meetings, and sync everything to Salesforce by hand at each step. Every decision point — suppress or continue, which tier, valid or risky email, which reply category — was a judgment call with no written rule behind it.',
-    solution:'Split the workflow into 10 specialized agents that pass one shared "Lead Record" instead of each person or script touching everything. Each agent owns exactly one stage, reads only the fields it needs, and writes back a defined output — with a hard validation rule gating the handoff instead of a judgment call. Tier-C leads loop back through the Intent and Scoring agents on a weekly re-score; low-confidence reply classifications route to a human queue instead of auto-branching; every touch writes an idempotent Salesforce record so the deal state is visible at every step, not just at the end.',
-    impact:'Redesigned directly from the manual workflow diagram used by the team today, with every agent boundary, validation rule, and metric traceable back to a real decision point in that process — not an idealized version of it.',
+    challenge:'The manual SDR workflow worked, but it lived in one process end to end: build a list in Apollo, dedupe against Salesforce, check 6Sense for intent, run a Python script to score and tier, find and validate a contact, write and send outreach, classify replies, book meetings, and sync everything to Salesforce by hand at each step. Every decision point (suppress or continue, which tier, valid or risky email, which reply category) was a judgment call with no written rule behind it.',
+    solution:'Split the workflow into 10 specialized agents that pass one shared "Lead Record" instead of each person or script touching everything. Each agent owns exactly one stage, reads only the fields it needs, and writes back a defined output, with a hard validation rule gating the handoff instead of a judgment call. Tier-C leads loop back through the Intent and Scoring agents on a weekly re-score; low-confidence reply classifications route to a human queue instead of auto-branching; every touch writes an idempotent Salesforce record so the deal state is visible at every step, not just at the end.',
+    impact:'Redesigned directly from the manual workflow diagram used by the team today, with every agent boundary, validation rule, and metric traceable back to a real decision point in that process, not an idealized version of it.',
     ac:[
-      'Every agent-to-agent handoff passes through a written validation rule, never an implicit judgment call — the rule is stated in the agent\'s contract, not left to the model\'s discretion.',
+      'Every agent-to-agent handoff passes through a written validation rule, never an implicit judgment call, the rule is stated in the agent\'s contract, not left to the model\'s discretion.',
       'A lead can be traced end to end through the shared Lead Record: any agent\'s output is inspectable without re-running the pipeline.',
       'Low-confidence decisions (email validity, reply classification) route to a human review queue instead of auto-proceeding.',
-      'Salesforce writes are idempotent by lead ID — re-running any stage never creates a duplicate record.'
+      'Salesforce writes are idempotent by lead ID: re-running any stage never creates a duplicate record.'
     ],
     metrics:[
       'Per-agent evaluation metric (e.g. bounce rate, classification accuracy, tier-to-conversion correlation) tracked independently, not just an end-to-end conversion number',
@@ -774,27 +742,28 @@ var PROJECTS = [
     },
     demoType:'gtm', demoUrl:'demo-sdr-rep-console.html', flowUrl:'demo-gtm-agentic.html',
     designUrl:'design-sdr-workflow.html',
-    designNote:'Step-through of the manual SDR pipeline this agent replaces — 27 stages from list build and dedupe through scoring, tiering, validation, personalisation, outreach and the Salesforce handoff, including every branch and rejection path.'
+    designNote:'Step-through of the manual SDR pipeline this agent replaces: 27 stages from list build and dedupe through scoring, tiering, validation, personalisation, outreach and the Salesforce handoff, including every branch and rejection path.'
   },
   {
     id:'customer-insights',
-    title:'AI Customer Insights — Preemptive Churn Engine',
-    status:'proto', statusLabel:'Concept · Target Q1 2027',
-    tagline:'Combines Health Score, product usage, and LinkedIn signals into one early-warning view for the AM team — before churn shows up as a lost renewal.',
+    outcomes:[['Signals fused','3 sources'],['Accounts in backtest','5 churned'],['Target ship','Q1 2027']],
+    title:'AI Customer Insights: Preemptive Churn Engine',
+    status:'concept', statusLabel:'Concept · target Q1 2027',
+    tagline:'Combines Health Score, product usage, and LinkedIn signals into one early-warning view for the AM team, before churn shows up as a lost renewal.',
     flow:'Apsona Scheduler → Apps Script (ingest) → Google Sheets scoring → Apps Script (push) → Salesforce → AI Signal Synthesis → AM Action Center',
     challenge:'Apsona\'s Customer Health Score is live and useful, but on its own it can\'t explain which specific behavior is driving a score up or down, and Health Score alone misses two real early-warning patterns: a champion leaving the company, and usage quietly collapsing on specific modules before the score catches up.',
-    solution:'Automated the Health Score refresh end-to-end first (Apsona Scheduler runs the MSR on a relative date filter, emails the CSV, an Apps Script ingests it into a scoring Google Sheet, and a second Apps Script pushes the result back to Salesforce via REST API) — then layered in Product Usage Event velocity (Doc Merge, MSR, SSR, Dedupe, Filters, Import/Export) and LinkedIn signals (org engagement plus executive champion turnover) on top. An AI synthesis step reads all signals together and writes the actual reason in plain language, not just a score, and an AM Action Center turns that reason directly into a next step — log a call, draft a re-engagement email, book a technical workshop, or flag the account for the renewal team.',
-    impact:'Health Score automation is in active build (one of two quarterly Rocks due Oct 5, 2026). Usage-event tracking gaps are being closed with DOps ahead of the Q1 2027 dashboard. LinkedIn and champion-turnover signals are proposed and scoped in this prototype, not yet live — the console is built to show that honestly per account rather than fabricating full coverage everywhere.',
+    solution:'Automated the Health Score refresh end-to-end first (Apsona Scheduler runs the MSR on a relative date filter, emails the CSV, an Apps Script ingests it into a scoring Google Sheet, and a second Apps Script pushes the result back to Salesforce via REST API), then layered in Product Usage Event velocity (Doc Merge, MSR, SSR, Dedupe, Filters, Import/Export) and LinkedIn signals (org engagement plus executive champion turnover) on top. An AI synthesis step reads all signals together and writes the actual reason in plain language, not just a score, and an AM Action Center turns that reason directly into a next step, log a call, draft a re-engagement email, book a technical workshop, or flag the account for the renewal team.',
+    impact:'Health Score automation is in active build (one of two quarterly Rocks due Oct 5, 2026). Usage-event tracking gaps are being closed with DOps ahead of the Q1 2027 dashboard. LinkedIn and champion-turnover signals are proposed and scoped in this prototype, not yet live, the console is built to show that honestly per account rather than fabricating full coverage everywhere.',
     ac:[
-      'Every account shows exactly how many of the five signals are actually live for it — a missing signal is shown as missing, never silently treated as zero or ignored.',
+      'Every account shows exactly how many of the five signals are actually live for it, a missing signal is shown as missing, never silently treated as zero or ignored.',
       'The AI synthesis step must cite which specific signals produced its read (e.g. champion turnover + usage drop), not just output a risk label.',
-      'Every AI-flagged account routes to a concrete AM action — log call, draft email, book workshop, or flag for renewal — never a bare alert with no next step.',
-      'Positive signals (usage growth, expansion-intent LinkedIn posts) surface an upsell action, not just a risk score — this is a health monitor, not only a fire alarm.'
+      'Every AI-flagged account routes to a concrete AM action (log call, draft email, book workshop, or flag for renewal) never a bare alert with no next step.',
+      'Positive signals (usage growth, expansion-intent LinkedIn posts) surface an upsell action, not just a risk score, this is a health monitor, not only a fire alarm.'
     ],
     metrics:[
       'On-time Health Score refresh rate (target: 100% by day 1 of month)',
       '% of high-risk accounts where AM outreach happened before the renewal window (preemptive rate)',
-      'Signal coverage rate — how many of the 5 signals are live per account, tracked as its own metric'
+      'Signal coverage rate: how many of the 5 signals are live per account, tracked as its own metric'
     ],
     stack:['Apsona Scheduler','Google Apps Script','Google Sheets','Salesforce REST API','LinkedIn Signals','Gemini/Claude Synthesis'],
     code:{lang:'Health Score push script (illustrative, from the actual build notes)', content:
@@ -821,7 +790,7 @@ var PROJECTS = [
   }
 ];
 
-var STATUS_CLASS = {live:'live', shipped:'shipped', proto:'proto'};
+var STATUS_CLASS = {live:'live', built:'built', concept:'concept'};
 
 /* ============ RENDER CARDS ============ */
 function renderCards(){
@@ -837,6 +806,7 @@ function renderCards(){
       '<div class="proj-cs-block"><h5>Solution</h5><p>'+p.solution+'</p></div>' +
       '<div class="proj-cs-block"><h5>Impact</h5><p>'+p.impact+'</p></div>' +
       '<div class="proj-flow">'+p.flow.toUpperCase()+'</div>' +
+      '<div class="proj-outcomes">'+(p.outcomes||[]).map(function(o){return '<div class="proj-outcome"><span class="k">'+o[0]+'</span><span class="v">'+o[1]+'</span></div>';}).join('')+'</div>' +
       '<div class="proj-tags">'+p.stack.map(function(s){return '<span class="tag">'+s+'</span>';}).join('')+'</div>' +
       '<div class="proj-actions">' +
         '<a class="btn primary" href="'+p.demoUrl+'" target="_blank" rel="noopener">Live Demo ↗</a>' +
@@ -909,7 +879,7 @@ function renderCode(p){
   document.getElementById('pane-code').innerHTML =
     '<div class="ov-block"><span class="label">'+p.code.lang+'</span></div>' +
     '<div class="code-box">'+escapeHtml(p.code.content)+'</div>' +
-    '<div class="code-caption">Illustrative snippet — the full implementation lives in the linked repo.</div>' +
+    '<div class="code-caption">Illustrative snippet: the full implementation lives in the linked repo.</div>' +
     '<a class="repo-link" href="https://github.com/YOUR-GITHUB-USERNAME/'+p.id+'" target="_blank" rel="noopener">View full repo ↗</a>' +
     (p.flowUrl ? ' <a class="repo-link" href="'+p.flowUrl+'" target="_blank" rel="noopener">View architecture animation ↗</a>' : '');
 }
@@ -926,7 +896,7 @@ function renderDemo(p){
   else if(p.demoType==='invoice') pane.innerHTML = demoInvoiceHTML();
   else if(p.demoType==='gtm') pane.innerHTML = demoGtmHTML();
   else if(p.demoType==='scorecard') pane.innerHTML = demoScorecardHTML();
-  else pane.innerHTML = '<div class="demo-box"><div class="demo-label">Full interactive prototype</div><p style="color:var(--fog);font-size:13.5px;">This one is a full standalone console — too much to embed inline here.</p><a class="btn primary" href="'+p.demoUrl+'" target="_blank" rel="noopener" style="margin-top:12px;display:inline-block;">Open Live Demo ↗</a></div>';
+  else pane.innerHTML = '<div class="demo-box"><div class="demo-label">Full interactive prototype</div><p style="color:var(--fog);font-size:13.5px;">This one is a full standalone console: too much to embed inline here.</p><a class="btn primary" href="'+p.demoUrl+'" target="_blank" rel="noopener" style="margin-top:12px;display:inline-block;">Open Live Demo ↗</a></div>';
 }
 
 /* --- Demo 1: Support Agent Q&A --- */
@@ -943,7 +913,7 @@ function demoSupportHTML(){
 }
 var SUPPORT_ANSWERS = {
   renewal:'License renewals are auto-detected 30 days out. Go to Setup → Apsona Licensing → Renew, or reply "renew" in this case and the agent will file the request for you.',
-  export:'Yes — Health Score exports are available under Reports → Health Score → Export to CSV, refreshed on the 1st of every month.',
+  export:'Yes: Health Score exports are available under Reports → Health Score → Export to CSV, refreshed on the 1st of every month.',
   sso:'SSO via SAML 2.0 is supported on Business+ and above. Your Salesforce admin can enable it under Setup → Single Sign-On Settings.'
 };
 function askDemo(key){
@@ -967,7 +937,7 @@ function demoHealthHTML(){
     return '<tr><td>'+a.name+'</td><td><div class="bar-track"><div class="bar-fill" id="hbar-'+i+'" style="width:'+a.score+'%"></div></div></td><td id="hval-'+i+'">'+a.score+'</td></tr>';
   }).join('');
   return '<div class="demo-box">' +
-    '<div class="demo-label">Monthly refresh — last run: Aug 1</div>' +
+    '<div class="demo-label">Monthly refresh: last run: Aug 1</div>' +
     '<table class="demo-table"><thead><tr><th>Account</th><th>Score</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>' +
     '<button class="btn primary sm" onclick="runHealthRefresh()">Run Monthly Refresh</button>' +
     '<div id="health-ts" class="code-caption"></div>' +
@@ -988,9 +958,9 @@ function runHealthRefresh(){
 /* --- Demo 3: Invoice classification --- */
 var INVOICE_MAP = {
   auto:{label:'Auto-Renew Eligible', cls:'ok', confidence:96},
-  overdue:{label:'Escalate — Payment Overdue 60+', cls:'bad', confidence:91},
-  changed:{label:'Needs Review — Terms Changed', cls:'warn', confidence:83},
-  dup:{label:'Flag — Possible Duplicate', cls:'warn', confidence:88}
+  overdue:{label:'Escalate: Payment Overdue 60+', cls:'bad', confidence:91},
+  changed:{label:'Needs Review: Terms Changed', cls:'warn', confidence:83},
+  dup:{label:'Flag: Possible Duplicate', cls:'warn', confidence:88}
 };
 function demoInvoiceHTML(){
   return '<div class="demo-box">' +
@@ -1017,15 +987,15 @@ function classifyInvoice(){
 
 /* --- Demo 4: GTM lead scoring --- */
 var GTM_LEADS = [
-  {name:'Priya Nair — VP Ops, Fernbank Health', target:88},
-  {name:'Daniel Osei — Dir. RevOps, Cartway', target:74},
-  {name:'Wei Chen — Head of GTM, Lumen Data', target:92},
-  {name:'Marta Ruiz — CRO, Nordling & Co', target:61},
-  {name:'Sam Patel — PM, GreenLeaf Systems', target:45}
+  {name:'Priya Nair, VP Ops, Fernbank Health', target:88},
+  {name:'Daniel Osei, Dir. RevOps, Cartway', target:74},
+  {name:'Wei Chen, Head of GTM, Lumen Data', target:92},
+  {name:'Marta Ruiz, CRO, Nordling & Co', target:61},
+  {name:'Sam Patel, PM, GreenLeaf Systems', target:45}
 ];
 function demoGtmHTML(){
   var rows = GTM_LEADS.map(function(l,i){
-    return '<tr id="gtm-row-'+i+'"><td>'+l.name+'</td><td><div class="bar-track"><div class="bar-fill" id="gbar-'+i+'" style="width:0%"></div></div></td><td id="gval-'+i+'">—</td></tr>';
+    return '<tr id="gtm-row-'+i+'"><td>'+l.name+'</td><td><div class="bar-track"><div class="bar-fill" id="gbar-'+i+'" style="width:0%"></div></div></td><td id="gval-'+i+'">-</td></tr>';
   }).join('');
   return '<div class="demo-box">' +
     '<div class="demo-label">Score sourced leads with Claude</div>' +
@@ -1060,7 +1030,7 @@ var USE_CASES = [
 ];
 function demoScorecardHTML(){
   var rows = USE_CASES.map(function(u,i){
-    return '<tr id="sc-row-'+i+'"><td>'+u.name+'</td><td>'+u.impact+'</td><td>'+u.effort+'</td><td>'+u.strategic+'</td><td id="sc-total-'+i+'">—</td></tr>';
+    return '<tr id="sc-row-'+i+'"><td>'+u.name+'</td><td>'+u.impact+'</td><td>'+u.effort+'</td><td>'+u.strategic+'</td><td id="sc-total-'+i+'">-</td></tr>';
   }).join('');
   return '<div class="demo-box">' +
     '<div class="demo-label">Adjust weights and watch the ranking change</div>' +

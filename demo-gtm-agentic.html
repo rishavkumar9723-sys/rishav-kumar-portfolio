@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GTM Pipeline — Agentified | Rishav</title>
+<title>GTM Pipeline: Agentified | Rishav</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
   :root{
@@ -78,13 +78,13 @@
 
 <div class="wrap">
   <div class="hero">
-    <div class="eyebrow">Live Demo — Agentic Redesign</div>
+    <div class="eyebrow">Live Demo: Agentic Redesign</div>
     <h1>GTM Pipeline, Agentified</h1>
     <p class="sub">
       The manual version of this pipeline works, but it lives in one person's head: Apollo for lists,
       6Sense for intent, a Python script for scoring, ZeroBounce for validation, PhantomBuster for LinkedIn,
       and a lot of judgment calls in between. Below is the same pipeline redesigned as 10 specialized agents
-      passing one shared record — each with a hard validation gate instead of a judgment call, and a metric
+      passing one shared record: each with a hard validation gate instead of a judgment call, and a metric
       that proves it's working. Click an agent to inspect its contract, or run the pipeline to watch the handoff.
     </p>
   </div>
@@ -103,7 +103,7 @@
       <div class="panel" id="detail-panel"></div>
       <div class="panel">
         <h3>Agent Message Log</h3>
-        <div class="log" id="log"><div class="log-empty">No messages yet — click Run Pipeline, or select an agent on the left.</div></div>
+        <div class="log" id="log"><div class="log-empty">No messages yet: click Run Pipeline, or select an agent on the left.</div></div>
       </div>
       <div class="panel">
         <h3>Shared Lead Record</h3>
@@ -113,35 +113,35 @@
   </div>
 </div>
 
-<footer>RISHAV.PM — AGENT CONTRACTS ARE ILLUSTRATIVE, MODELED ON A REAL MANUAL WORKFLOW</footer>
+<footer>RISHAV.PM: AGENT CONTRACTS ARE ILLUSTRATIVE, MODELED ON A REAL MANUAL WORKFLOW</footer>
 
 <script>
 var AGENTS = [
   {
     id:'lister', name:'Lister Agent', tool:'Apollo', sf:false,
     role:'Builds the raw candidate list against ICP filters (US, 250+ employees) instead of a person running an Apollo search by hand.',
-    rule:'An account only enters the pipeline if it passes both the employee-count filter AND has a resolvable company domain — no manual "looks about right" adds.',
+    rule:'An account only enters the pipeline if it passes both the employee-count filter AND has a resolvable company domain, no manual "looks about right" adds.',
     metric:'% of listed accounts matching ICP on manual audit (target: 95%+).',
     emit:{accountId:'acc_4471', company:'Acme Manufacturing', domain:'acmemfg.com', employeeCount:310, source:'Apollo'}
   },
   {
     id:'dedupe', name:'Dedupe Agent', tool:'Apsona · Salesforce', sf:true,
     role:'Checks the account against existing Salesforce records before anything else happens downstream.',
-    rule:'Suppression only fires on an exact domain match. A fuzzy or partial match routes to a human review queue — it is never auto-suppressed.',
+    rule:'Suppression only fires on an exact domain match. A fuzzy or partial match routes to a human review queue, it is never auto-suppressed.',
     metric:'False-suppression rate (accounts wrongly marked as already-in-CRM).',
     emit:{inCrm:false, checkedAgainst:'Salesforce Account.Website', matchType:'exact_domain'}
   },
   {
     id:'intent', name:'Intent Agent', tool:'6Sense · Apify', sf:false,
     role:'Scans for buying signals (hiring surges, tech-stack changes, content engagement) and tags the account with a reason, not just a score.',
-    rule:'A signal only gets tagged "hot" if at least one corroborating source confirms it — a single weak signal is logged but not escalated.',
+    rule:'A signal only gets tagged "hot" if at least one corroborating source confirms it, a single weak signal is logged but not escalated.',
     metric:'Intent-tag precision vs. accounts that actually engaged within 30 days.',
     emit:{intentSignals:['hiring_surge_ops_team'], sources:['6Sense','Apify_job_boards'], corroborated:true}
   },
   {
     id:'scoring', name:'Scoring Agent', tool:'Python model · 0–100', sf:false,
     role:'Combines fit and intent signals into a single score and tier (A / B / C), and re-runs weekly for anything held at Tier C.',
-    rule:'Every score ships with its feature breakdown attached. A score with no explainable inputs is rejected before it reaches the next agent — no black-box numbers downstream.',
+    rule:'Every score ships with its feature breakdown attached. A score with no explainable inputs is rejected before it reaches the next agent, no black-box numbers downstream.',
     metric:'Tier-to-conversion correlation, tracked monthly by cohort.',
     emit:{score:58, tier:'C', features:{firmographic:22,intent:18,engagement:18}, action:'hold_for_weekly_rescore'}
   },
@@ -162,7 +162,7 @@ var AGENTS = [
   {
     id:'outreach', name:'Outreach Agent', tool:'Gmail · PhantomBuster', sf:true,
     role:'Sends the email, queues a LinkedIn touch, and manages the follow-up sequence.',
-    rule:'A hard cap of 3 touches without a reply before the sequence auto-pauses — no infinite follow-up loops running quietly in the background.',
+    rule:'A hard cap of 3 touches without a reply before the sequence auto-pauses, no infinite follow-up loops running quietly in the background.',
     metric:'Sequence completion rate and reply lift from the LinkedIn touch specifically.',
     emit:{sequenceStep:2, channels:['email','linkedin'], touchesSoFar:2, autoPauseAt:3}
   },
@@ -176,13 +176,13 @@ var AGENTS = [
   {
     id:'scheduling', name:'Scheduling Agent', tool:'Calendar API', sf:true,
     role:'Proposes meeting times, books the confirmed slot, and preps a pre-meeting brief for the seller.',
-    rule:'Only proposes and books against the seller\'s actual free/busy calendar — it never offers a slot it hasn\'t confirmed is open.',
+    rule:'Only proposes and books against the seller\'s actual free/busy calendar, it never offers a slot it hasn\'t confirmed is open.',
     metric:'No-show rate and time-to-book, tracked from first proposal to confirmed meeting.',
     emit:{meeting:{proposedSlots:3, booked:true}, briefGenerated:true}
   },
   {
     id:'crmsync', name:'CRM-Sync Agent', tool:'Salesforce REST API', sf:true,
-    role:'Writes Account, Contact, and Activity records to Salesforce at every step — not just at the end — so the deal state is always visible, and hands off to the seller.',
+    role:'Writes Account, Contact, and Activity records to Salesforce at every step (not just at the end) so the deal state is always visible, and hands off to the seller.',
     rule:'Writes are idempotent by leadId. Re-running any stage never creates a duplicate Salesforce record.',
     metric:'Sync latency and record-completeness audit (every touch has a matching Activity record).',
     emit:{sfSync:'complete', recordsWritten:['Account','Contact','Activity x6'], handoff:'seller_queue'}
@@ -239,8 +239,8 @@ function resetPipeline(){
   running = false;
   currentIndex = -1;
   record = {};
-  document.getElementById('log').innerHTML = '<div class="log-empty">No messages yet — click Run Pipeline, or select an agent on the left.</div>';
-  document.getElementById('detail-panel').innerHTML = '<h3>Select an agent</h3><div class="kv"><div class="v">Click any agent on the left to see its role, validation rule, and evaluation metric — or run the pipeline to watch the handoff happen live.</div></div>';
+  document.getElementById('log').innerHTML = '<div class="log-empty">No messages yet: click Run Pipeline, or select an agent on the left.</div>';
+  document.getElementById('detail-panel').innerHTML = '<h3>Select an agent</h3><div class="kv"><div class="v">Click any agent on the left to see its role, validation rule, and evaluation metric, or run the pipeline to watch the handoff happen live.</div></div>';
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('stage-counter').textContent = 'Stage 0 / 10';
   renderJson();

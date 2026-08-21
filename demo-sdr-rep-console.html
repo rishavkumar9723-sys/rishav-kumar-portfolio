@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pursuit — Outbound Console | Apsona</title>
+<title>Pursuit: Outbound Console | Apsona</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
   :root{
@@ -275,11 +275,11 @@
 <script>
 /* ================= AGENT DEFINITIONS (for Run Pipeline) ================= */
 var PIPELINE_AGENTS = [
-  {name:'Lister Agent', tool:'Apollo', log:['<span class="fn">apollo.search</span>(employees&gt;=250, country="US")', '<span class="ok">&gt; matched 1 account — Solstice Retail Co (312 employees)</span>']},
-  {name:'Dedupe Agent', tool:'Apsona · Salesforce', log:['<span class="fn">salesforce.query</span>(Account.Website = "solsticeretail.com")', '<span class="ok">&gt; no exact match — proceeding</span>']},
+  {name:'Lister Agent', tool:'Apollo', log:['<span class="fn">apollo.search</span>(employees&gt;=250, country="US")', '<span class="ok">&gt; matched 1 account: Solstice Retail Co (312 employees)</span>']},
+  {name:'Dedupe Agent', tool:'Apsona · Salesforce', log:['<span class="fn">salesforce.query</span>(Account.Website = "solsticeretail.com")', '<span class="ok">&gt; no exact match: proceeding</span>']},
   {name:'Intent Agent', tool:'6Sense · Apify', log:['<span class="fn">sixsense.getSignals</span>(accountId)', 'apify.scrapeJobBoards(domain)', '<span class="ok">&gt; corroborated: hiring surge (ops), confidence 0.82</span>']},
-  {name:'Scoring Agent', tool:'Python model', log:['<span class="fn">score_lead</span>(features)', '<span class="ok">&gt; score 71 — Tier B, breakdown attached</span>']},
-  {name:'Contact-Resolution Agent', tool:'Apollo · ZeroBounce', log:['<span class="fn">apollo.findPersona</span>(domain, role="Ops")', 'zerobounce.<span class="fn">validate</span>(email)', '<span class="warn">&gt; status: "risky" — hard gate triggered, escalating to rep</span>']}
+  {name:'Scoring Agent', tool:'Python model', log:['<span class="fn">score_lead</span>(features)', '<span class="ok">&gt; score 71: Tier B, breakdown attached</span>']},
+  {name:'Contact-Resolution Agent', tool:'Apollo · ZeroBounce', log:['<span class="fn">apollo.findPersona</span>(domain, role="Ops")', 'zerobounce.<span class="fn">validate</span>(email)', '<span class="warn">&gt; status: "risky", hard gate triggered, escalating to rep</span>']}
 ];
 
 /* ================= LEAD DATA ================= */
@@ -293,11 +293,11 @@ var LEADS = [
       {agent:'Lister Agent', time:'Mon 9:02 AM', result:'pass', rule:'Account must have 250+ employees and a resolvable domain.', reasoning:'Matched ICP filter: 310 employees, domain resolved via Apollo.'},
       {agent:'Dedupe Agent', time:'Mon 9:03 AM', result:'pass', rule:'Suppress only on an exact domain match against Salesforce.', reasoning:'No exact match found in Salesforce Account.Website.'},
       {agent:'Intent Agent', time:'Mon 9:05 AM', result:'pass', rule:'Tag "hot" only with a corroborating second source.', reasoning:'Hiring surge confirmed by both 6Sense and a job-board scrape (Apify).', confidence:0.88},
-      {agent:'Scoring Agent', time:'Mon 9:06 AM', result:'fail', rule:'Score must ship with an explainable feature breakdown.', reasoning:'Initial score 58 — Tier C. Held for weekly re-score rather than discarded.'},
-      {agent:'Scoring Agent', time:'Thu 9:00 AM', result:'pass', rule:'Re-scored on the weekly Tier-C loop.', reasoning:'Score rose to 74 after fresh intent data — promoted to Tier A.'},
+      {agent:'Scoring Agent', time:'Mon 9:06 AM', result:'fail', rule:'Score must ship with an explainable feature breakdown.', reasoning:'Initial score 58: Tier C. Held for weekly re-score rather than discarded.'},
+      {agent:'Scoring Agent', time:'Thu 9:00 AM', result:'pass', rule:'Re-scored on the weekly Tier-C loop.', reasoning:'Score rose to 74 after fresh intent data: promoted to Tier A.'},
       {agent:'Contact-Resolution Agent', time:'Thu 9:15 AM', result:'pass', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found J. Rivera, RevOps Admin via Apollo. ZeroBounce returned "valid".'},
       {agent:'Personalization Agent', time:'Thu 9:20 AM', result:'pass', rule:'Draft must cite a real signal from the Intent Agent.', reasoning:'Drafted around the hiring-surge angle with a single CTA.'},
-      {agent:'Outreach Agent', time:'Thu 9:25 AM', result:'pass', rule:'Cap of 3 touches without reply before auto-pause.', reasoning:'Email sent (step 1). No reply after 3 days — follow-up sent (touch 2/3).'},
+      {agent:'Outreach Agent', time:'Thu 9:25 AM', result:'pass', rule:'Cap of 3 touches without reply before auto-pause.', reasoning:'Email sent (step 1). No reply after 3 days: follow-up sent (touch 2/3).'},
       {agent:'Reply-Classification Agent', time:'Mon 10:40 AM', result:'pass', rule:'Below 0.75 confidence, route to human review.', reasoning:'Reply: "Sounds interesting, when can we chat?" classified positive.', confidence:0.91},
       {agent:'Scheduling Agent', time:'Mon 10:41 AM', result:'pass', rule:'Only book against the seller\'s actual free/busy calendar.', reasoning:'Proposed 3 slots via Calendly, booked Thu 2:00 PM with Diego M. Brief generated.'},
       {agent:'CRM-Sync Agent', time:'Mon 10:41 AM', result:'pass', rule:'Writes are idempotent by lead ID.', reasoning:'Account, Contact, and 7 Activity records written to Salesforce. Handed off to seller queue.'}
@@ -305,14 +305,14 @@ var LEADS = [
   },
   {
     id:'northfield', company:'Northfield Logistics', domain:'northfieldlog.com', contact:'K. Alvarez · Ops Manager',
-    tier:'B', stage:'Outreach — awaiting reply', status:'on_track', updated:'2 hrs ago', stageIndex:7,
+    tier:'B', stage:'Outreach: awaiting reply', status:'on_track', updated:'2 hrs ago', stageIndex:7,
     facts:{employees:640, intent:'Tech-stack change (new WMS)', seller:'Diego M.'},
     meeting:{booked:false},
     trail:[
       {agent:'Lister Agent', time:'Tue 8:10 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'642 employees, domain resolved.'},
       {agent:'Dedupe Agent', time:'Tue 8:11 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match in Salesforce.'},
-      {agent:'Intent Agent', time:'Tue 8:13 AM', result:'pass', rule:'Corroborating source required for "hot".', reasoning:'WMS migration confirmed via 6Sense only — tagged "warm", not "hot".', confidence:0.74},
-      {agent:'Scoring Agent', time:'Tue 8:14 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 66 — Tier B.'},
+      {agent:'Intent Agent', time:'Tue 8:13 AM', result:'pass', rule:'Corroborating source required for "hot".', reasoning:'WMS migration confirmed via 6Sense only: tagged "warm", not "hot".', confidence:0.74},
+      {agent:'Scoring Agent', time:'Tue 8:14 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 66: Tier B.'},
       {agent:'Contact-Resolution Agent', time:'Tue 8:20 AM', result:'pass', rule:'Hard gate: valid email required.', reasoning:'Found K. Alvarez, Ops Manager. ZeroBounce: valid.'},
       {agent:'Personalization Agent', time:'Tue 8:22 AM', result:'pass', rule:'Draft must cite a real signal.', reasoning:'Angle: WMS migration timing.'},
       {agent:'Outreach Agent', time:'Tue 8:25 AM', result:'pass', rule:'Cap of 3 touches without reply.', reasoning:'Email sent, 1 follow-up sent (2/3). Awaiting reply.'}
@@ -320,67 +320,67 @@ var LEADS = [
   },
   {
     id:'bramble', company:'Bramble & Co', domain:'brambleco.com', contact:'M. Okafor · Head of Ops',
-    tier:'A', stage:'Contact Resolution — blocked', status:'needs_review', updated:'40 min ago', stageIndex:5,
-    facts:{employees:420, intent:'Budget signal (new headcount req)', seller:'—'},
+    tier:'A', stage:'Contact Resolution: blocked', status:'needs_review', updated:'40 min ago', stageIndex:5,
+    facts:{employees:420, intent:'Budget signal (new headcount req)', seller:'-'},
     meeting:{booked:false},
-    reviewReason:'ZeroBounce flagged the resolved contact email as "risky" — the domain looks like a catch-all, so the Contact-Resolution Agent\'s hard gate stopped the sequence rather than guessing.',
+    reviewReason:'ZeroBounce flagged the resolved contact email as "risky", the domain looks like a catch-all, so the Contact-Resolution Agent\'s hard gate stopped the sequence rather than guessing.',
     trail:[
       {agent:'Lister Agent', time:'Wed 9:40 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'420 employees.'},
       {agent:'Dedupe Agent', time:'Wed 9:41 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match in Salesforce.'},
       {agent:'Intent Agent', time:'Wed 9:43 AM', result:'pass', rule:'Corroborating source required.', reasoning:'Budget signal confirmed via 6Sense + Apify job posting.', confidence:0.83},
-      {agent:'Scoring Agent', time:'Wed 9:44 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 79 — Tier A.'},
-      {agent:'Contact-Resolution Agent', time:'Wed 10:20 AM', result:'fail', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found M. Okafor, Head of Ops. ZeroBounce returned "risky" — possible catch-all domain. Escalated instead of guessing.', confidence:0.52}
+      {agent:'Scoring Agent', time:'Wed 9:44 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 79: Tier A.'},
+      {agent:'Contact-Resolution Agent', time:'Wed 10:20 AM', result:'fail', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found M. Okafor, Head of Ops. ZeroBounce returned "risky", possible catch-all domain. Escalated instead of guessing.', confidence:0.52}
     ]
   },
   {
     id:'halden', company:'Halden Retail Group', domain:'haldenretail.co', contact:'Unresolved',
-    tier:'C', stage:'Dedupe — blocked', status:'needs_review', updated:'1 hr ago', stageIndex:2,
-    facts:{employees:275, intent:'Not yet evaluated', seller:'—'},
+    tier:'C', stage:'Dedupe: blocked', status:'needs_review', updated:'1 hr ago', stageIndex:2,
+    facts:{employees:275, intent:'Not yet evaluated', seller:'-'},
     meeting:{booked:false},
-    reviewReason:'Domain haldenretail.co is a 92% fuzzy match against an existing Salesforce account, "Halden Retail LLC" (haldenretail.com) — not an exact match, so the Dedupe Agent routed it to you instead of auto-suppressing.',
+    reviewReason:'Domain haldenretail.co is a 92% fuzzy match against an existing Salesforce account, "Halden Retail LLC" (haldenretail.com): not an exact match, so the Dedupe Agent routed it to you instead of auto-suppressing.',
     trail:[
       {agent:'Lister Agent', time:'Wed 11:02 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'275 employees.'},
-      {agent:'Dedupe Agent', time:'Wed 11:03 AM', result:'fail', rule:'Suppress only on an exact domain match — fuzzy matches route to review.', reasoning:'haldenretail.co is a 92% similarity match to existing Account "Halden Retail LLC" (haldenretail.com). Not exact — held for your call.', confidence:0.92}
+      {agent:'Dedupe Agent', time:'Wed 11:03 AM', result:'fail', rule:'Suppress only on an exact domain match: fuzzy matches route to review.', reasoning:'haldenretail.co is a 92% similarity match to existing Account "Halden Retail LLC" (haldenretail.com). Not exact: held for your call.', confidence:0.92}
     ]
   },
   {
     id:'ferro', company:'Ferro Industrial', domain:'ferroindustrial.com', contact:'S. Kwan · Procurement Lead',
-    tier:'B', stage:'Reply Classification — blocked', status:'needs_review', updated:'3 hrs ago', stageIndex:8,
+    tier:'B', stage:'Reply Classification: blocked', status:'needs_review', updated:'3 hrs ago', stageIndex:8,
     facts:{employees:510, intent:'Hiring surge (procurement)', seller:'Amara L.'},
     meeting:{booked:false},
-    reviewReason:'The reply "Let\'s reconnect after Q3 budgeting wraps up" classified as ambiguous at 0.61 confidence — below the 0.75 auto-route threshold, so it\'s waiting on your read of the actual intent.',
+    reviewReason:'The reply "Let\'s reconnect after Q3 budgeting wraps up" classified as ambiguous at 0.61 confidence: below the 0.75 auto-route threshold, so it\'s waiting on your read of the actual intent.',
     trail:[
       {agent:'Lister Agent', time:'Mon 8:00 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'510 employees.'},
       {agent:'Dedupe Agent', time:'Mon 8:01 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match in Salesforce.'},
       {agent:'Intent Agent', time:'Mon 8:03 AM', result:'pass', rule:'Corroborating source required.', reasoning:'Hiring surge confirmed via 6Sense + Apify.', confidence:0.79},
-      {agent:'Scoring Agent', time:'Mon 8:04 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 70 — Tier B.'},
+      {agent:'Scoring Agent', time:'Mon 8:04 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 70: Tier B.'},
       {agent:'Contact-Resolution Agent', time:'Mon 8:15 AM', result:'pass', rule:'Hard gate: valid email required.', reasoning:'Found S. Kwan, Procurement Lead. ZeroBounce: valid.'},
       {agent:'Outreach Agent', time:'Mon 8:20 AM', result:'pass', rule:'Cap of 3 touches.', reasoning:'Email sent. Reply received same day.'},
-      {agent:'Reply-Classification Agent', time:'Mon 3:10 PM', result:'fail', rule:'Below 0.75 confidence, route to human review — never assume intent.', reasoning:'Reply: "Let\'s reconnect after Q3 budgeting wraps up." Ambiguous between Positive and Not Now.', confidence:0.61}
+      {agent:'Reply-Classification Agent', time:'Mon 3:10 PM', result:'fail', rule:'Below 0.75 confidence, route to human review, never assume intent.', reasoning:'Reply: "Let\'s reconnect after Q3 budgeting wraps up." Ambiguous between Positive and Not Now.', confidence:0.61}
     ]
   },
   {
     id:'solace', company:'Solace Health', domain:'solacehealth.org', contact:'Unresolved',
-    tier:'C', stage:'Scoring — held for weekly re-score', status:'blocked', updated:'1 day ago', stageIndex:4,
-    facts:{employees:260, intent:'Single weak signal (content download)', seller:'—'},
+    tier:'C', stage:'Scoring: held for weekly re-score', status:'blocked', updated:'1 day ago', stageIndex:4,
+    facts:{employees:260, intent:'Single weak signal (content download)', seller:'-'},
     meeting:{booked:false},
     trail:[
       {agent:'Lister Agent', time:'Tue 7:30 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'260 employees.'},
       {agent:'Dedupe Agent', time:'Tue 7:31 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match.'},
-      {agent:'Intent Agent', time:'Tue 7:33 AM', result:'pass', rule:'Corroborating source required for "hot" tag.', reasoning:'Only a single content-download signal — logged, not escalated to "hot".', confidence:0.41},
-      {agent:'Scoring Agent', time:'Tue 7:34 AM', result:'fail', rule:'Feature breakdown required; low scores hold rather than discard.', reasoning:'Score 52 — Tier C. Held for next weekly re-score cycle (in 4 days).'}
+      {agent:'Intent Agent', time:'Tue 7:33 AM', result:'pass', rule:'Corroborating source required for "hot" tag.', reasoning:'Only a single content-download signal: logged, not escalated to "hot".', confidence:0.41},
+      {agent:'Scoring Agent', time:'Tue 7:34 AM', result:'fail', rule:'Feature breakdown required; low scores hold rather than discard.', reasoning:'Score 52: Tier C. Held for next weekly re-score cycle (in 4 days).'}
     ]
   },
   {
     id:'vantage', company:'Vantage Freight', domain:'vantagefreight.com', contact:'D. Osei · Dir. RevOps',
-    tier:'A', stage:'Closed — Suppressed', status:'closed', updated:'2 days ago', stageIndex:8,
-    facts:{employees:390, intent:'Hiring surge', seller:'—'},
+    tier:'A', stage:'Closed: Suppressed', status:'closed', updated:'2 days ago', stageIndex:8,
+    facts:{employees:390, intent:'Hiring surge', seller:'-'},
     meeting:{booked:false},
     trail:[
       {agent:'Lister Agent', time:'Fri 9:00 AM', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'390 employees.'},
       {agent:'Dedupe Agent', time:'Fri 9:01 AM', result:'pass', rule:'Exact domain match only.', reasoning:'No match.'},
       {agent:'Intent Agent', time:'Fri 9:03 AM', result:'pass', rule:'Corroborating source required.', reasoning:'Hiring surge confirmed.', confidence:0.85},
-      {agent:'Scoring Agent', time:'Fri 9:04 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 81 — Tier A.'},
+      {agent:'Scoring Agent', time:'Fri 9:04 AM', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 81: Tier A.'},
       {agent:'Contact-Resolution Agent', time:'Fri 9:20 AM', result:'pass', rule:'Hard gate: valid email required.', reasoning:'Found D. Osei, Dir. RevOps. Valid.'},
       {agent:'Outreach Agent', time:'Fri 9:25 AM', result:'pass', rule:'Cap of 3 touches.', reasoning:'Email sent.'},
       {agent:'Reply-Classification Agent', time:'Mon 11:00 AM', result:'pass', rule:'Below 0.75 confidence routes to human.', reasoning:'Reply: "Not a fit for us right now, please remove me." Classified not_interested.', confidence:0.94},
@@ -393,10 +393,10 @@ var INTEGRATIONS = [
   {name:'Apollo', color:'#7C4DFF', mark:'AP', desc:'Prospecting, firmographic filters, and persona/contact lookup.', usedBy:['Lister Agent','Contact-Resolution Agent'], stat:'1,204 calls today'},
   {name:'6Sense', color:'#00B8A9', mark:'6S', desc:'Buying-intent signals scored against the account\'s digital footprint.', usedBy:['Intent Agent'], stat:'318 accounts scanned today'},
   {name:'Apify', color:'#FF6E40', mark:'AF', desc:'Job-board and web scraping used to corroborate intent signals.', usedBy:['Intent Agent'], stat:'42 scrapes today'},
-  {name:'ZeroBounce', color:'#2D6CDF', mark:'ZB', desc:'Real-time email validation — the hard gate before any send.', usedBy:['Contact-Resolution Agent'], stat:'96 validations today'},
+  {name:'ZeroBounce', color:'#2D6CDF', mark:'ZB', desc:'Real-time email validation: the hard gate before any send.', usedBy:['Contact-Resolution Agent'], stat:'96 validations today'},
   {name:'PhantomBuster', color:'#5B3A99', mark:'PB', desc:'LinkedIn outreach automation, sequenced alongside email.', usedBy:['Outreach Agent'], stat:'54 LinkedIn touches today'},
-  {name:'Salesforce REST API', color:'#00A1E0', mark:'SF', desc:'System of record — every agent writes back an Account, Contact, or Activity record.', usedBy:['Dedupe Agent','Contact-Resolution Agent','Outreach Agent','Scheduling Agent','CRM-Sync Agent'], stat:'212 records synced today'},
-  {name:'Calendar API', color:'#0F9D58', mark:'CA', desc:'Free/busy lookup and booking — Calendly-style scheduling, never a phantom slot.', usedBy:['Scheduling Agent'], stat:'6 meetings booked today'},
+  {name:'Salesforce REST API', color:'#00A1E0', mark:'SF', desc:'System of record: every agent writes back an Account, Contact, or Activity record.', usedBy:['Dedupe Agent','Contact-Resolution Agent','Outreach Agent','Scheduling Agent','CRM-Sync Agent'], stat:'212 records synced today'},
+  {name:'Calendar API', color:'#0F9D58', mark:'CA', desc:'Free/busy lookup and booking: Calendly-style scheduling, never a phantom slot.', usedBy:['Scheduling Agent'], stat:'6 meetings booked today'},
   {name:'Gmail API', color:'#EA4335', mark:'GM', desc:'Sends the personalized email and threads the reply back for classification.', usedBy:['Outreach Agent','Reply-Classification Agent'], stat:'89 emails sent today'}
 ];
 
@@ -469,7 +469,7 @@ function renderReview(){
   pane.innerHTML = '<div class="page-head"><div><h1>Flagged for You</h1><p>Escalations where an agent hit a validation gate and stopped rather than guessing.</p></div></div>' +
     items.map(function(l){
       return '<div class="review-card">' +
-        '<div class="review-top"><h3>'+l.company+' <span style="color:var(--fog-dim);font-weight:400;font-size:13px;">— '+l.stage+'</span></h3>' +
+        '<div class="review-top"><h3>'+l.company+' <span style="color:var(--fog-dim);font-weight:400;font-size:13px;">- '+l.stage+'</span></h3>' +
         '<span class="tier '+l.tier+'">TIER '+l.tier+'</span></div>' +
         '<div class="review-reason"><b>Why it stopped:</b> '+l.reviewReason+'</div>' +
         '<div class="review-actions">' + reviewActionsFor(l) + '</div>' +
@@ -484,13 +484,13 @@ function reviewActionsFor(l){
            '<button class="btn ghost sm" onclick="openDrawer(\''+l.id+'\')">View Full Trail</button>';
   }
   if(l.id === 'halden'){
-    return '<button class="btn primary sm" onclick="resolveReview(\'halden\',\'confirm_suppress\')">Confirm Same Account — Suppress</button>' +
-           '<button class="btn ghost sm" onclick="resolveReview(\'halden\',\'not_match\')">Not a Match — Continue</button>' +
+    return '<button class="btn primary sm" onclick="resolveReview(\'halden\',\'confirm_suppress\')">Confirm Same Account: Suppress</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\'halden\',\'not_match\')">Not a Match: Continue</button>' +
            '<button class="btn ghost sm" onclick="openDrawer(\'halden\')">View Full Trail</button>';
   }
   if(l.id === 'ferro'){
-    return '<button class="btn primary sm" onclick="resolveReview(\'ferro\',\'mark_positive\')">Mark Positive — Send to Scheduling</button>' +
-           '<button class="btn ghost sm" onclick="resolveReview(\'ferro\',\'mark_not_now\')">Mark Not Now — Snooze 90d</button>' +
+    return '<button class="btn primary sm" onclick="resolveReview(\'ferro\',\'mark_positive\')">Mark Positive: Send to Scheduling</button>' +
+           '<button class="btn ghost sm" onclick="resolveReview(\'ferro\',\'mark_not_now\')">Mark Not Now: Snooze 90d</button>' +
            '<button class="btn ghost sm" onclick="openDrawer(\'ferro\')">View Full Trail</button>';
   }
   return '';
@@ -504,28 +504,28 @@ function resolveReview(id, action){
   if(id === 'bramble' || id === 'solstice'){
     if(action === 'alt_contact'){
       lead.status = 'on_track'; lead.stage = 'Personalization'; lead.stageIndex = 6;
-      entry.reasoning = 'Rep found an alternate contact with a valid email — pipeline resumed.';
+      entry.reasoning = 'Rep found an alternate contact with a valid email, pipeline resumed.';
     } else {
-      lead.status = 'closed'; lead.stage = 'Closed — Discarded';
-      entry.reasoning = 'Rep discarded — no reliable contact could be confirmed.';
+      lead.status = 'closed'; lead.stage = 'Closed: Discarded';
+      entry.reasoning = 'Rep discarded: no reliable contact could be confirmed.';
     }
   }
   if(id === 'halden'){
     if(action === 'confirm_suppress'){
-      lead.status = 'closed'; lead.stage = 'Closed — Suppressed (confirmed duplicate)';
-      entry.reasoning = 'Rep confirmed this is the same account under a different domain — suppressed and linked to the existing Salesforce Account.';
+      lead.status = 'closed'; lead.stage = 'Closed: Suppressed (confirmed duplicate)';
+      entry.reasoning = 'Rep confirmed this is the same account under a different domain, suppressed and linked to the existing Salesforce Account.';
     } else {
       lead.status = 'on_track'; lead.stage = 'Intent Detection'; lead.stageIndex = 3;
-      entry.reasoning = 'Rep confirmed this is a genuinely different company — pipeline resumed from Intent Agent.';
+      entry.reasoning = 'Rep confirmed this is a genuinely different company, pipeline resumed from Intent Agent.';
     }
   }
   if(id === 'ferro'){
     if(action === 'mark_positive'){
       lead.status = 'on_track'; lead.stage = 'Scheduling'; lead.stageIndex = 9;
-      entry.reasoning = 'Rep read the full thread and determined real intent to meet post-Q3 — routed to Scheduling Agent with a note to expect a Q4 follow-through.';
+      entry.reasoning = 'Rep read the full thread and determined real intent to meet post-Q3, routed to Scheduling Agent with a note to expect a Q4 follow-through.';
     } else {
       lead.status = 'closed'; lead.stage = 'Snoozed 90 days';
-      entry.reasoning = 'Rep read the reply as a soft no for now — snoozed rather than pushed further.';
+      entry.reasoning = 'Rep read the reply as a soft no for now, snoozed rather than pushed further.';
     }
   }
 
@@ -555,7 +555,7 @@ function renderMetrics(){
       '<div class="stat-card"><div class="stat-num">'+passRate+'%</div><div class="stat-label">Validation gates passed clean</div></div>' +
     '</div>' +
     '<div class="insight-card"><h3>Why gate pass-rate matters more than conversion rate</h3>' +
-    '<p>A single end-to-end conversion number hides where the pipeline is actually struggling. Tracking each agent\'s gate pass-rate separately shows, for example, that Contact-Resolution and Dedupe are where most escalations originate — which is where to invest in better source data before touching the scoring model.</p></div>';
+    '<p>A single end-to-end conversion number hides where the pipeline is actually struggling. Tracking each agent\'s gate pass-rate separately shows, for example, that Contact-Resolution and Dedupe are where most escalations originate, which is where to invest in better source data before touching the scoring model.</p></div>';
 }
 
 /* ================= INTEGRATIONS ================= */
@@ -594,7 +594,7 @@ function renderRunPipeline(){
       '<div class="rp-code" id="rp-code"><div class="rp-code-empty">Click "Run Pipeline" to watch each agent\'s calls execute here.</div></div>' +
     '</div>' +
     '<div class="rp-done-banner" id="rp-done-banner">' +
-      '<span>✅ <b>Solstice Retail Co</b> processed — hit a validation gate at Contact-Resolution and needs your review.</span>' +
+      '<span>✅ <b>Solstice Retail Co</b> processed: hit a validation gate at Contact-Resolution and needs your review.</span>' +
       '<button class="btn primary sm" onclick="switchMainTab(\'review\')">Go to Needs My Review</button>' +
     '</div>';
   renderStepper(-1);
@@ -666,15 +666,15 @@ function addSolsticeLead(){
   if(LEADS.some(function(l){return l.id==='solstice';})) return;
   LEADS.push({
     id:'solstice', company:'Solstice Retail Co', domain:'solsticeretail.com', contact:'T. Whitfield · Ops Director',
-    tier:'B', stage:'Contact Resolution — blocked', status:'needs_review', updated:'Just now', stageIndex:5,
-    facts:{employees:312, intent:'Hiring surge (ops)', seller:'—'},
+    tier:'B', stage:'Contact Resolution: blocked', status:'needs_review', updated:'Just now', stageIndex:5,
+    facts:{employees:312, intent:'Hiring surge (ops)', seller:'-'},
     meeting:{booked:false},
-    reviewReason:'ZeroBounce flagged the resolved contact email as "risky" — the Contact-Resolution Agent\'s hard gate stopped the sequence rather than guessing.',
+    reviewReason:'ZeroBounce flagged the resolved contact email as "risky", the Contact-Resolution Agent\'s hard gate stopped the sequence rather than guessing.',
     trail:[
       {agent:'Lister Agent', time:'Just now', result:'pass', rule:'250+ employees, resolvable domain.', reasoning:'312 employees, domain resolved via Apollo.'},
       {agent:'Dedupe Agent', time:'Just now', result:'pass', rule:'Exact domain match only.', reasoning:'No match found in Salesforce.'},
       {agent:'Intent Agent', time:'Just now', result:'pass', rule:'Corroborating source required.', reasoning:'Hiring surge corroborated by 6Sense + Apify.', confidence:0.82},
-      {agent:'Scoring Agent', time:'Just now', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 71 — Tier B.'},
+      {agent:'Scoring Agent', time:'Just now', result:'pass', rule:'Feature breakdown required.', reasoning:'Score 71: Tier B.'},
       {agent:'Contact-Resolution Agent', time:'Just now', result:'fail', rule:'Hard gate: sequence cannot start unless email status = valid.', reasoning:'Found T. Whitfield, Ops Director. ZeroBounce returned "risky". Escalated instead of guessing.', confidence:0.55}
     ]
   });

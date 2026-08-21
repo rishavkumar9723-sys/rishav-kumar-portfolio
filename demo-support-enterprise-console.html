@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anchor — Grounded Support Console | Apsona</title>
+<title>Anchor: Grounded Support Console | Apsona</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
   :root{
@@ -288,10 +288,10 @@ var ARCH_FLOW = ['Salesforce Case','HTTP POST','Vertex AI Search','MCP Context S
 
 /* ================= PIPELINE AGENTS (for Run Pipeline) ================= */
 var PIPELINE_AGENTS = [
-  {name:'Case Intake Agent', tool:'Salesforce Platform Event → HTTPS', log:['<span class="fn">POST</span> https://agent.apsona.com/webhook/case-created', '<span class="ok">&gt; Case #00012358 detected — status: New, no existing draft</span>']},
+  {name:'Case Intake Agent', tool:'Salesforce Platform Event → HTTPS', log:['<span class="fn">POST</span> https://agent.apsona.com/webhook/case-created', '<span class="ok">&gt; Case #00012358 detected: status: New, no existing draft</span>']},
   {name:'MCP Context Agent', tool:'MCP Server → Salesforce Case API', log:['<span class="fn">mcp.getCaseContext</span>(caseId="00012358")', '<span class="ok">&gt; customer tier: Business+, 1 prior case, product: Report Export</span>']},
   {name:'Vertex AI Search Retrieval Agent', tool:'Vertex AI Search datastore', log:['<span class="fn">vertexAiSearch.query</span>(datastore="apsona-support-kb", query=caseSubject)', '<span class="ok">&gt; 2 results: Drive doc (webViewLink), Help Center article</span>']},
-  {name:'Citation & Grounding Agent', tool:'Gemini Enterprise grounding check', log:['<span class="fn">citationAgent.crossCheck</span>(draftClaims, retrievedMetadata)', '<span class="warn">&gt; 1 of 2 claims unsupported — flagged for rep review, not shipped</span>']}
+  {name:'Citation & Grounding Agent', tool:'Gemini Enterprise grounding check', log:['<span class="fn">citationAgent.crossCheck</span>(draftClaims, retrievedMetadata)', '<span class="warn">&gt; 1 of 2 claims unsupported: flagged for rep review, not shipped</span>']}
 ];
 
 /* ================= CASE DATA ================= */
@@ -309,7 +309,7 @@ var CASES = [
       {agent:'Case Intake Agent', time:'10:02 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012301 created, no prior draft found.'},
       {agent:'MCP Context Agent', time:'10:02 AM', result:'pass', rule:'Draft cannot proceed without a validated case-context object.', reasoning:'Retrieved customer tier (Business+), 1 prior case, product area.'},
       {agent:'Vertex AI Search Retrieval Agent', time:'10:03 AM', result:'pass', rule:'Only surface results with a valid source URL in metadata.', reasoning:'Retrieved Drive doc via webViewLink and matching Help Center article.', confidence:0.89},
-      {agent:'Citation & Grounding Agent', time:'10:03 AM', result:'pass', rule:'Every technical claim must be accompanied by a citation from retrieved results — never a guessed link.', reasoning:'Both recommended steps matched directly to retrieved sources.'},
+      {agent:'Citation & Grounding Agent', time:'10:03 AM', result:'pass', rule:'Every technical claim must be accompanied by a citation from retrieved results, never a guessed link.', reasoning:'Both recommended steps matched directly to retrieved sources.'},
       {agent:'Drafting Agent (Gemini Enterprise)', time:'10:03 AM', result:'pass', rule:'Draft in the support team\'s voice, one CTA.', reasoning:'Draft generated addressing R. Fenwick directly, 2 numbered steps, 1 closing CTA.'},
       {agent:'Chatter-Post Agent', time:'10:04 AM', result:'pass', rule:'Raw Google redirect links (google.com/url?q=...) are always resolved to clean public URLs before posting.', reasoning:'Resolved 2 redirect-wrapped links into clean docs.apsona.com URLs before posting to Chatter.'}
     ]
@@ -318,7 +318,7 @@ var CASES = [
     id:'okonkwo', caseNum:'#00012309', company:'Coastal Data Co-op', domain:'coastaldata.coop', contact:'A. Okonkwo · IT Lead',
     tier:'P3', subject:'Bulk action stuck at 40%', status:'on_track', updated:'1 hr ago', stageIndex:6,
     facts:{plan:'Team', priorCases:0, product:'Bulk Actions'},
-    draft:'Hi A. Okonkwo,<br><br>Thanks for flagging this — a bulk action stalling partway through usually points to a batch-size or governor-limit issue. One of our support leads walked through this exact scenario on a recent call, linked below, alongside our written guide.<br><br><b>Recommended Steps:</b><ol><li>Reduce your batch size as shown in the <a href="#" target="_blank">Fathom call: Bulk Action Troubleshooting</a> (jump to 4:12).</li><li>Re-run the action and confirm the record count matches expectations.</li></ol>Let me know how it goes!',
+    draft:'Hi A. Okonkwo,<br><br>Thanks for flagging this: a bulk action stalling partway through usually points to a batch-size or governor-limit issue. One of our support leads walked through this exact scenario on a recent call, linked below, alongside our written guide.<br><br><b>Recommended Steps:</b><ol><li>Reduce your batch size as shown in the <a href="#" target="_blank">Fathom call: Bulk Action Troubleshooting</a> (jump to 4:12).</li><li>Re-run the action and confirm the record count matches expectations.</li></ol>Let me know how it goes!',
     sources:[
       {type:'fathom', title:'Fathom: Bulk Action Troubleshooting Call', sub:'Recorded Mar 12 · timestamp 4:12', color:'#7C4DFF'},
       {type:'drive', title:'Apsona Bulk Actions Guide.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
@@ -326,7 +326,7 @@ var CASES = [
     trail:[
       {agent:'Case Intake Agent', time:'9:10 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012309 created.'},
       {agent:'MCP Context Agent', time:'9:10 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'No prior cases, plan: Team.'},
-      {agent:'Vertex AI Search Retrieval Agent', time:'9:11 AM', result:'pass', rule:'Only surface results with a valid source URL in metadata.', reasoning:'Best match was a Fathom call recording transcript, not a written doc — surfaced with timestamp.', confidence:0.81},
+      {agent:'Vertex AI Search Retrieval Agent', time:'9:11 AM', result:'pass', rule:'Only surface results with a valid source URL in metadata.', reasoning:'Best match was a Fathom call recording transcript, not a written doc, surfaced with timestamp.', confidence:0.81},
       {agent:'Citation & Grounding Agent', time:'9:11 AM', result:'pass', rule:'Every claim needs a citation from retrieved results.', reasoning:'Batch-size step matched the Fathom transcript at 4:12; second step matched the written guide.'},
       {agent:'Drafting Agent (Gemini Enterprise)', time:'9:11 AM', result:'pass', rule:'Draft in support voice, one CTA.', reasoning:'Draft generated referencing both the call and the doc.'},
       {agent:'Chatter-Post Agent', time:'9:12 AM', result:'pass', rule:'Links must resolve to clean, clickable URLs.', reasoning:'Posted to Chatter with a direct-timestamp Fathom link and clean Drive link.'}
@@ -336,7 +336,7 @@ var CASES = [
     id:'delacruz', caseNum:'#00012322', company:'Bright Path Foundation', domain:'brightpathfdn.org', contact:'L. De la Cruz · Database Admin',
     tier:'P2', subject:'Duplicate contact records after sync', status:'needs_review', updated:'35 min ago', stageIndex:4,
     facts:{plan:'Business+', priorCases:2, product:'Sync / Dedupe'},
-    reviewReason:'The Citation & Grounding Agent could match one recommended step to a source ("check sync direction settings") but not the second ("clear cache and retry manually") — no retrieved document mentions it. Rather than ship an uncited claim, it dropped the step and is waiting on you to confirm or add a source.',
+    reviewReason:'The Citation & Grounding Agent could match one recommended step to a source ("check sync direction settings") but not the second ("clear cache and retry manually"): no retrieved document mentions it. Rather than ship an uncited claim, it dropped the step and is waiting on you to confirm or add a source.',
     facts2:true,
     sources:[
       {type:'drive', title:'Apsona Sync Conflict Resolution.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
@@ -345,23 +345,23 @@ var CASES = [
       {agent:'Case Intake Agent', time:'11:40 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012322 created.'},
       {agent:'MCP Context Agent', time:'11:40 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'2 prior cases on sync issues found and attached.'},
       {agent:'Vertex AI Search Retrieval Agent', time:'11:41 AM', result:'pass', rule:'Only surface results with valid source URLs.', reasoning:'One matching doc retrieved on sync-direction settings.', confidence:0.68},
-      {agent:'Citation & Grounding Agent', time:'11:41 AM', result:'fail', rule:'Do not generate or guess links not explicitly provided in search metadata — if unsupported, drop the claim rather than ship it.', reasoning:'"Clear cache and retry manually" has no matching source in retrieved results. Dropped from the draft and escalated.', confidence:0.44}
+      {agent:'Citation & Grounding Agent', time:'11:41 AM', result:'fail', rule:'Do not generate or guess links not explicitly provided in search metadata, if unsupported, drop the claim rather than ship it.', reasoning:'"Clear cache and retry manually" has no matching source in retrieved results. Dropped from the draft and escalated.', confidence:0.44}
     ]
   },
   {
     id:'harbor', caseNum:'#00012330', company:'Harbor & Co.', domain:'harborandco.com', contact:'T. Massey · Data Manager',
-    tier:'P1', subject:'Recurring export failure — 3rd time this quarter', status:'needs_review', updated:'50 min ago', stageIndex:3,
+    tier:'P1', subject:'Recurring export failure: 3rd time this quarter', status:'needs_review', updated:'50 min ago', stageIndex:3,
     facts:{plan:'Enterprise', priorCases:3, product:'Reporting / Export'},
-    reviewReason:'The MCP Context Agent found 2 prior cases on this exact issue and a linked Jira ticket, APSONA-4821, describing a known race condition in export field mapping — plus a Confluence page documenting the known issue. This looks like a recurring bug, not a one-off, and needs your call on how to respond.',
+    reviewReason:'The MCP Context Agent found 2 prior cases on this exact issue and a linked Jira ticket, APSONA-4821, describing a known race condition in export field mapping, plus a Confluence page documenting the known issue. This looks like a recurring bug, not a one-off, and needs your call on how to respond.',
     sources:[
-      {type:'jira', title:'APSONA-4821 — Export field mapping race condition', sub:'Atlassian Jira · Open, Engineering', color:'#0052CC'},
-      {type:'confluence', title:'Known Issues — Export Module', sub:'Atlassian Confluence', color:'#2684FF'},
+      {type:'jira', title:'APSONA-4821: Export field mapping race condition', sub:'Atlassian Jira · Open, Engineering', color:'#0052CC'},
+      {type:'confluence', title:'Known Issues: Export Module', sub:'Atlassian Confluence', color:'#2684FF'},
       {type:'drive', title:'Apsona Export Troubleshooting.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
     ],
     trail:[
       {agent:'Case Intake Agent', time:'8:55 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012330 created, marked P1 by customer plan.'},
       {agent:'MCP Context Agent', time:'8:55 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'Found 2 prior cases on the same issue for this account.'},
-      {agent:'Vertex AI Search Retrieval Agent', time:'8:56 AM', result:'fail', rule:'A recurring pattern across linked systems (3+ cases, open Jira ticket) routes to a human before drafting — never auto-responds to a known bug with a workaround script.', reasoning:'Retrieved an open Jira ticket (APSONA-4821) and Confluence known-issue page matching this exact symptom across 3 cases.', confidence:0.94}
+      {agent:'Vertex AI Search Retrieval Agent', time:'8:56 AM', result:'fail', rule:'A recurring pattern across linked systems (3+ cases, open Jira ticket) routes to a human before drafting, never auto-responds to a known bug with a workaround script.', reasoning:'Retrieved an open Jira ticket (APSONA-4821) and Confluence known-issue page matching this exact symptom across 3 cases.', confidence:0.94}
     ]
   },
   {
@@ -371,20 +371,20 @@ var CASES = [
     reviewReason:null,
     trail:[
       {agent:'Case Intake Agent', time:'7:30 AM', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012341 created.'},
-      {agent:'MCP Context Agent', time:'7:30 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'No prior cases — new SSO customer.'},
-      {agent:'Vertex AI Search Retrieval Agent', time:'7:31 AM', result:'fail', rule:'Only surface results with a valid source URL — zero results means no draft, not a guess.', reasoning:'No indexed document covers this specific SAML redirect-loop scenario yet. Returned zero results with valid metadata, so no draft was generated.', confidence:0.0}
+      {agent:'MCP Context Agent', time:'7:30 AM', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'No prior cases: new SSO customer.'},
+      {agent:'Vertex AI Search Retrieval Agent', time:'7:31 AM', result:'fail', rule:'Only surface results with a valid source URL: zero results means no draft, not a guess.', reasoning:'No indexed document covers this specific SAML redirect-loop scenario yet. Returned zero results with valid metadata, so no draft was generated.', confidence:0.0}
     ]
   }
 ];
 
 var INTEGRATIONS = [
-  {name:'Vertex AI Search', color:'#4285F4', mark:'VS', desc:'Grounded retrieval across Drive, Fathom, Confluence, Jira, and the Help Center — one datastore, one query.', usedBy:['Retrieval Agent'], stat:'412 queries today'},
+  {name:'Vertex AI Search', color:'#4285F4', mark:'VS', desc:'Grounded retrieval across Drive, Fathom, Confluence, Jira, and the Help Center, one datastore, one query.', usedBy:['Retrieval Agent'], stat:'412 queries today'},
   {name:'Gemini Enterprise (Agent Builder)', color:'#8E44E9', mark:'GE', desc:'Drafts the customer-facing reply in the support team\'s voice, grounded in retrieved sources only.', usedBy:['Drafting Agent'], stat:'96 drafts generated today'},
   {name:'Google Drive', color:'#0F9D58', mark:'GD', desc:'Source documents, resolved via webViewLink so citations point to a real, permissioned file.', usedBy:['Retrieval Agent'], stat:'58 documents indexed'},
   {name:'Fathom', color:'#7C4DFF', mark:'FT', desc:'Call recordings and summaries used as a citable source when a past support call solved the same issue.', usedBy:['Retrieval Agent'], stat:'12 calls referenced today'},
   {name:'Atlassian (Confluence + Jira)', color:'#2684FF', mark:'AT', desc:'Known-issue documentation and linked engineering tickets, so recurring bugs get traced back, not re-answered from scratch.', usedBy:['MCP Context Agent','Retrieval Agent'], stat:'3 known-issue matches today'},
   {name:'Salesforce Case & Chatter API', color:'#00A1E0', mark:'SF', desc:'Case intake trigger and the channel the finished, cleaned-up draft gets posted back into.', usedBy:['Case Intake Agent','Chatter-Post Agent'], stat:'96 cases processed today'},
-  {name:'MCP Server', color:'#161C33', mark:'MCP', desc:'Structured case context — customer tier, prior case history, product area — fed to every downstream agent.', usedBy:['MCP Context Agent'], stat:'96 context calls today'},
+  {name:'MCP Server', color:'#161C33', mark:'MCP', desc:'Structured case context (customer tier, prior case history, product area) fed to every downstream agent.', usedBy:['MCP Context Agent'], stat:'96 context calls today'},
   {name:'Apsona Help Center', color:'#D97706', mark:'HC', desc:'Public article mapping so citations resolve to a clean, customer-facing URL instead of an internal doc link.', usedBy:['Citation & Grounding Agent','Chatter-Post Agent'], stat:'41 articles linked today'}
 ];
 
@@ -464,7 +464,7 @@ function renderReview(){
   pane.innerHTML = '<div class="page-head"><div><h1>Awaiting Your Word</h1><p>Cases where an agent could not fully ground its draft and stopped rather than guessing.</p></div></div>' +
     items.map(function(c){
       return '<div class="review-card">' +
-        '<div class="review-top"><h3>'+c.company+' <span style="color:var(--fog-dim);font-weight:400;font-size:13px;">'+c.caseNum+' — '+c.subject+'</span></h3>' +
+        '<div class="review-top"><h3>'+c.company+' <span style="color:var(--fog-dim);font-weight:400;font-size:13px;">'+c.caseNum+' - '+c.subject+'</span></h3>' +
         '<span class="tier '+c.tier+'">'+c.tier+'</span></div>' +
         '<div class="review-reason"><b>Why it stopped:</b> '+c.reviewReason+'</div>' +
         '<div class="review-actions">' + reviewActionsFor(c) + '</div>' +
@@ -494,7 +494,7 @@ function resolveReview(id, action){
   if(id === 'delacruz' || id === 'sterling'){
     if(action === 'approve_without'){
       c.status = 'on_track'; c.stageIndex = 6;
-      entry.reasoning = 'Rep approved the draft with the unsupported step removed — posted to Chatter with only the grounded recommendation.';
+      entry.reasoning = 'Rep approved the draft with the unsupported step removed, posted to Chatter with only the grounded recommendation.';
     } else {
       c.status = 'on_track'; c.stageIndex = 6;
       entry.reasoning = 'Rep manually added a citation from internal knowledge and approved the full draft for posting.';
@@ -536,7 +536,7 @@ function renderMetrics(){
       '<div class="stat-card"><div class="stat-num">'+passRate+'%</div><div class="stat-label">Grounding gates passed clean</div></div>' +
     '</div>' +
     '<div class="insight-card"><h3>Zero-hallucination is the metric that matters here</h3>' +
-    '<p>A high resolution rate means nothing if even one reply links to a page that does not exist. Tracking the Citation & Grounding Agent\'s gate pass-rate separately — and routing anything unsupported to a human instead of shipping it — is what makes it safe to let this draft customer-facing replies unattended.</p></div>';
+    '<p>A high resolution rate means nothing if even one reply links to a page that does not exist. Tracking the Citation & Grounding Agent\'s gate pass-rate separately (and routing anything unsupported to a human instead of shipping it) is what makes it safe to let this draft customer-facing replies unattended.</p></div>';
 }
 
 /* ================= INTEGRATIONS ================= */
@@ -564,7 +564,7 @@ function renderRunPipeline(){
   var pane = document.getElementById('pane-run');
   pane.innerHTML =
     archStripHtml() +
-    '<div class="page-head"><div><h1>Trace a Case</h1><p>Watch a new case call out from Salesforce, get grounded against Vertex AI Search, and come back as a draft — with the actual HTTP and API calls logged step by step.</p></div></div>' +
+    '<div class="page-head"><div><h1>Trace a Case</h1><p>Watch a new case call out from Salesforce, get grounded against Vertex AI Search, and come back as a draft, with the actual HTTP and API calls logged step by step.</p></div></div>' +
     '<div class="rp-controls">' +
       '<button class="btn primary" id="rp-run-btn" onclick="runPipelineDemo()">▶ Trace Case</button>' +
       '<button class="btn ghost" onclick="resetPipelineDemo()">↺ Reset</button>' +
@@ -576,7 +576,7 @@ function renderRunPipeline(){
       '<div class="rp-code" id="rp-code"><div class="rp-code-empty">Click "Run Pipeline" to watch each agent\'s calls execute here.</div></div>' +
     '</div>' +
     '<div class="rp-done-banner" id="rp-done-banner">' +
-      '<span>⚠️ <b>Sterling Facilities Group</b> processed — one step in the draft has no matching citation and needs your review before it can post.</span>' +
+      '<span>⚠️ <b>Sterling Facilities Group</b> processed: one step in the draft has no matching citation and needs your review before it can post.</span>' +
       '<button class="btn primary sm" onclick="switchMainTab(\'review\')">Go to Needs My Review</button>' +
     '</div>';
   renderStepper(-1);
@@ -649,7 +649,7 @@ function addSterlingCase(){
     id:'sterling', caseNum:'#00012358', company:'Sterling Facilities Group', domain:'sterlingfacilities.com', contact:'D. Ahn · IT Manager',
     tier:'P2', subject:'Report export timing out on large datasets', status:'needs_review', updated:'Just now', stageIndex:3,
     facts:{plan:'Business+', priorCases:1, product:'Reporting / Export'},
-    reviewReason:'The Citation & Grounding Agent matched one recommended step ("reduce batch size") to a retrieved source, but a second step ("contact your Salesforce admin to raise governor limits") has no matching document — dropped rather than shipped, and flagged for you.',
+    reviewReason:'The Citation & Grounding Agent matched one recommended step ("reduce batch size") to a retrieved source, but a second step ("contact your Salesforce admin to raise governor limits") has no matching document: dropped rather than shipped, and flagged for you.',
     sources:[
       {type:'drive', title:'Apsona Export Troubleshooting.docx', sub:'Google Drive · webViewLink resolved', color:'#0F9D58'}
     ],
@@ -657,7 +657,7 @@ function addSterlingCase(){
       {agent:'Case Intake Agent', time:'Just now', result:'pass', rule:'Only trigger on Case status = New with no existing draft.', reasoning:'Case #00012358 detected via Platform Event.'},
       {agent:'MCP Context Agent', time:'Just now', result:'pass', rule:'Draft cannot proceed without validated context.', reasoning:'Customer tier Business+, 1 prior case, product: Report Export.'},
       {agent:'Vertex AI Search Retrieval Agent', time:'Just now', result:'pass', rule:'Only surface results with a valid source URL.', reasoning:'Retrieved 1 Drive doc and 1 Help Center article via Vertex AI Search.', confidence:0.71},
-      {agent:'Citation & Grounding Agent', time:'Just now', result:'fail', rule:'Do not generate or guess links not explicitly provided in search metadata.', reasoning:'"Raise governor limits with your Salesforce admin" has no matching retrieved source — dropped and escalated instead of guessed.', confidence:0.39}
+      {agent:'Citation & Grounding Agent', time:'Just now', result:'fail', rule:'Do not generate or guess links not explicitly provided in search metadata.', reasoning:'"Raise governor limits with your Salesforce admin" has no matching retrieved source: dropped and escalated instead of guessed.', confidence:0.39}
     ]
   });
 }
@@ -667,7 +667,7 @@ function openDrawer(id){
   currentDrawerLead = CASES.filter(function(c){ return c.id === id; })[0];
   if(!currentDrawerLead) return;
   document.getElementById('drawer-avatar').textContent = initials(currentDrawerLead.company);
-  document.getElementById('drawer-company').textContent = currentDrawerLead.company + ' — ' + currentDrawerLead.caseNum;
+  document.getElementById('drawer-company').textContent = currentDrawerLead.company + ' - ' + currentDrawerLead.caseNum;
   document.getElementById('drawer-contact').textContent = currentDrawerLead.contact + ' · ' + currentDrawerLead.domain;
   document.getElementById('drawer-badges').innerHTML =
     '<span class="tier '+currentDrawerLead.tier+'" style="margin-right:8px;">'+currentDrawerLead.tier+'</span>' + statusChip(currentDrawerLead.status);
@@ -690,7 +690,7 @@ function renderDrawerOverview(){
       '<div class="draft-actions"><button class="btn primary sm" disabled>✓ Posted to Chatter</button></div></div>';
   } else {
     draftHtml = '<div class="draft-card"><h4>Generated Draft</h4><div class="draft-body" style="color:var(--fog-dim);">'+
-      (c.status === 'blocked' ? 'No draft generated — Vertex AI Search returned zero grounded results for this topic. Waiting on documentation, not on you.' : 'Draft withheld until the flagged step below is resolved.') +
+      (c.status === 'blocked' ? 'No draft generated: Vertex AI Search returned zero grounded results for this topic. Waiting on documentation, not on you.' : 'Draft withheld until the flagged step below is resolved.') +
       '</div></div>';
   }
   document.getElementById('dpane-overview').innerHTML =

@@ -52,7 +52,22 @@ header {
 .back-link { font-size: 12px; color: var(--text-muted); margin-right: 6px; }
 .back-link:hover { color: var(--text-main); }
 .user-profile { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-muted); }
-.ai-pill { background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.ai-pill { background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: none; font-family: inherit; cursor: pointer; box-shadow: 0 0 0 0 rgba(139,92,246,0.55); animation: aiPulse 2.6s infinite; transition: transform .15s; }
+.ai-pill:hover { transform: translateY(-1px); animation: none; box-shadow: 0 4px 14px rgba(139,92,246,0.45); }
+@keyframes aiPulse { 0% { box-shadow: 0 0 0 0 rgba(139,92,246,0.5); } 70% { box-shadow: 0 0 0 8px rgba(139,92,246,0); } 100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); } }
+.ins-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.ins-stat { background:#0f172a; border:1px solid var(--card-border); border-radius:8px; padding:12px; }
+.ins-stat .k { font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); display:block; margin-bottom:5px; }
+.ins-stat .v { font-size:18px; font-weight:700; color:#fff; display:block; line-height:1.2; }
+.ins-block { background:#0f172a; border:1px solid var(--card-border); border-left:3px solid #8b5cf6; border-radius:8px; padding:12px 14px; }
+.ins-block h5 { font-size:12px; font-weight:700; color:#a78bfa; margin-bottom:6px; }
+.ins-block p { font-size:12px; color:#e2e8f0; line-height:1.6; }
+.ins-rank { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--card-border); font-size:12px; }
+.ins-rank:last-child { border-bottom:none; }
+.ins-rank .n { width:20px; height:20px; border-radius:50%; background:#8b5cf6; color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex:none; }
+.ins-rank .who { flex:1; color:#fff; font-weight:600; }
+.ins-rank .why { color:var(--text-muted); font-size:11px; }
+@media (max-width:560px){ .ins-grid { grid-template-columns:1fr; } }
 
 /* Layout Containers */
 .main-container { display: flex; flex: 1; overflow: hidden; }
@@ -199,20 +214,20 @@ header {
     <span class="app-title">AI Customer Insights &amp; Preemptive Churn Engine</span>
   </div>
   <div class="user-profile">
-    <span class="ai-pill">✦ Gemini AI Insights Active</span>
+    <button class="ai-pill" onclick="openModal('portfolio-insights')" title="Run a portfolio-wide Gemini synthesis across all accounts">✦ Gemini AI Insights Active</button>
     <span>Account Manager: <strong>Rishav Kumar</strong></span>
     <span>Role: <strong>CS Lead</strong></span>
   </div>
 </header>
 
 <div class="signal-strip">
-  <span class="signal-chip live">1. Health Score — Live</span>
-  <span class="signal-chip live">2. Usage Event Velocity — Live</span>
-  <span class="signal-chip live">3. LinkedIn &amp; Org Intent — Live</span>
-  <span class="signal-chip new">4. Executive Champion Turnover — New</span>
-  <span class="signal-chip new">5. Feature Friction &amp; Batch Failure — New</span>
-  <span class="signal-chip new">6. License Adoption Velocity — New</span>
-  <span class="signal-chip new">7. AI Sentiment &amp; Support Stress — New</span>
+  <span class="signal-chip live">1. Health Score: Live</span>
+  <span class="signal-chip live">2. Usage Event Velocity: Live</span>
+  <span class="signal-chip live">3. LinkedIn &amp; Org Intent: Live</span>
+  <span class="signal-chip new">4. Executive Champion Turnover: New</span>
+  <span class="signal-chip new">5. Feature Friction &amp; Batch Failure: New</span>
+  <span class="signal-chip new">6. License Adoption Velocity: New</span>
+  <span class="signal-chip new">7. AI Sentiment &amp; Support Stress: New</span>
 </div>
 
 <div class="kpi-banner">
@@ -274,7 +289,7 @@ header {
     <div class="insights-grid">
       <div class="card">
         <div class="card-title">
-          <span>Signal 1 — Health Score Engine (Global: <span id="detScoreVal">0.0</span>/100)</span>
+          <span>Signal 1: Health Score Engine (Global: <span id="detScoreVal">0.0</span>/100)</span>
           <span style="font-size: 11px; color: var(--accent-blue); text-transform:none;">Auto-refreshed via Apps Script MSR</span>
         </div>
         <div class="formula-bar-container">
@@ -294,7 +309,7 @@ header {
 
       <div class="card">
         <div class="card-title">
-          <span>Signal 2 &amp; 3 — Usage Events &amp; LinkedIn Intent</span>
+          <span>Signal 2 &amp; 3: Usage Events &amp; LinkedIn Intent</span>
           <span style="font-size: 11px; color: var(--healthy); text-transform:none;">Live Telemetry</span>
         </div>
         <table class="events-table">
@@ -364,7 +379,7 @@ const accountsData = [
     ],
     linkedInSignal: "⚠️ Key Decision Maker (Salesforce Admin) left the company 3 weeks ago.",
     aiAnalysis: [
-      { title: "Executive Champion Turnover Risk", body: "LinkedIn signals indicate the previous Admin departed 3 weeks ago with no successor identified in the system yet. This account has had zero MSR runs since the departure — usage collapse and champion loss are compounding." },
+      { title: "Executive Champion Turnover Risk", body: "LinkedIn signals indicate the previous Admin departed 3 weeks ago with no successor identified in the system yet. This account has had zero MSR runs since the departure, usage collapse and champion loss are compounding." },
       { title: "Underutilized Seat Band (51+ Licenses)", body: "Only a small fraction of 50+ purchased licenses have logged in over the last 30 days. Renewal risk is high given the ratio of paid seats to active usage." }
     ]
   },
@@ -381,7 +396,7 @@ const accountsData = [
     ],
     linkedInSignal: "💡 3 team members viewed Apsona's LinkedIn post on MSR Automation.",
     aiAnalysis: [
-      { title: "Feature Expansion Opportunity", body: "High single-step report usage but low MSR multi-step adoption suggests the team hasn't been onboarded onto the more powerful reporting flow yet — a training gap, not a churn signal." }
+      { title: "Feature Expansion Opportunity", body: "High single-step report usage but low MSR multi-step adoption suggests the team hasn't been onboarded onto the more powerful reporting flow yet, a training gap, not a churn signal." }
     ]
   },
   {
@@ -514,7 +529,7 @@ function selectAccount(id) {
   const aiContainer = document.getElementById("aiAlertContainer");
   aiContainer.innerHTML = `
     <div class="ai-alert-box" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08);">
-      <div class="ai-alert-header" style="color: #60a5fa;">🔗 Signal 3 — LinkedIn &amp; Social Engagement</div>
+      <div class="ai-alert-header" style="color: #60a5fa;">🔗 Signal 3: LinkedIn &amp; Social Engagement</div>
       <div class="ai-alert-body">${acc.linkedInSignal}</div>
     </div>`;
   acc.aiAnalysis.forEach(ai => {
@@ -549,21 +564,95 @@ function filterAccounts() {
 }
 
 function openModal(type) {
-  const acc = accountsData.find(a => a.id === currentSelectedId);
+  const acc = accountsData.find(a => a.id === currentSelectedId) || accountsData[0];
   const modal = document.getElementById("actionModal");
   const title = document.getElementById("modalTitle");
   const body = document.getElementById("modalBody");
   modal.classList.add("show");
 
+  if (type === 'portfolio-insights') {
+    title.innerText = "✦ Gemini Portfolio Synthesis · All Accounts";
+
+    const totalArr = accountsData.reduce((t, a) => t + a.arr, 0);
+    const atRisk = accountsData.filter(a => a.healthStatus !== 'Healthy');
+    const atRiskArr = atRisk.reduce((t, a) => t + a.arr, 0);
+    const critical = accountsData.filter(a => a.healthStatus === 'Critical');
+    const avgScore = (accountsData.reduce((t, a) => t + a.healthScore, 0) / accountsData.length).toFixed(1);
+
+    // which product event is decaying across the widest set of accounts
+    const decay = {};
+    accountsData.forEach(a => a.events.forEach(e => {
+      if (String(e.trend).indexOf('↓') === 0 || e.count === '0') {
+        decay[e.name] = (decay[e.name] || 0) + 1;
+      }
+    }));
+    const worstFeature = Object.keys(decay).sort((x, y) => decay[y] - decay[x])[0];
+    const worstCount = decay[worstFeature] || 0;
+
+    // accounts carrying a people-risk signal, not just a usage signal
+    const championRisk = accountsData.filter(a => a.linkedInSignal.indexOf('⚠') === 0);
+
+    // outreach queue: ARR weighted against health gap
+    const queue = accountsData.slice()
+      .map(a => ({ a: a, p: a.arr * (100 - a.healthScore) / 100 }))
+      .sort((x, y) => y.p - x.p)
+      .slice(0, 3);
+
+    const money = n => '$' + n.toLocaleString();
+
+    body.innerHTML = `
+      <div class="ins-grid">
+        <div class="ins-stat"><span class="k">ARR at risk</span><span class="v">${money(atRiskArr)}</span></div>
+        <div class="ins-stat"><span class="k">Of total book</span><span class="v">${Math.round(atRiskArr / totalArr * 100)}%</span></div>
+        <div class="ins-stat"><span class="k">Avg health score</span><span class="v">${avgScore}</span></div>
+      </div>
+
+      <div class="ins-block">
+        <h5>Portfolio read</h5>
+        <p>${atRisk.length} of ${accountsData.length} accounts are off Healthy, carrying ${money(atRiskArr)} of the ${money(totalArr)} book.
+        ${critical.length} sit at Critical (${critical.map(a => a.name).join(', ')}), where the health score has already bottomed out rather than started to slide.
+        The pattern across the segment is not pricing pushback, it is usage decay reaching the renewal window unnoticed.</p>
+      </div>
+
+      <div class="ins-block">
+        <h5>Strongest cross-account signal</h5>
+        <p><strong>${worstFeature}</strong> is flat or declining on ${worstCount} of ${accountsData.length} accounts, the widest spread of any tracked event.
+        A drop concentrated in one account is an account problem. A drop this wide is a product or onboarding problem, and it should go to the roadmap conversation, not only to the CS queue.</p>
+      </div>
+
+      <div class="ins-block">
+        <h5>People risk beats usage risk</h5>
+        <p>${championRisk.length ? championRisk.map(a => a.name).join(', ') + ' ' + (championRisk.length > 1 ? 'carry' : 'carries') + ' a champion-departure signal from LinkedIn. Usage collapse following an admin exit is rarely recoverable through product nudges alone, so these need a named human owner and a re-onboarding motion, not an automated email.' : 'No champion-departure signals detected this cycle. Risk in this portfolio is currently usage-driven rather than people-driven.'}</p>
+      </div>
+
+      <div class="ins-block">
+        <h5>Recommended outreach order (ARR × health gap)</h5>
+        ${queue.map((q, i) => `
+          <div class="ins-rank">
+            <span class="n">${i + 1}</span>
+            <span class="who">${q.a.name}</span>
+            <span class="why">${money(q.a.arr)} · score ${q.a.healthScore} · renews ${q.a.expDate}</span>
+          </div>`).join('')}
+      </div>
+
+      <div class="playbook-note">
+        <strong>How this works in the real build:</strong> the deterministic layer computes every number above from Salesforce and product event data first,
+        then Gemini is handed only the finished figures and asked to write the interpretation. The model never calculates a score and never invents an account.
+        That split is what makes the output safe to put in front of an AM.
+      </div>
+      <button class="btn btn-ai" style="justify-content:center;" onclick="submitModalAction('Synthesis exported to the CS channel and logged against each account record.')">Export to CS Channel</button>`;
+    return;
+  }
+
   if (type === 'log-call') {
-    title.innerText = `📞 Log Outreach Call — ${acc.name}`;
+    title.innerText = `📞 Log Outreach Call: ${acc.name}`;
     body.innerHTML = `
       <div class="form-group">
         <label>Call Sentiment</label>
         <select id="callSentiment">
-          <option>Positive — Champion Re-engaged</option>
-          <option>Neutral — Requires Follow-up</option>
-          <option selected>High Risk — Customer Expressed Frustration</option>
+          <option>Positive: Champion Re-engaged</option>
+          <option>Neutral: Requires Follow-up</option>
+          <option selected>High Risk: Customer Expressed Frustration</option>
         </select>
       </div>
       <div class="form-group">
@@ -581,7 +670,7 @@ function openModal(type) {
       <button class="btn btn-primary" style="justify-content: center;" onclick="submitModalAction('Call logged. Health_Score_Status__c updated in Salesforce via REST API.')">Save Call Log</button>`;
   } else if (type === 'ai-email') {
     const domain = acc.name.toLowerCase().replace(/[^a-z]/g, '');
-    title.innerText = `✉️ AI Generated Champion Email — ${acc.name}`;
+    title.innerText = `✉️ AI Generated Champion Email: ${acc.name}`;
     body.innerHTML = `
       <div class="form-group"><label>Recipient Email</label><input type="text" value="admin@${domain}.org"></div>
       <div class="form-group"><label>Subject Line</label><input type="text" value="Quick question regarding your Apsona Multi-Step Reports &amp; Automation"></div>
@@ -610,7 +699,7 @@ Rishav Kumar | Apsona Success Team</textarea>
       </ul>
       <button class="btn btn-primary" style="justify-content: center; margin-top: 10px;" onclick="submitModalAction('Playbook executed and logged.')">Acknowledge &amp; Close</button>`;
   } else if (type === 'book-session') {
-    title.innerText = `📅 Book Technical Workshop — ${acc.name}`;
+    title.innerText = `📅 Book Technical Workshop: ${acc.name}`;
     body.innerHTML = `
       <div class="form-group">
         <label>Workshop Topic</label>
