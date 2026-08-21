@@ -15,10 +15,11 @@
     --line:#DCE1E8;
     --line-soft:#E7EBF0;
     --fog:#535F6D;
-    --fog-dim:#8792A1;
+    --fog-dim:#606C7B;
     --paper:#141C25;
     --amber:#B45309;
     --accent-text:#141C25;
+    --on-navy:#FFFFFF;
     --navy:#141C25;
     --mint:#15803D;
     --coral:#B91C1C;
@@ -37,10 +38,11 @@
     --line:#2A3744;
     --line-soft:#222C38;
     --fog:#94A3B3;
-    --fog-dim:#6B7A8A;
+    --fog-dim:#8090A0;
     --paper:#E8EEF4;
     --amber:#E9A13B;
     --accent-text:#F1F6FA;
+    --on-navy:#141C25;
     --navy:#E9A13B;
     --mint:#4ADE80;
     --coral:#F87171;
@@ -101,9 +103,9 @@
     color:var(--paper);display:flex;align-items:center;gap:2px;
   }
   .logo .accent{color:var(--accent-text);}
-  .navlinks{display:flex;gap:26px;font-size:13.5px;color:var(--fog);align-items:center;}
+  .navlinks{display:flex;gap:26px;font-size:13.5px;color:var(--paper);font-weight:500;align-items:center;}
   .navlinks a{transition:color 0.2s;}
-  .navlinks a:hover{color:var(--paper);}
+  .navlinks a:hover{color:var(--amber);}
   .navlinks .icon-link{display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 12px;border-radius:6px;font-family:var(--mono);font-size:12px;color:var(--paper);}
   .navlinks .icon-link:hover{border-color:var(--fog-dim);}
   .theme-toggle{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--fog);}
@@ -119,7 +121,7 @@
     font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;
     color:var(--fog-dim);margin-bottom:22px;display:flex;align-items:center;gap:10px;
   }
-  .eyebrow::before{content:'';width:18px;height:1px;background:var(--fog-dim);}
+  .eyebrow::before{content:none;}
 
   .hero-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:48px;align-items:center;}
   @media (max-width:840px){.hero-grid{grid-template-columns:1fr;}}
@@ -141,7 +143,7 @@
     font-family:var(--body);font-size:14px;font-weight:600;padding:13px 24px;border-radius:8px;
     border:1px solid var(--line);transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;
   }
-  .btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .btn.primary{background:var(--navy);color:var(--on-navy);border-color:var(--navy);}
   .btn.primary:hover{opacity:0.9;}
   .btn.ghost{color:var(--paper);background:var(--panel);}
   .btn.ghost:hover{border-color:var(--fog-dim);}
@@ -666,9 +668,9 @@ var PROJECTS = [
     status:'built', statusLabel:'Built · v1 prototype',
     tagline:'Classifies renewal invoices automatically and routes them through a Lightning quick action.',
     flow:'Apex Trigger → Classification Engine → LWC Quick Action → Gemini API',
-    challenge:'The BnL team classified and processed invoice renewals by hand, with no intelligent routing layer to separate auto-renewals from cases that needed review.',
-    solution:'An Apex trigger classifies incoming invoice records, a Gemini API call adds a confidence-scored recommendation, and a Lightning Web Component quick action surfaces that recommendation directly to reps for one-click action.',
-    impact:'Working v1 prototype with a full PRD and Technical Build Notes delivered for stakeholder review, plus a Salesforce-styled clickable prototype of the AI assistant panel and an animated system data-flow diagram for stakeholder walkthroughs.',
+    challenge:'The BnL team classified and processed invoice renewals by hand, with no intelligent routing layer to separate auto-renewals from cases that needed review. Every case also had to be traced back to the right AFS Lead and License by Org ID, since replies landing on old closed cases made email subject lines unreliable. Seat counts were re-read from the prior year\'s invoice and payment type was guessed from history, so one mismatch could put an invoice out of line with the quote the customer had already approved.',
+    solution:'An Apex trigger classifies incoming invoice records, a Gemini API call adds a confidence-scored recommendation, and a Lightning Web Component quick action surfaces that recommendation directly to reps for one-click action. The classifier separates the four intents that arrive in the billing queue: pricing question, customer-confirmed quote, direct invoice request, and non-renewal. Deterministic SOQL carries forward prior-year seat counts for AFS, Multi-Step Reports, Dedupe and Document Merge, and payment type is inferred from the last three transactions on file.',
+    impact:'Working v1 prototype with a full PRD and Technical Build Notes delivered for stakeholder review, plus a Salesforce-styled clickable prototype of the AI assistant panel and an animated system data-flow diagram for stakeholder walkthroughs. Every step logs an explicit pass/fail check against the confirmed quote, so the reasoning is auditable rather than a black box, and the AM keeps final control to edit, prepare or send.',
     ac:[
       'Every invoice gets a classification label before it reaches a rep queue.',
       'Reps can accept or override the recommendation in one click from the quick action.',
